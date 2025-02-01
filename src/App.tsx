@@ -19,7 +19,7 @@ const App: React.FC = () => {
                             <ProtectedRoute>
                                 <div className='flex'>
                                     <Sidebar />
-                                    <div className='ml-64 flex-1 p-4'>
+                                    <div className='ml-64 flex-1'>
                                         <Routes>
                                             {routes.map((route, index) => (
                                                 <Route key={index} path={route.path} element={route.element} />

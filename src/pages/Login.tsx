@@ -24,8 +24,10 @@ const Login: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            login();
             const data = await autentication(username, password);
+            if (data.success) login();
+            data.success;
+            console.log(data);
         } catch (error: any) {
             setError(error.message);
         } finally {

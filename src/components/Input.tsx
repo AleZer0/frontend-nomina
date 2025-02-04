@@ -10,12 +10,14 @@ interface InputProps {
     handleShowPassword?: () => void;
 }
 
-const Input: React.FC<InputProps> = ({ type, placeholder, showPassword, handleShowPassword }) => {
+const Input: React.FC<InputProps> = ({ type, placeholder, value, onChange, showPassword, handleShowPassword }) => {
     return (
         <div className='relative mb-4'>
             <input
                 type={showPassword ? 'text' : type}
                 placeholder={placeholder}
+                value={value}
+                onChange={onChange}
                 className='w-full rounded border border-gray-200 p-2 text-blue-950 hover:border-gray-300 hover:shadow focus:ring-1 focus:ring-blue-400 focus:outline-none'
             />
             {type === 'password' && (

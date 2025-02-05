@@ -1,40 +1,73 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../utils/axiosInstance';
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: () => void;
+    loading: boolean;
+    login: (credentials: { nombre_usuario: string; contrasena: string }) => Promise<void>;
     logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-        const savedAuth = localStorage.getItem('isAuthenticated');
-        return savedAuth === 'true';
-    });
-
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const login = () => {
-        setIsAuthenticated(true);
-        localStorage.setItem('isAuthenticated', 'true');
-        navigate('/employees');
+
+    // Verificar si el usuario tiene una sesión activa
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            try {
+                const response = await axiosInstance.get(
+                    'https://app-nomina-141e425e046a.herokuapp.com/api/usuario/verify',
+                    {
+                        withCredentials: true,
+                    }
+                );
+                if (response.data.success) {
+                    setIsAuthenticated(true);
+                    navigate('/employees');
+                }
+            } catch (error) {
+                setIsAuthenticated(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkAuthStatus();
+    }, []);
+
+    // Función de inicio de sesión
+    const login = async (credentials: { nombre_usuario: string; contrasena: string }) => {
+        try {
+            await axiosInstance.post('https://app-nomina-141e425e046a.herokuapp.com/api/usuario/login', credentials, {
+                withCredentials: true,
+            });
+            setIsAuthenticated(true);
+        } catch (error) {
+            setIsAuthenticated(false);
+            throw new Error('Credenciales incorrectas');
+        }
     };
 
+    // Función de cierre de sesión
     const logout = () => {
+        axiosInstance.post(
+            'https://app-nomina-141e425e046a.herokuapp.com/api/usuario/logout',
+            {},
+            { withCredentials: true }
+        );
         setIsAuthenticated(false);
-        localStorage.removeItem('isAuthenticated');
-        navigate('/');
     };
 
-    return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>{children}</AuthContext.Provider>;
 };
 
+// Hook personalizado para usar el contexto de autenticación
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth debe usarse dentro de un AuthProvider');
-    }
+    if (!context) throw new Error('useAuth debe ser usado dentro de AuthProvider');
     return context;
 };

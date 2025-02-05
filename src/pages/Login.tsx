@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -8,29 +8,30 @@ import Button from '../components/Button';
 const Login: React.FC = () => {
     const [nombre_usuario, setUsername] = useState<string>('');
     const [contrasena, setPassword] = useState<string>('');
+
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const { isAuthenticated, login } = useAuth();
     const navigate = useNavigate();
 
-    const [showPassword, setShowPassword] = useState<boolean>(false);
     const handleShowPassword = () => {
         console.log(showPassword);
         setShowPassword(!showPassword);
     };
 
-    const { login } = useAuth();
     const handleLogin = async () => {
-        setLoading(true);
-        setError(null);
         try {
             await login({ nombre_usuario, contrasena });
-            navigate('/employees');
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
+        } catch (error) {
+            setError('Error al iniciar sesión.');
+            throw new Error(`Error al iniciar sesión: ${error}`);
         }
     };
+
+    useEffect(() => {
+        if (isAuthenticated) navigate('/employees');
+    }, [isAuthenticated, navigate]);
 
     return (
         <div className='flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-800 to-blue-400'>
@@ -60,8 +61,9 @@ const Login: React.FC = () => {
                 </div>
                 <Button
                     onClick={handleLogin}
-                    design={`${loading ? 'bg-gray-300 text-blue-50' : 'bg-blue-500 hover:bg-blue-400 text-blue-50 cursor-pointer'}`}>
-                    {loading ? 'Cargando...' : 'Ingresar'}
+                    disabled={nombre_usuario === '' || contrasena === ''}
+                    design={`${nombre_usuario === '' || contrasena === '' ? 'bg-gray-300 text-blue-50' : 'bg-blue-500 hover:bg-blue-400 text-blue-50 cursor-pointer'}`}>
+                    {nombre_usuario === '' || contrasena === '' ? 'Esperando...' : 'Ingresar'}
                 </Button>
             </div>
         </div>

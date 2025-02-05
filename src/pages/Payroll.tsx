@@ -1,60 +1,52 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { downloadPayrollPDF } from '../services/pdf.service';
-
-interface Nomina {
-    folio: number;
-    fecha: string;
-    prestamos: number;
-    infonavit: number;
-    sueldo: number;
-    id_empleado: number;
-    empleado: {
-        nombre: string;
-        apellido: string;
-    };
-}
-
-interface Empleado {
-    id_empleado: number;
-    nombre: string;
-    apellido: string;
-}
+import { createPayroll, getPayrolls } from '../services/payroll.service';
+import { PayrollInterface } from '../types';
+import Empleado from '../services/employees.service';
 
 const Payroll: React.FC = () => {
-    const [nominas, setNominas] = useState<Nomina[]>([]);
-    const [empleados, setEmpleados] = useState<Empleado[]>([]);
+    const [nominas, setNominas] = useState<PayrollInterface[]>([]);
+    const [empleados, setEmpleados] = useState<PayrollInterface['empleado'][]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newNomina, setNewNomina] = useState({ id_empleado: '', sueldo: '', prestamos: '', infonavit: '' });
+    const [newNomina, setNewNomina] = useState({
+        fecha: Date.now.toString,
+        prestamos: '',
+        infonavit: '',
+        sueldo: '',
+        id_empleado: '',
+    });
 
-    // Simulación de datos
     useEffect(() => {
-        setNominas([
-            {
-                folio: 1,
-                fecha: '2024-02-01',
-                prestamos: 500,
-                infonavit: 300,
-                sueldo: 15000,
-                id_empleado: 1,
-                empleado: { nombre: 'Alexis', apellido: 'Díaz' },
-            },
-            {
-                folio: 2,
-                fecha: '2024-02-01',
-                prestamos: 1000,
-                infonavit: 500,
-                sueldo: 17000,
-                id_empleado: 2,
-                empleado: { nombre: 'Hashley', apellido: 'Aquino' },
-            },
-        ]);
+        Empleado.getEmployees(1)
+            .then(response => {
+                console.log('Respuesta de getEmployees:', response); // Para depuración
+                if (response && Array.isArray(response.empleados)) {
+                    setEmpleados(response.empleados);
+                } else {
+                    console.error('Formato inesperado en la respuesta:', response);
+                    setEmpleados([]);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching employees:', error);
+                setEmpleados([]);
+            });
 
-        setEmpleados([
-            { id_empleado: 1, nombre: 'Alexis', apellido: 'Díaz' },
-            { id_empleado: 2, nombre: 'Hashley', apellido: 'Aquino' },
-            { id_empleado: 3, nombre: 'Carlos', apellido: 'Mendoza' },
-        ]);
+        getPayrolls(1)
+            .then(response => {
+                console.log('Respuesta de getPayrolls:', response); // Para depuración
+                if (response && Array.isArray(response.nominas)) {
+                    setNominas(response.nominas);
+                } else {
+                    console.error('Formato inesperado en la respuesta:', response);
+                    setNominas([]);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching payrolls:', error);
+                setNominas([]);
+            });
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -69,18 +61,48 @@ const Payroll: React.FC = () => {
 
         const empleadoSeleccionado = empleados.find(emp => emp.id_empleado === Number(newNomina.id_empleado));
 
-        const nuevaNomina: Nomina = {
+        const nuevaNomina: PayrollInterface = {
             folio: nominas.length + 1,
             fecha: new Date().toISOString(),
             prestamos: Number(newNomina.prestamos) || 0,
             infonavit: Number(newNomina.infonavit) || 0,
             sueldo: Number(newNomina.sueldo),
             id_empleado: Number(newNomina.id_empleado),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            estado: 1,
             empleado: {
+                id_empleado: empleadoSeleccionado?.id_empleado || 0,
                 nombre: empleadoSeleccionado?.nombre || '',
                 apellido: empleadoSeleccionado?.apellido || '',
+                puesto: empleadoSeleccionado?.puesto || '',
+                sueldo: empleadoSeleccionado?.sueldo || 0,
+                created_at: empleadoSeleccionado?.created_at || '',
+                updated_at: empleadoSeleccionado?.updated_at || '',
+                estado: empleadoSeleccionado?.estado || 1,
             },
         };
+        createPayroll({
+            fecha: new Date().toISOString(),
+            prestamos: Number(newNomina.prestamos) || 0,
+            infonavit: Number(newNomina.infonavit) || 0,
+            sueldo: Number(newNomina.sueldo),
+            id_empleado: parseInt(newNomina.id_empleado),
+        })
+            .then(response => {
+                console.log('Respuesta de createPayroll:', response); // Para depuración
+                if (response && response.data && response.data.nomina) {
+                    setNominas([...nominas, response.data.nomina]);
+                    setIsModalOpen(false);
+                } else {
+                    console.error('Formato inesperado en la respuesta:', response);
+                    alert('Error al crear la nómina.');
+                }
+            })
+            .catch(error => {
+                console.error('Error creando la nómina:', error);
+                alert('Error al crear la nómina.');
+            });
 
         setNominas([...nominas, nuevaNomina]);
         setIsModalOpen(false);
@@ -97,15 +119,12 @@ const Payroll: React.FC = () => {
             <main className='flex-1 p-6'>
                 <div className='mb-4 flex items-center justify-between'>
                     <h2 className='text-xl font-semibold'>Listado de Nóminas</h2>
-                    <div>
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className='rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600'>
-                            ➕ Añadir Nómina
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className='rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600'>
+                        ➕ Añadir Nómina
+                    </button>
                 </div>
-
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     <div className='grid grid-cols-8 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Folio</div>
@@ -117,39 +136,40 @@ const Payroll: React.FC = () => {
                         <div>Total a Pagar</div>
                         <div>Acciones</div>
                     </div>
-
                     <div className='divide-y divide-gray-300'>
-                        {nominas.map(item => (
-                            <div
-                                key={item.folio}
-                                className='grid grid-cols-8 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
-                                <div>{item.folio}</div>
-                                <div>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
-                                <div>{new Date(item.fecha).toLocaleDateString()}</div>
-                                <div>${item.sueldo.toFixed(2)}</div>
-                                <div>${item.prestamos.toFixed(2)}</div>
-                                <div>${item.infonavit.toFixed(2)}</div>
-                                <div className='font-semibold text-green-600'>
-                                    ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
+                        {nominas.length > 0 ? (
+                            nominas.map(item => (
+                                <div
+                                    key={item.folio}
+                                    className='grid grid-cols-8 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
+                                    <div>{item.folio}</div>
+                                    <div>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
+                                    <div>{new Date(item.fecha).toLocaleDateString()}</div>
+                                    <div>${item.sueldo.toFixed(2)}</div>
+                                    <div>${item.prestamos.toFixed(2)}</div>
+                                    <div>${item.infonavit.toFixed(2)}</div>
+                                    <div className='font-semibold text-green-600'>
+                                        ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
+                                    </div>
+                                    <div>
+                                        <button
+                                            onClick={() => handleGneratePDF(item.folio)}
+                                            className='cursor-pointer rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
+                                            📄 Generar PDF
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <button
-                                        onClick={() => handleGneratePDF(item.folio)}
-                                        className='cursor-pointer rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
-                                        📄 Generar PDF
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <div className='p-3 text-center text-gray-500'>No hay nóminas disponibles</div>
+                        )}
                     </div>
                 </div>
             </main>
-
-            {/* MODAL */}
             {isModalOpen && (
-                <div className='bg-opacity-5 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg'>
+                <div className='bg-opacity-30 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md'>
                     <div className='w-96 rounded-lg bg-white p-6 shadow-lg'>
-                        <h2 className='mb-4 text-lg font-semibold'>Añadir Nómina</h2>
+                        <h2 className='mb-4 text-lg font-semibold'>Añadir Nueva Nómina</h2>
 
                         {/* Selección de Empleado */}
                         <label className='mb-2 block text-gray-700'>Empleado:</label>

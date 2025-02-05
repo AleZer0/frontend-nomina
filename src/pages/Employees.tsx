@@ -1,120 +1,197 @@
 import { useEffect, useRef, useState } from 'react';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
-import { SlOptions } from 'react-icons/sl';
+import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from '../services/employeesService';
+import DropdownMenu from '../components/DropdownMenu';
 
-interface DropdownMenuProps {
-    onClick?: () => void;
+interface Employee {
+    id_empleado: number;
+    nombre: string;
+    apellido: string;
+    puesto: string;
+    sueldo: number;
 }
 
-const data = [
-    {
-        nombre: 'Alexis',
-        apellidos: 'Diaz',
-        puesto: 'Programador Junior',
-        sueldo: '1500 MNX',
-        ultimaNomina: 'NOM001',
-    },
-    {
-        nombre: 'Hashley',
-        apellidos: 'Aquino',
-        puesto: 'Programador Junior',
-        sueldo: '1500 MNX',
-        ultimaNomina: 'NOM002',
-    },
-    // Otros registros...
-];
-
 const Employees: React.FC = () => {
-    return (
-        <div className='flex-1'>
-            {' '}
-            {/* Permite que el contenido de la pagina ocupe todo el espacio disponible despues del sidebar */}
-            <Header tittle={'Listado de Empleados'}></Header>
-            {/* El titulo del header se debe enviar de esta manera */}
-            <main className='p-5'>
-                {' '}
-                {/* Definir un espacio o area para el contenido debajo del header */}
-                <div className='space-y-2'>
-                    {/* Encabezado */}
-                    <ul className='flex flex-col rounded-2xl bg-gray-100 p-1'>
-                        <li className='relative mt-1.5 flex flex-row items-center p-1.5 font-semibold tracking-wide after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-gray-400'>
-                            <div className='flex flex-1'>Nombre</div>
-                            <div className='flex flex-1'>Apellidos</div>
-                            <div className='flex flex-1'>Puesto de trabajo</div>
-                            <div className='flex flex-1'>Sueldo</div>
-                            <div className='flex flex-1'>Ultima nomina</div>
-                            <div className='flex flex-1'>Opciones</div>
-                        </li>
-                        {data.map((item, index) => (
-                            <li
-                                key={index}
-                                className='relative flex flex-row items-center p-1.5 text-sm tracking-tight after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-gray-300'>
-                                <div className='flex flex-1'>{item.nombre}</div>
-                                <div className='flex flex-1'>{item.apellidos}</div>
-                                <div className='flex flex-1'>{item.puesto}</div>
-                                <div className='flex flex-1'>{item.sueldo}</div>
-                                <div className='flex flex-1'>
-                                    Folio:
-                                    <Link to={'/payroll'} className='flex flex-1 text-blue-600 underline'>
-                                        {' ' + item.ultimaNomina}
-                                    </Link>
-                                </div>
-                                <button className='flex flex-1 text-blue-600 hover:underline'>Generar Nómina</button>
-                                <DropdownMenu />
-                            </li>
-                        ))}
-                    </ul>
-                    {/* Filas de datos */}
-                </div>
-            </main>
-        </div>
-    );
-};
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ onClick }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newEmployee, setNewEmployee] = useState({ nombre: '', apellido: '', puesto: '', sueldo: '' });
 
-    const toggleMenu = () => setIsOpen(!isOpen);
+    const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]); // ✅ Se usa un ref global para los botones
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        (async () => {
+            const data = await getEmployees(1);
+            setEmployees(data.empleados);
+        })();
     }, []);
 
-    return (
-        <div ref={dropdownRef} className='relative'>
-            <button
-                onClick={toggleMenu}
-                className='inline-flex items-center rounded-lg text-sm text-black hover:bg-green-300 focus:bg-green-400'
-                type='button'>
-                <SlOptions className='absolute right-1.5 bottom-0.5 h-4 w-4 font-thin' />
-            </button>
+    // Función para manejar cambios en los inputs del modal
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setNewEmployee({ ...newEmployee, [e.target.name]: e.target.value });
+    };
 
-            {isOpen && (
-                <div className='absolute top-8 right-0 z-20 w-44 rounded-lg bg-green-50 shadow-md'>
-                    <ul className='py-2 text-sm text-black'>
-                        <li>
-                            <button className='block w-full px-4 py-2 text-left hover:bg-green-100 hover:font-bold'>
-                                Editar empleado
-                            </button>
-                        </li>
-                        <li>
+    // Función para crear un nuevo empleado
+    const handleSubmit = () => {
+        if (!newEmployee.nombre || !newEmployee.apellido || !newEmployee.puesto || !newEmployee.sueldo) {
+            alert('Por favor, completa todos los campos.');
+            return;
+        }
+
+        createEmployee({
+            nombre: newEmployee.nombre,
+            apellido: newEmployee.apellido,
+            puesto: newEmployee.puesto,
+            sueldo: parseFloat(newEmployee.sueldo),
+        }).then(() => {
+            getEmployees(1).then((data) => setEmployees(data.empleados));
+        });
+
+        setIsModalOpen(false);
+    };
+
+    return (
+        <div className="min-h-screen flex-1 bg-gray-100">
+            <Header tittle="Listado de Empleados" />
+            <main className="p-6">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="mb-4 rounded bg-green-500 px-3 py-2 text-white"
+                >
+                    ➕ Nuevo empleado
+                </button>
+
+                <div className="overflow-hidden rounded-lg bg-white shadow-lg">
+                    <div className="grid grid-cols-6 bg-gray-200 p-3 font-semibold text-gray-700 text-center">
+                        <div>Nombre</div>
+                        <div>Apellidos</div>
+                        <div>Puesto</div>
+                        <div>Sueldo</div>
+                        <div>Última Nómina</div>
+                        <div>Opciones</div>
+                    </div>
+
+                    <div className="divide-y divide-gray-300">
+                        {employees.map((item, index) => {
+                            const handleEdit = () => {
+                                updateEmployee(item.id_empleado, {
+                                    nombre: item.nombre,
+                                    apellido: item.apellido,
+                                    puesto: item.puesto,
+                                    sueldo: item.sueldo,
+                                }).then(() => {
+                                    getEmployees(1).then((data) => setEmployees(data.empleados));
+                                });
+                            };
+
+                            const handleDelete = () => {
+                                deleteEmployee(item.id_empleado).then(() => {
+                                    getEmployees(1).then((data) => setEmployees(data.empleados));
+                                });
+                            };
+
+                            return (
+                                <div
+                                    key={item.id_empleado}
+                                    className="grid grid-cols-6 items-center p-3 text-center text-gray-800 odd:bg-gray-50"
+                                >
+                                    <div>{item.nombre}</div>
+                                    <div>{item.apellido}</div>
+                                    <div>{item.puesto}</div>
+                                    <div>${item.sueldo.toFixed(2)}</div>
+                                    <div>
+                                        Folio:
+                                        <Link to="/payroll" className="text-blue-600 underline">
+                                            {' N/A'}
+                                        </Link>
+                                    </div>
+                                    <div className="flex justify-center gap-2">
+                                        <button
+                                            onClick={() => console.log('Generar nómina')}
+                                            className="px-4 py-2 rounded bg-blue-500 text-white text-sm font-medium transition hover:bg-blue-600"
+                                        >
+                                            Generar Nómina
+                                        </button>
+                                        <DropdownMenu
+                                            buttonRef={(el) => (buttonRefs.current[index] = el)}
+                                            onDelete={handleDelete}
+                                            onEdit={handleEdit}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </main>
+
+            {/* MODAL */}
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-opacity-30 backdrop-blur-md z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+                        <h2 className="text-lg font-semibold mb-4">Añadir Nuevo Empleado</h2>
+
+                        {/* Campos del modal */}
+                        <label className="block mb-2 text-gray-700">Nombre:</label>
+                        <input
+                            type="text"
+                            name="nombre"
+                            value={newEmployee.nombre}
+                            onChange={handleChange}
+                            placeholder="Nombre"
+                            className="w-full p-2 border rounded-lg mb-4"
+                        />
+
+                        <label className="block mb-2 text-gray-700">Apellido:</label>
+                        <input
+                            type="text"
+                            name="apellido"
+                            value={newEmployee.apellido}
+                            onChange={handleChange}
+                            placeholder="Apellido"
+                            className="w-full p-2 border rounded-lg mb-4"
+                        />
+
+                        <label className="block mb-2 text-gray-700">Puesto:</label>
+                        <input
+                            type="text"
+                            name="puesto"
+                            value={newEmployee.puesto}
+                            onChange={handleChange}
+                            placeholder="Puesto"
+                            className="w-full p-2 border rounded-lg mb-4"
+                        />
+
+                        <label className="block mb-2 text-gray-700">Sueldo:</label>
+                        <input
+                            type="number"
+                            name="sueldo"
+                            value={newEmployee.sueldo}
+                            onChange={handleChange}
+                            placeholder="Sueldo"
+                            className="w-full p-2 border rounded-lg mb-4"
+                        />
+
+                        {/* Botones de acción */}
+                        <div className="flex justify-end gap-2">
                             <button
-                                onClick={onClick}
-                                className='block w-full px-4 py-2 text-left text-red-600 hover:bg-green-100 hover:font-bold'>
-                                Eliminar empleado
+                                onClick={() => setIsModalOpen(false)}
+                                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                            >
+                                Cancelar
                             </button>
-                        </li>
-                    </ul>
+                            <button
+                                onClick={handleSubmit}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                            >
+                                Guardar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
     );
 };
+
 export default Employees;

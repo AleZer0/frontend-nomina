@@ -6,9 +6,9 @@ const Sidebar: React.FC = () => {
     const { logout } = useAuth();
 
     return (
-        <div className='fixed h-screen w-64 bg-gray-800 text-white'>
-            <h1 className='border-b border-gray-700 p-4 text-2xl font-bold'>Mi App</h1>
-            <nav className='p-4'>
+        <div className='fixed h-screen w-64 bg-gray-800 text-white flex flex-col'>
+            <h1 className='border-b border-gray-700 p-4 text-2xl font-bold'>Nóminas</h1>
+            <nav className='p-4 flex-grow'>
                 <ul>
                     {routes.map((route, index) => (
                         <li key={index} className='mb-2'>
@@ -19,7 +19,10 @@ const Sidebar: React.FC = () => {
                     ))}
                 </ul>
             </nav>
-            <button onClick={logout} className='relative mt-72 block w-full rounded p-2 text-left hover:bg-red-700'>
+            <button
+                onClick={logout}
+                className='absolute bottom-4 left-4 right-4 w-auto rounded p-2 text-left bg-blue-400 hover:bg-blue-500 transition-colors cursor-pointer'
+            >
                 ❌ Cerrar Sesión
             </button>
         </div>

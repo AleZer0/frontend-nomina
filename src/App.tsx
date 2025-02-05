@@ -1,38 +1,44 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './layouts/ProtectedRoute';
+
 import Login from './pages/Login';
-import Sidebar from './components/Sidebar';
 
 import { routes } from './routes';
+import ProtectedRoute from './routes/ProtectedRoute';
+import Sidebar from './components/Sidebar';
 
 const App: React.FC = () => {
     return (
-        <Router>
+        <BrowserRouter>
             <AuthProvider>
                 <Routes>
-                    <Route path='/' element={<Login />} />
+                    <Route path='/login' element={<Login />} />
 
+                    <Route path='/' element={<Navigate to='/employees' replace />} />
                     <Route
                         path='/*'
                         element={
                             <ProtectedRoute>
-                                <div className='flex'>
-                                    <Sidebar />
-                                    <div className='ml-64 flex-1'>
-                                        <Routes>
-                                            {routes.map((route, index) => (
-                                                <Route key={index} path={route.path} element={route.element} />
-                                            ))}
-                                        </Routes>
-                                    </div>
-                                </div>
+                                <Routes>
+                                    {routes.map((route, index) => (
+                                        <Route
+                                            key={index}
+                                            path={route.path}
+                                            element={
+                                                <>
+                                                    <Sidebar />
+                                                    {route.element}
+                                                </>
+                                            }
+                                        />
+                                    ))}
+                                </Routes>
                             </ProtectedRoute>
                         }
                     />
                 </Routes>
             </AuthProvider>
-        </Router>
+        </BrowserRouter>
     );
 };
 

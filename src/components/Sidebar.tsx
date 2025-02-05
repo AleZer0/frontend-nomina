@@ -1,14 +1,24 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { routes } from '../routes';
 
 const Sidebar: React.FC = () => {
     const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            throw new Error(`Error al cerrar sesión: ${error}`);
+        }
+    };
 
     return (
-        <div className='fixed h-screen w-64 bg-gray-800 text-white flex flex-col'>
-            <h1 className='border-b border-gray-700 p-4 text-2xl font-bold'>Nóminas</h1>
-            <nav className='p-4 flex-grow'>
+        <div className='fixed flex h-screen w-64 flex-col bg-gray-800 text-white'>
+            <h1 className='h-20 border-b border-gray-700 p-5 text-xl font-bold'>Control de nominas</h1>
+            <nav className='flex-grow p-4'>
                 <ul>
                     {routes.map((route, index) => (
                         <li key={index} className='mb-2'>
@@ -20,9 +30,8 @@ const Sidebar: React.FC = () => {
                 </ul>
             </nav>
             <button
-                onClick={logout}
-                className='absolute bottom-4 left-4 right-4 w-auto rounded p-2 text-left bg-blue-400 hover:bg-blue-500 transition-colors cursor-pointer'
-            >
+                onClick={handleLogout}
+                className='absolute right-4 bottom-4 left-4 w-auto cursor-pointer rounded bg-blue-400 p-2 text-left transition-colors hover:bg-blue-500'>
                 ❌ Cerrar Sesión
             </button>
         </div>

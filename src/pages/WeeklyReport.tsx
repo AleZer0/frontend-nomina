@@ -36,7 +36,7 @@ const WeeklyReport: React.FC = () => {
         const groupByWeek = (nominas: Nomina[]) => {
             const weeks: Record<string, WeeklyReportData> = {};
 
-            nominas.forEach((item) => {
+            nominas.forEach(item => {
                 const date = new Date(item.fecha);
                 const year = date.getFullYear();
                 const weekNumber = getWeekNumber(date);
@@ -81,26 +81,28 @@ const WeeklyReport: React.FC = () => {
         autoTable(doc, {
             startY: 20,
             head: [['Semana', 'Empleados Pagados', 'Total Sueldos', 'Préstamos', 'Infonavit', 'Total Neto']],
-            body: [[
-                reporte.semana,
-                reporte.totalEmpleados,
-                `$${reporte.totalSueldos.toFixed(2)}`,
-                `$${reporte.totalPrestamos.toFixed(2)}`,
-                `$${reporte.totalInfonavit.toFixed(2)}`,
-                `$${reporte.totalNeto.toFixed(2)}`,
-            ]],
+            body: [
+                [
+                    reporte.semana,
+                    reporte.totalEmpleados,
+                    `$${reporte.totalSueldos.toFixed(2)}`,
+                    `$${reporte.totalPrestamos.toFixed(2)}`,
+                    `$${reporte.totalInfonavit.toFixed(2)}`,
+                    `$${reporte.totalNeto.toFixed(2)}`,
+                ],
+            ],
         });
 
         doc.save(`reporte_semanal_${reporte.semana.replace(/ /g, '_')}.pdf`);
     };
 
     return (
-        <div className='min-h-screen flex-1 bg-gray-100'>
+        <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Reportes Semanales' />
             <main className='p-6'>
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     {/* Encabezado de la tabla */}
-                    <div className='grid grid-cols-7 bg-gray-200 p-3 font-semibold text-gray-700 text-center'>
+                    <div className='grid grid-cols-7 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Semana</div>
                         <div>Empleados Pagados</div>
                         <div>Total Sueldos</div>
@@ -113,7 +115,9 @@ const WeeklyReport: React.FC = () => {
                     {/* Filas del reporte */}
                     <div className='divide-y divide-gray-300'>
                         {reportes.map((item, index) => (
-                            <div key={index} className='grid grid-cols-7 items-center p-3 text-gray-800 odd:bg-gray-50 text-center'>
+                            <div
+                                key={index}
+                                className='grid grid-cols-7 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                 <div>{item.semana}</div>
                                 <div>{item.totalEmpleados}</div>
                                 <div>${item.totalSueldos.toFixed(2)}</div>
@@ -123,8 +127,7 @@ const WeeklyReport: React.FC = () => {
                                 <div>
                                     <button
                                         onClick={() => generatePDF(item)}
-                                        className='px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition'
-                                    >
+                                        className='rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
                                         📄 Generar PDF
                                     </button>
                                 </div>

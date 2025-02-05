@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 
-import Employees from './pages/Employees';
-import Payroll from './pages/Payroll';
-import WeeklyReport from './pages/WeeklyReport';
+import Employees from '../pages/Employees';
+import Payroll from '../pages/Payroll';
+import WeeklyReport from '../pages/WeeklyReport';
 
 interface Route {
     path: string;

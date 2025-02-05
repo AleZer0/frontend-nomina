@@ -31,8 +31,24 @@ const Payroll: React.FC = () => {
     // Simulación de datos
     useEffect(() => {
         setNominas([
-            { folio: 1, fecha: '2024-02-01', prestamos: 500, infonavit: 300, sueldo: 15000, id_empleado: 1, empleado: { nombre: 'Alexis', apellido: 'Díaz' } },
-            { folio: 2, fecha: '2024-02-01', prestamos: 1000, infonavit: 500, sueldo: 17000, id_empleado: 2, empleado: { nombre: 'Hashley', apellido: 'Aquino' } },
+            {
+                folio: 1,
+                fecha: '2024-02-01',
+                prestamos: 500,
+                infonavit: 300,
+                sueldo: 15000,
+                id_empleado: 1,
+                empleado: { nombre: 'Alexis', apellido: 'Díaz' },
+            },
+            {
+                folio: 2,
+                fecha: '2024-02-01',
+                prestamos: 1000,
+                infonavit: 500,
+                sueldo: 17000,
+                id_empleado: 2,
+                empleado: { nombre: 'Hashley', apellido: 'Aquino' },
+            },
         ]);
 
         setEmpleados([
@@ -52,7 +68,7 @@ const Payroll: React.FC = () => {
             return;
         }
 
-        const empleadoSeleccionado = empleados.find((emp) => emp.id_empleado === Number(newNomina.id_empleado));
+        const empleadoSeleccionado = empleados.find(emp => emp.id_empleado === Number(newNomina.id_empleado));
 
         const nuevaNomina: Nomina = {
             folio: nominas.length + 1,
@@ -79,38 +95,39 @@ const Payroll: React.FC = () => {
         autoTable(doc, {
             startY: 20,
             head: [['Folio', 'Empleado', 'Fecha', 'Sueldo', 'Préstamos', 'Infonavit', 'Total a Pagar']],
-            body: [[
-                nomina.folio,
-                `${nomina.empleado.nombre} ${nomina.empleado.apellido}`,
-                new Date(nomina.fecha).toLocaleDateString(),
-                `$${nomina.sueldo.toFixed(2)}`,
-                `$${nomina.prestamos.toFixed(2)}`,
-                `$${nomina.infonavit.toFixed(2)}`,
-                `$${(nomina.sueldo - nomina.prestamos - nomina.infonavit).toFixed(2)}`,
-            ]],
+            body: [
+                [
+                    nomina.folio,
+                    `${nomina.empleado.nombre} ${nomina.empleado.apellido}`,
+                    new Date(nomina.fecha).toLocaleDateString(),
+                    `$${nomina.sueldo.toFixed(2)}`,
+                    `$${nomina.prestamos.toFixed(2)}`,
+                    `$${nomina.infonavit.toFixed(2)}`,
+                    `$${(nomina.sueldo - nomina.prestamos - nomina.infonavit).toFixed(2)}`,
+                ],
+            ],
         });
 
         doc.save(`reporte_nomina_${nomina.folio}.pdf`);
     };
 
     return (
-        <div className='flex flex-col h-screen bg-gray-100'>
+        <div className='ml-64 flex h-screen flex-col bg-gray-100'>
             <Header tittle='Nóminas' />
             <main className='flex-1 p-6'>
-                <div className='flex justify-between items-center mb-4'>
+                <div className='mb-4 flex items-center justify-between'>
                     <h2 className='text-xl font-semibold'>Listado de Nóminas</h2>
                     <div>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition'
-                        >
+                            className='rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600'>
                             ➕ Añadir Nómina
                         </button>
                     </div>
                 </div>
 
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
-                    <div className='grid grid-cols-8 bg-gray-200 p-3 font-semibold text-gray-700 text-center'>
+                    <div className='grid grid-cols-8 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Folio</div>
                         <div>Empleado</div>
                         <div>Fecha</div>
@@ -122,8 +139,10 @@ const Payroll: React.FC = () => {
                     </div>
 
                     <div className='divide-y divide-gray-300'>
-                        {nominas.map((item) => (
-                            <div key={item.folio} className='grid grid-cols-8 items-center p-3 text-gray-800 odd:bg-gray-50 text-center'>
+                        {nominas.map(item => (
+                            <div
+                                key={item.folio}
+                                className='grid grid-cols-8 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                 <div>{item.folio}</div>
                                 <div>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
                                 <div>{new Date(item.fecha).toLocaleDateString()}</div>
@@ -136,8 +155,7 @@ const Payroll: React.FC = () => {
                                 <div>
                                     <button
                                         onClick={() => generatePDF(item)}
-                                        className='px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition'
-                                    >
+                                        className='rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
                                         📄 Generar PDF
                                     </button>
                                 </div>
@@ -149,21 +167,20 @@ const Payroll: React.FC = () => {
 
             {/* MODAL */}
             {isModalOpen && (
-                <div className='fixed inset-0 flex items-center justify-center bg-opacity-5 backdrop-blur-lg z-50'>
-                    <div className='bg-white rounded-lg shadow-lg p-6 w-96'>
-                        <h2 className='text-lg font-semibold mb-4'>Añadir Nómina</h2>
+                <div className='bg-opacity-5 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg'>
+                    <div className='w-96 rounded-lg bg-white p-6 shadow-lg'>
+                        <h2 className='mb-4 text-lg font-semibold'>Añadir Nómina</h2>
 
                         {/* Selección de Empleado */}
-                        <label className='block mb-2 text-gray-700'>Empleado:</label>
+                        <label className='mb-2 block text-gray-700'>Empleado:</label>
                         <select
                             name='id_empleado'
                             value={newNomina.id_empleado}
                             onChange={handleChange}
-                            className='w-full p-2 border rounded-lg mb-4'
-                            aria-label='Seleccionar Empleado'
-                        >
+                            className='mb-4 w-full rounded-lg border p-2'
+                            aria-label='Seleccionar Empleado'>
                             <option value=''>Seleccione un empleado</option>
-                            {empleados.map((emp) => (
+                            {empleados.map(emp => (
                                 <option key={emp.id_empleado} value={emp.id_empleado}>
                                     {emp.nombre} {emp.apellido}
                                 </option>
@@ -171,21 +188,46 @@ const Payroll: React.FC = () => {
                         </select>
 
                         {/* Campos de sueldo, préstamos, infonavit */}
-                        <label className='block mb-2 text-gray-700'>Sueldo:</label>
-                        <input type='number' name='sueldo' value={newNomina.sueldo} onChange={handleChange} className='w-full p-2 border rounded-lg mb-4' placeholder='Ingrese el sueldo' />
+                        <label className='mb-2 block text-gray-700'>Sueldo:</label>
+                        <input
+                            type='number'
+                            name='sueldo'
+                            value={newNomina.sueldo}
+                            onChange={handleChange}
+                            className='mb-4 w-full rounded-lg border p-2'
+                            placeholder='Ingrese el sueldo'
+                        />
 
-                        <label className='block mb-2 text-gray-700'>Préstamos:</label>
-                        <input type='number' name='prestamos' value={newNomina.prestamos} onChange={handleChange} className='w-full p-2 border rounded-lg mb-4' placeholder='Ingrese los préstamos' />
+                        <label className='mb-2 block text-gray-700'>Préstamos:</label>
+                        <input
+                            type='number'
+                            name='prestamos'
+                            value={newNomina.prestamos}
+                            onChange={handleChange}
+                            className='mb-4 w-full rounded-lg border p-2'
+                            placeholder='Ingrese los préstamos'
+                        />
 
-                        <label className='block mb-2 text-gray-700'>Infonavit:</label>
-                        <input type='number' name='infonavit' value={newNomina.infonavit} onChange={handleChange} className='w-full p-2 border rounded-lg mb-4' placeholder='Ingrese el infonavit' />
+                        <label className='mb-2 block text-gray-700'>Infonavit:</label>
+                        <input
+                            type='number'
+                            name='infonavit'
+                            value={newNomina.infonavit}
+                            onChange={handleChange}
+                            className='mb-4 w-full rounded-lg border p-2'
+                            placeholder='Ingrese el infonavit'
+                        />
 
                         {/* Botones de acción */}
                         <div className='flex justify-end gap-2'>
-                            <button onClick={() => setIsModalOpen(false)} className='px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500'>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className='rounded-lg bg-gray-400 px-4 py-2 text-white hover:bg-gray-500'>
                                 Cancelar
                             </button>
-                            <button onClick={handleSubmit} className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>
+                            <button
+                                onClick={handleSubmit}
+                                className='rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600'>
                                 Guardar
                             </button>
                         </div>

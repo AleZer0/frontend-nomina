@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../utils/axiosInstance';
+import axios from 'axios';
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -20,12 +20,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axiosInstance.get(
-                    'https://app-nomina-141e425e046a.herokuapp.com/api/usuario/verify',
-                    {
-                        withCredentials: true,
-                    }
-                );
+                const response = await axios.get('https://app-nomina-141e425e046a.herokuapp.com/api/usuario/verify', {
+                    withCredentials: true,
+                });
                 if (response.data.success) {
                     setIsAuthenticated(true);
                     navigate('/employees');
@@ -42,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Función de inicio de sesión
     const login = async (credentials: { nombre_usuario: string; contrasena: string }) => {
         try {
-            await axiosInstance.post('https://app-nomina-141e425e046a.herokuapp.com/api/usuario/login', credentials, {
+            await axios.post('https://app-nomina-141e425e046a.herokuapp.com/api/usuario/login', credentials, {
                 withCredentials: true,
             });
             setIsAuthenticated(true);
@@ -54,11 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Función de cierre de sesión
     const logout = () => {
-        axiosInstance.post(
-            'https://app-nomina-141e425e046a.herokuapp.com/api/usuario/logout',
-            {},
-            { withCredentials: true }
-        );
+        axios.post('https://app-nomina-141e425e046a.herokuapp.com/api/usuario/logout', {}, { withCredentials: true });
         setIsAuthenticated(false);
     };
 

@@ -9,7 +9,6 @@ export const autentication = async (nombre_usuario: string, contrasena: string) 
         body: JSON.stringify({ nombre_usuario, contrasena }),
         credentials: 'include',
     });
-    // console.log(response);
     if (!response.ok) {
         throw new Error('Error en la petición');
     }

@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
 
-import { autentication } from '../api/auth';
-
 const Login: React.FC = () => {
-    const [username, setUsername] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+    const [nombre_usuario, setUsername] = useState<string>('');
+    const [contrasena, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const handleShowPassword = () => {
@@ -24,10 +23,8 @@ const Login: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await autentication(username, password);
-            if (data.success) login();
-            data.success;
-            console.log(data);
+            await login({ nombre_usuario, contrasena });
+            navigate('/employees');
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -43,14 +40,14 @@ const Login: React.FC = () => {
                 <Input
                     type='text'
                     placeholder='Nombre de usuario'
-                    value={username}
+                    value={nombre_usuario}
                     onChange={e => setUsername(e.target.value)}
                 />
                 <Input
                     type='password'
                     placeholder='Contraseña'
                     showPassword={showPassword}
-                    value={password}
+                    value={contrasena}
                     onChange={e => setPassword(e.target.value)}
                     handleShowPassword={handleShowPassword}
                 />

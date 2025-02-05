@@ -23,3 +23,26 @@ export interface Empleado {
     puesto: string;
     sueldo: number;
 }
+
+export interface PayrollInterface {
+    folio: number;
+    id_empleado: number;
+    fecha: string;
+    prestamos: number;
+    infonavit: number;
+    sueldo: number;
+    created_at: string;
+    updated_at: string;
+    estado: number;
+    empleado: {
+        id_empleado: number;
+        nombre: string;
+        apellido: string;
+        puesto: string;
+        sueldo: number;
+        created_at: string;
+        updated_at: string;
+        estado: number;
+    };
+}
+

@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import Autenticacion from '../services/autenticacion.service';
-import { AuthContextType, Usuario } from '../types';
+import { AuthContextType, UsuarioType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [usuario, setUsuario] = useState<Usuario | null>(null);
+    const [usuario, setUsuario] = useState<UsuarioType | null>(null);
 
     const checkAuthStatus = async () => {
         setLoading(true);

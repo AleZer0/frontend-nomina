@@ -1,4 +1,4 @@
-export interface Usuario {
+export interface UsuarioType {
     id_usuario: number;
     nombre_usuario: string;
 }
@@ -6,7 +6,7 @@ export interface Usuario {
 export interface AuthContextType {
     isAuthenticated: boolean;
     loading: boolean;
-    usuario: Usuario | null;
+    usuario: UsuarioType | null;
     login: (credentials: { nombre_usuario: string; contrasena: string }) => Promise<void>;
     logout: () => void;
 }
@@ -14,10 +14,10 @@ export interface AuthContextType {
 export interface AuthResponse {
     success: boolean;
     mensaje: string;
-    usuario: Usuario;
+    usuario: UsuarioType;
 }
 
-export interface Empleado {
+export interface EmpleadoType {
     nombre: string;
     apellido: string;
     puesto: string;

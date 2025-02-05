@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
-import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from '../services/employees.service';
+import Empleado from '../services/employees.service';
 import DropdownMenu from '../components/DropdownMenu';
 
 interface Employee {
@@ -21,7 +21,7 @@ const Employees: React.FC = () => {
 
     useEffect(() => {
         (async () => {
-            const data = await getEmployees(1);
+            const data = await Empleado.getEmployees(1);
             setEmployees(data.empleados);
         })();
     }, []);
@@ -38,13 +38,13 @@ const Employees: React.FC = () => {
             return;
         }
 
-        createEmployee({
+        Empleado.createEmployee({
             nombre: newEmployee.nombre,
             apellido: newEmployee.apellido,
             puesto: newEmployee.puesto,
             sueldo: parseFloat(newEmployee.sueldo),
         }).then(() => {
-            getEmployees(1).then(data => setEmployees(data.empleados));
+            Empleado.getEmployees(1).then(data => setEmployees(data.empleados));
         });
 
         setIsModalOpen(false);
@@ -71,19 +71,19 @@ const Employees: React.FC = () => {
                     <div className='divide-y divide-gray-300'>
                         {employees.map((item, index) => {
                             const handleEdit = () => {
-                                updateEmployee(item.id_empleado, {
+                                Empleado.updateEmployee(item.id_empleado, {
                                     nombre: item.nombre,
                                     apellido: item.apellido,
                                     puesto: item.puesto,
                                     sueldo: item.sueldo,
                                 }).then(() => {
-                                    getEmployees(1).then(data => setEmployees(data.empleados));
+                                    Empleado.getEmployees(1).then(data => setEmployees(data.empleados));
                                 });
                             };
 
                             const handleDelete = () => {
-                                deleteEmployee(item.id_empleado).then(() => {
-                                    getEmployees(1).then(data => setEmployees(data.empleados));
+                                Empleado.deleteEmployee(item.id_empleado).then(() => {
+                                    Empleado.getEmployees(1).then(data => setEmployees(data.empleados));
                                 });
                             };
 

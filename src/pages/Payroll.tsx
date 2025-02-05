@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import Header from '../components/Header';
+import { downloadPayrollPDF } from '../services/pdf.service';
 
 interface Nomina {
     folio: number;
@@ -88,27 +87,8 @@ const Payroll: React.FC = () => {
     };
 
     // Función para generar PDF por nómina
-    const generatePDF = (nomina: Nomina) => {
-        const doc = new jsPDF();
-        doc.text('Reporte de Nómina', 14, 10);
-
-        autoTable(doc, {
-            startY: 20,
-            head: [['Folio', 'Empleado', 'Fecha', 'Sueldo', 'Préstamos', 'Infonavit', 'Total a Pagar']],
-            body: [
-                [
-                    nomina.folio,
-                    `${nomina.empleado.nombre} ${nomina.empleado.apellido}`,
-                    new Date(nomina.fecha).toLocaleDateString(),
-                    `$${nomina.sueldo.toFixed(2)}`,
-                    `$${nomina.prestamos.toFixed(2)}`,
-                    `$${nomina.infonavit.toFixed(2)}`,
-                    `$${(nomina.sueldo - nomina.prestamos - nomina.infonavit).toFixed(2)}`,
-                ],
-            ],
-        });
-
-        doc.save(`reporte_nomina_${nomina.folio}.pdf`);
+    const handleGneratePDF = (folio: number) => {
+        downloadPayrollPDF(folio);
     };
 
     return (
@@ -154,8 +134,8 @@ const Payroll: React.FC = () => {
                                 </div>
                                 <div>
                                     <button
-                                        onClick={() => generatePDF(item)}
-                                        className='rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
+                                        onClick={() => handleGneratePDF(item.folio)}
+                                        className='cursor-pointer rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
                                         📄 Generar PDF
                                     </button>
                                 </div>

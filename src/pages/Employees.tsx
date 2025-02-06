@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import { Link } from 'react-router-dom';
 import Empleado from '../services/employees.service';
 import DropdownMenu from '../components/DropdownMenu';
+import Button from '../components/Button';
 
 interface Employee {
     id_empleado: number;
@@ -54,10 +55,6 @@ const Employees: React.FC = () => {
         <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Listado de Empleados' />
             <main className='p-6'>
-                <button onClick={() => setIsModalOpen(true)} className='mb-4 rounded bg-green-500 px-3 py-2 text-white'>
-                    ➕ Nuevo empleado
-                </button>
-
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     <div className='grid grid-cols-6 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Nombre</div>
@@ -117,6 +114,14 @@ const Employees: React.FC = () => {
                             );
                         })}
                     </div>
+                </div>
+                <div className='mt-4 items-end flex justify-end absolute bottom-6 right-6'>
+                <Button
+                        onClick={() => setIsModalOpen(true)}
+                        children='Nuevo Empleado'
+                        disabled={false}
+                        design='bg-blue-500 text-white cursor-pointer'
+                        icon={null}/>
                 </div>
             </main>
 

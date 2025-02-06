@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { routes } from '../routes';
+import Button from './Button';
 
 const Sidebar: React.FC = () => {
     const { logout } = useAuth();
@@ -29,11 +30,12 @@ const Sidebar: React.FC = () => {
                     ))}
                 </ul>
             </nav>
-            <button
+            <Button
                 onClick={handleLogout}
-                className='absolute right-4 bottom-4 left-4 w-auto cursor-pointer rounded bg-blue-400 p-2 text-left transition-colors hover:bg-blue-500'>
-                ❌ Cerrar Sesión
-            </button>
+                children='Cerrar sesión'
+                design='bg-red-400 w-60 cursor-pointer flex justify-center items-center rounded p-2 absolute bottom-5 left-2'
+                disabled={false}
+            />
         </div>
     );
 };

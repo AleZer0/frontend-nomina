@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import { downloadPayrollPDF } from '../services/pdf.service';
 import { createPayroll, getPayrolls } from '../services/payroll.service';
 import { PayrollInterface } from '../types';
+import Button from "../components/Button";
 import Empleado from '../services/employees.service';
 
 const Payroll: React.FC = () => {
@@ -117,14 +118,6 @@ const Payroll: React.FC = () => {
         <div className='ml-64 flex h-screen flex-col bg-gray-100'>
             <Header tittle='Nóminas' />
             <main className='flex-1 p-6'>
-                <div className='mb-4 flex items-center justify-between'>
-                    <h2 className='text-xl font-semibold'>Listado de Nóminas</h2>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className='rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600'>
-                        ➕ Añadir Nómina
-                    </button>
-                </div>
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     <div className='grid grid-cols-8 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Folio</div>
@@ -152,11 +145,12 @@ const Payroll: React.FC = () => {
                                         ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
                                     </div>
                                     <div>
-                                        <button
+                                        <Button
                                             onClick={() => handleGneratePDF(item.folio)}
-                                            className='cursor-pointer rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
-                                            📄 Generar PDF
-                                        </button>
+                                            children='Generar PDF'
+                                            disabled={false}
+                                            design='bg-green-500 text-white cursor-pointer'
+                                            icon={null}/>
                                     </div>
                                 </div>
                             ))
@@ -164,6 +158,14 @@ const Payroll: React.FC = () => {
                             <div className='p-3 text-center text-gray-500'>No hay nóminas disponibles</div>
                         )}
                     </div>
+                </div>
+                <div className='mt-4 items-end flex justify-end absolute bottom-6 right-6'>
+                <Button
+                        onClick={() => setIsModalOpen(true)}
+                        children='Nueva Nomina'
+                        disabled={false}
+                        design='bg-blue-500 text-white cursor-pointer'
+                        icon={null}/>
                 </div>
             </main>
             {isModalOpen && (
@@ -220,16 +222,16 @@ const Payroll: React.FC = () => {
 
                         {/* Botones de acción */}
                         <div className='flex justify-end gap-2'>
-                            <button
+                            <Button
                                 onClick={() => setIsModalOpen(false)}
-                                className='rounded-lg bg-gray-400 px-4 py-2 text-white hover:bg-gray-500'>
-                                Cancelar
-                            </button>
-                            <button
+                                children='Cancelar'
+                                disabled={false}
+                                design='bg-gray-400 text-white cursor-pointer'/>
+                            <Button
                                 onClick={handleSubmit}
-                                className='rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600'>
-                                Guardar
-                            </button>
+                                children='Guardar'
+                                disabled={false}
+                                design='bg-green-500 text-white cursor-pointer'/>
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { createPayroll, getPayrolls } from '../services/payroll.service';
 import { PayrollInterface } from '../types';
 import Button from '../components/Button';
 import Empleado from '../services/employees.service';
+import { FaFilePdf } from 'react-icons/fa6';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 
 import { HiDocumentPlus } from 'react-icons/hi2';
@@ -55,7 +56,7 @@ const Payroll: React.FC = () => {
 
     return (
         <div className='ml-64 flex h-screen flex-col bg-gray-100'>
-            <Header tittle='Nóminas'>
+            <Header tittle='Listado de Nóminas'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     disabled={false}
@@ -94,14 +95,17 @@ const Payroll: React.FC = () => {
                                     <div className='font-semibold text-green-600'>
                                         ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
                                     </div>
-                                    <div>
+                                    <div className='flex justify-center gap-2'>
                                         <Button
                                             onClick={() => handleGeneratePDF(item.folio)}
-                                            children='Generar PDF'
                                             disabled={false}
-                                            design='bg-green-500 text-white cursor-pointer'
-                                            icon={null}
-                                        />
+                                            design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'
+                                            icon={null}>
+                                            <span className='relative pt-0.5'>
+                                                <FaFilePdf size={17} />
+                                            </span>
+                                            Generar PDF
+                                        </Button>
                                     </div>
                                 </div>
                             ))

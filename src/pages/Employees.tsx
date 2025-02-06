@@ -6,6 +6,7 @@ import DropdownMenu from '../components/DropdownMenu';
 import Button from '../components/Button';
 import { createPayroll } from '../services/payroll.service';
 import CreateEmployeeModal from '../components/modals/CreateNewEmployee';
+import { HiDocumentPlus } from 'react-icons/hi2';
 
 import { IoIosPersonAdd } from 'react-icons/io';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
@@ -53,23 +54,22 @@ const Employees: React.FC = () => {
     };
 
     return (
-        <div className="ml-64 min-h-screen flex-1 bg-gray-100">
-            <Header tittle="Listado de Empleados">
+        <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
+            <Header tittle='Listado de Empleados'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     disabled={false}
-                    design="hover:shadow-xl hover:bg-green-500 bg-green-400 cursor-pointer text-black"
-                    icon={null}
-                >
-                    <span className="relative pt-1">
+                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 cursor-pointer text-black'
+                    icon={null}>
+                    <span className='relative pt-1'>
                         <IoIosPersonAdd size={17} />
                     </span>
                     Nuevo empleado
                 </Button>
             </Header>
-            <main className="p-6">
-                <div className="overflow-hidden rounded-lg bg-white shadow-lg">
-                    <div className="grid grid-cols-6 bg-gray-200 p-3 text-center font-semibold text-gray-700">
+            <main className='p-6'>
+                <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
+                    <div className='grid grid-cols-6 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Nombre</div>
                         <div>Apellidos</div>
                         <div>Puesto</div>
@@ -78,7 +78,7 @@ const Employees: React.FC = () => {
                         <div>Acciones</div>
                     </div>
 
-                    <div className="divide-y divide-gray-300">
+                    <div className='divide-y divide-gray-300'>
                         {employees.map((item, index) => {
                             const handleEdit = () => {
                                 Empleado.updateEmployee(item.id_empleado, {
@@ -100,25 +100,26 @@ const Employees: React.FC = () => {
                             return (
                                 <div
                                     key={item.id_empleado}
-                                    className="grid grid-cols-6 items-center p-3 text-center text-gray-800 odd:bg-gray-50"
-                                >
+                                    className='grid grid-cols-6 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                     <div>{item.nombre}</div>
                                     <div>{item.apellido}</div>
                                     <div>{item.puesto}</div>
                                     <div>${item.sueldo.toFixed(2)}</div>
                                     <div>
                                         Folio:
-                                        <Link to="/payroll" className="text-blue-600 underline">
+                                        <Link to='/payroll' className='text-blue-600 underline'>
                                             {' N/A'}
                                         </Link>
                                     </div>
-                                    <div className="flex justify-center gap-2">
+                                    <div className='flex justify-center gap-2'>
                                         <Button
-                                            children="Generar Nómina"
                                             onClick={() => setIsModalPayrollOpen(true)}
-                                            design="cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600"
-                                        />
+                                            design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
+                                            <span className='relative pt-0.5'>
+                                                <HiDocumentPlus size={17} />
+                                            </span>
                                             Generar Nómina
+                                        </Button>
                                         <DropdownMenu
                                             buttonRef={el => (buttonRefs.current[index] = el)}
                                             onDelete={handleDelete}
@@ -139,7 +140,7 @@ const Employees: React.FC = () => {
                 onSubmit={handleAddEmployee}
             />
             <CreatePayrollModal
-            empleados={employees}
+                empleados={employees}
                 isOpen={isModalPayrollOpen}
                 onClose={() => setIsModalPayrollOpen(false)}
                 onSubmit={handleSubmitPayroll}

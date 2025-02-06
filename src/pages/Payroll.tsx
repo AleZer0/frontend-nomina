@@ -5,6 +5,7 @@ import { createPayroll, getPayrolls } from '../services/payroll.service';
 import { PayrollInterface } from '../types';
 import Button from '../components/Button';
 import Empleado from '../services/employees.service';
+import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 
 import { HiDocumentPlus } from 'react-icons/hi2';
 
@@ -12,107 +13,43 @@ const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
     const [empleados, setEmpleados] = useState<PayrollInterface['empleado'][]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newNomina, setNewNomina] = useState({
-        fecha: Date.now.toString,
-        prestamos: '',
-        infonavit: '',
-        sueldo: '',
-        id_empleado: '',
-    });
 
     useEffect(() => {
         Empleado.getEmployees(1)
             .then(response => {
-                console.log('Respuesta de getEmployees:', response); // Para depuración
                 if (response && Array.isArray(response.empleados)) {
                     setEmpleados(response.empleados);
                 } else {
-                    console.error('Formato inesperado en la respuesta:', response);
                     setEmpleados([]);
                 }
             })
-            .catch(error => {
-                console.error('Error fetching employees:', error);
-                setEmpleados([]);
-            });
+            .catch(() => setEmpleados([]));
 
         getPayrolls(1)
             .then(response => {
-                console.log('Respuesta de getPayrolls:', response); // Para depuración
                 if (response && Array.isArray(response.nominas)) {
                     setNominas(response.nominas);
                 } else {
-                    console.error('Formato inesperado en la respuesta:', response);
                     setNominas([]);
                 }
             })
-            .catch(error => {
-                console.error('Error fetching payrolls:', error);
-                setNominas([]);
-            });
+            .catch(() => setNominas([]));
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setNewNomina({ ...newNomina, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = () => {
-        if (!newNomina.id_empleado || !newNomina.sueldo) {
-            alert('Por favor, completa todos los campos.');
-            return;
-        }
-
-        const empleadoSeleccionado = empleados.find(emp => emp.id_empleado === Number(newNomina.id_empleado));
-
-        const nuevaNomina: PayrollInterface = {
-            folio: nominas.length + 1,
-            fecha: new Date().toISOString(),
-            prestamos: Number(newNomina.prestamos) || 0,
-            infonavit: Number(newNomina.infonavit) || 0,
-            sueldo: Number(newNomina.sueldo),
-            id_empleado: Number(newNomina.id_empleado),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            estado: 1,
-            empleado: {
-                id_empleado: empleadoSeleccionado?.id_empleado || 0,
-                nombre: empleadoSeleccionado?.nombre || '',
-                apellido: empleadoSeleccionado?.apellido || '',
-                puesto: empleadoSeleccionado?.puesto || '',
-                sueldo: empleadoSeleccionado?.sueldo || 0,
-                created_at: empleadoSeleccionado?.created_at || '',
-                updated_at: empleadoSeleccionado?.updated_at || '',
-                estado: empleadoSeleccionado?.estado || 1,
-            },
-        };
-        createPayroll({
-            fecha: new Date().toISOString(),
-            prestamos: Number(newNomina.prestamos) || 0,
-            infonavit: Number(newNomina.infonavit) || 0,
-            sueldo: Number(newNomina.sueldo),
-            id_empleado: parseInt(newNomina.id_empleado),
-        })
+    const handleSubmit = (newNomina: any) => {
+        createPayroll(newNomina)
             .then(response => {
-                console.log('Respuesta de createPayroll:', response); // Para depuración
                 if (response && response.data && response.data.nomina) {
                     setNominas([...nominas, response.data.nomina]);
                     setIsModalOpen(false);
                 } else {
-                    console.error('Formato inesperado en la respuesta:', response);
                     alert('Error al crear la nómina.');
                 }
             })
-            .catch(error => {
-                console.error('Error creando la nómina:', error);
-                alert('Error al crear la nómina.');
-            });
-
-        setNominas([...nominas, nuevaNomina]);
-        setIsModalOpen(false);
+            .catch(() => alert('Error al crear la nómina.'));
     };
 
-    // Función para generar PDF por nómina
-    const handleGneratePDF = (folio: number) => {
+    const handleGeneratePDF = (folio: number) => {
         downloadPayrollPDF(folio);
     };
 
@@ -127,7 +64,7 @@ const Payroll: React.FC = () => {
                     <span className='relative pt-1'>
                         <HiDocumentPlus size={17} />
                     </span>
-                    Nueva nomina
+                    Nueva nómina
                 </Button>
             </Header>
             <main className='flex-1 p-6'>
@@ -159,7 +96,7 @@ const Payroll: React.FC = () => {
                                     </div>
                                     <div>
                                         <Button
-                                            onClick={() => handleGneratePDF(item.folio)}
+                                            onClick={() => handleGeneratePDF(item.folio)}
                                             children='Generar PDF'
                                             disabled={false}
                                             design='bg-green-500 text-white cursor-pointer'
@@ -174,76 +111,12 @@ const Payroll: React.FC = () => {
                     </div>
                 </div>
             </main>
-            {isModalOpen && (
-                <div className='bg-opacity-30 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md'>
-                    <div className='w-96 rounded-lg bg-white p-6 shadow-lg'>
-                        <h2 className='mb-4 text-lg font-semibold'>Añadir Nueva Nómina</h2>
-
-                        {/* Selección de Empleado */}
-                        <label className='mb-2 block text-gray-700'>Empleado:</label>
-                        <select
-                            name='id_empleado'
-                            value={newNomina.id_empleado}
-                            onChange={handleChange}
-                            className='mb-4 w-full rounded-lg border p-2'
-                            aria-label='Seleccionar Empleado'>
-                            <option value=''>Seleccione un empleado</option>
-                            {empleados.map(emp => (
-                                <option key={emp.id_empleado} value={emp.id_empleado}>
-                                    {emp.nombre} {emp.apellido}
-                                </option>
-                            ))}
-                        </select>
-
-                        {/* Campos de sueldo, préstamos, infonavit */}
-                        <label className='mb-2 block text-gray-700'>Sueldo:</label>
-                        <input
-                            type='number'
-                            name='sueldo'
-                            value={newNomina.sueldo}
-                            onChange={handleChange}
-                            className='mb-4 w-full rounded-lg border p-2'
-                            placeholder='Ingrese el sueldo'
-                        />
-
-                        <label className='mb-2 block text-gray-700'>Préstamos:</label>
-                        <input
-                            type='number'
-                            name='prestamos'
-                            value={newNomina.prestamos}
-                            onChange={handleChange}
-                            className='mb-4 w-full rounded-lg border p-2'
-                            placeholder='Ingrese los préstamos'
-                        />
-
-                        <label className='mb-2 block text-gray-700'>Infonavit:</label>
-                        <input
-                            type='number'
-                            name='infonavit'
-                            value={newNomina.infonavit}
-                            onChange={handleChange}
-                            className='mb-4 w-full rounded-lg border p-2'
-                            placeholder='Ingrese el infonavit'
-                        />
-
-                        {/* Botones de acción */}
-                        <div className='flex justify-end gap-2'>
-                            <Button
-                                onClick={() => setIsModalOpen(false)}
-                                children='Cancelar'
-                                disabled={false}
-                                design='bg-gray-400 text-white cursor-pointer'
-                            />
-                            <Button
-                                onClick={handleSubmit}
-                                children='Guardar'
-                                disabled={false}
-                                design='bg-green-500 text-white cursor-pointer'
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CreatePayrollModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleSubmit}
+                empleados={empleados}
+            />
         </div>
     );
 };

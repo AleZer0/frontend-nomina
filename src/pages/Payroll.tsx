@@ -3,8 +3,10 @@ import Header from '../components/Header';
 import { downloadPayrollPDF } from '../services/pdf.service';
 import { createPayroll, getPayrolls } from '../services/payroll.service';
 import { PayrollInterface } from '../types';
-import Button from "../components/Button";
+import Button from '../components/Button';
 import Empleado from '../services/employees.service';
+
+import { HiDocumentPlus } from 'react-icons/hi2';
 
 const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
@@ -116,7 +118,18 @@ const Payroll: React.FC = () => {
 
     return (
         <div className='ml-64 flex h-screen flex-col bg-gray-100'>
-            <Header tittle='Nóminas' />
+            <Header tittle='Nóminas'>
+                <Button
+                    onClick={() => setIsModalOpen(true)}
+                    disabled={false}
+                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 cursor-pointer text-black'
+                    icon={null}>
+                    <span className='relative pt-1'>
+                        <HiDocumentPlus size={17} />
+                    </span>
+                    Nueva nomina
+                </Button>
+            </Header>
             <main className='flex-1 p-6'>
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     <div className='grid grid-cols-8 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
@@ -150,7 +163,8 @@ const Payroll: React.FC = () => {
                                             children='Generar PDF'
                                             disabled={false}
                                             design='bg-green-500 text-white cursor-pointer'
-                                            icon={null}/>
+                                            icon={null}
+                                        />
                                     </div>
                                 </div>
                             ))
@@ -158,14 +172,6 @@ const Payroll: React.FC = () => {
                             <div className='p-3 text-center text-gray-500'>No hay nóminas disponibles</div>
                         )}
                     </div>
-                </div>
-                <div className='mt-4 items-end flex justify-end absolute bottom-6 right-6'>
-                <Button
-                        onClick={() => setIsModalOpen(true)}
-                        children='Nueva Nomina'
-                        disabled={false}
-                        design='bg-blue-500 text-white cursor-pointer'
-                        icon={null}/>
                 </div>
             </main>
             {isModalOpen && (
@@ -226,12 +232,14 @@ const Payroll: React.FC = () => {
                                 onClick={() => setIsModalOpen(false)}
                                 children='Cancelar'
                                 disabled={false}
-                                design='bg-gray-400 text-white cursor-pointer'/>
+                                design='bg-gray-400 text-white cursor-pointer'
+                            />
                             <Button
                                 onClick={handleSubmit}
                                 children='Guardar'
                                 disabled={false}
-                                design='bg-green-500 text-white cursor-pointer'/>
+                                design='bg-green-500 text-white cursor-pointer'
+                            />
                         </div>
                     </div>
                 </div>

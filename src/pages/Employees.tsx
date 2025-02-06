@@ -5,6 +5,8 @@ import Empleado from '../services/employees.service';
 import DropdownMenu from '../components/DropdownMenu';
 import Button from '../components/Button';
 
+import { IoIosPersonAdd } from 'react-icons/io';
+
 interface Employee {
     id_empleado: number;
     nombre: string;
@@ -53,7 +55,18 @@ const Employees: React.FC = () => {
 
     return (
         <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Listado de Empleados' />
+            <Header tittle='Listado de Empleados'>
+                <Button
+                    onClick={() => setIsModalOpen(true)}
+                    disabled={false}
+                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 cursor-pointer text-black'
+                    icon={null}>
+                    <span className='relative pt-1'>
+                        <IoIosPersonAdd size={17} />
+                    </span>
+                    Nuevo empleado
+                </Button>
+            </Header>
             <main className='p-6'>
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     <div className='grid grid-cols-6 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
@@ -62,7 +75,7 @@ const Employees: React.FC = () => {
                         <div>Puesto</div>
                         <div>Sueldo</div>
                         <div>Última Nómina</div>
-                        <div>Opciones</div>
+                        <div>Acciones</div>
                     </div>
 
                     <div className='divide-y divide-gray-300'>
@@ -101,7 +114,7 @@ const Employees: React.FC = () => {
                                     <div className='flex justify-center gap-2'>
                                         <button
                                             onClick={() => console.log('Generar nómina')}
-                                            className='rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600'>
+                                            className='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600'>
                                             Generar Nómina
                                         </button>
                                         <DropdownMenu
@@ -114,14 +127,6 @@ const Employees: React.FC = () => {
                             );
                         })}
                     </div>
-                </div>
-                <div className='mt-4 items-end flex justify-end absolute bottom-6 right-6'>
-                <Button
-                        onClick={() => setIsModalOpen(true)}
-                        children='Nuevo Empleado'
-                        disabled={false}
-                        design='bg-blue-500 text-white cursor-pointer'
-                        icon={null}/>
                 </div>
             </main>
 

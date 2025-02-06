@@ -11,7 +11,7 @@ type ButtonProps = {
 const Button: React.FC<ButtonProps> = ({ children, onClick, disabled, design, icon }) => {
     return (
         <button
-            className={`rounded px-4 py-2 font-sans text-base font-medium tracking-tight ${design}`}
+            className={`flex gap-2 rounded px-4 py-2 font-sans text-base font-bold tracking-tight transition duration-500 ${design}`}
             onClick={onClick}
             disabled={disabled}>
             {icon}

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Header from '../components/Header';
+import Button from '../components/Button';
+import { FaFilePdf } from 'react-icons/fa6';
 
 interface Nomina {
     folio: number;
@@ -124,12 +126,15 @@ const WeeklyReport: React.FC = () => {
                                 <div>${item.totalPrestamos.toFixed(2)}</div>
                                 <div>${item.totalInfonavit.toFixed(2)}</div>
                                 <div className='font-semibold text-green-600'>${item.totalNeto.toFixed(2)}</div>
-                                <div>
-                                    <button
+                                <div className='flex justify-center gap-2'>
+                                    <Button
                                         onClick={() => generatePDF(item)}
-                                        className='rounded-lg bg-red-500 px-2 py-1 text-white transition hover:bg-red-600'>
-                                        📄 Generar PDF
-                                    </button>
+                                        design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
+                                        <span className='relative pt-0.5'>
+                                            <FaFilePdf size={17} />
+                                        </span>
+                                        Generar PDF
+                                    </Button>
                                 </div>
                             </div>
                         ))}

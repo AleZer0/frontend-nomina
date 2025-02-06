@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Empleado from '../services/employees.service';
 import DropdownMenu from '../components/DropdownMenu';
 import Button from '../components/Button';
+import { HiDocumentPlus } from 'react-icons/hi2';
 
 import { IoIosPersonAdd } from 'react-icons/io';
 
@@ -112,11 +113,14 @@ const Employees: React.FC = () => {
                                         </Link>
                                     </div>
                                     <div className='flex justify-center gap-2'>
-                                        <button
+                                        <Button
                                             onClick={() => console.log('Generar nómina')}
-                                            className='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-600'>
+                                            design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
+                                            <span className='relative pt-0.5'>
+                                                <HiDocumentPlus size={17} />
+                                            </span>
                                             Generar Nómina
-                                        </button>
+                                        </Button>
                                         <DropdownMenu
                                             buttonRef={el => (buttonRefs.current[index] = el)}
                                             onDelete={handleDelete}

@@ -12,7 +12,7 @@ const Sidebar: React.FC = () => {
             await logout();
             navigate('/login');
         } catch (error) {
-            throw new Error(`Error al cerrar sesión: ${error}`);
+            console.error('Error al cerrar sesión:', error);
         }
     };
 

@@ -56,10 +56,6 @@ const Payroll: React.FC = () => {
             .catch(() => alert('Error al crear la nómina.'));
     };
 
-    const handleGeneratePDF = (folio: number) => {
-        downloadPayrollPDF(folio);
-    };
-
     return (
         <div className='ml-64 flex h-screen flex-col bg-gray-100'>
             <Header tittle='Listado de Nóminas'>
@@ -103,7 +99,7 @@ const Payroll: React.FC = () => {
                                     </div>
                                     <div className='flex justify-center gap-2'>
                                         <Button
-                                            onClick={() => handleGeneratePDF(item.folio)}
+                                            onClick={() => downloadPayrollPDF(item.folio)}
                                             disabled={false}
                                             design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'
                                             icon={null}>

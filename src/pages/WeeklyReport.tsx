@@ -48,8 +48,8 @@ const WeeklyReport: React.FC = () => {
                             <div
                                 key={index}
                                 className='grid grid-cols-7 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
-                                <div>{item.semana}</div>
-                                <div>{`Semana ${item.empleados_pagados.length}, 2025`}</div>
+                                <div>{`Semana ${item.semana}, 2025`}</div>
+                                <div>{item.empleados_pagados.length}</div>
                                 <div>${item.total_sueldos.toFixed(2)}</div>
                                 <div>${item.total_prestamos.toFixed(2)}</div>
                                 <div>${item.total_infonavit.toFixed(2)}</div>

@@ -20,6 +20,7 @@ interface Employee {
 }
 
 const Employees: React.FC = () => {
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(0);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalPayrollOpen, setIsModalPayrollOpen] = useState(false);
@@ -113,7 +114,10 @@ const Employees: React.FC = () => {
                                     </div>
                                     <div className='flex justify-center gap-2'>
                                         <Button
-                                            onClick={() => setIsModalPayrollOpen(true)}
+                                            onClick={() => {
+                                                setIsModalPayrollOpen(true);
+                                                setEmpleadoSeleccionado(item.id_empleado);
+                                            }}
                                             design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                             <span className='relative pt-0.5'>
                                                 <HiDocumentPlus size={17} />
@@ -144,6 +148,7 @@ const Employees: React.FC = () => {
                 isOpen={isModalPayrollOpen}
                 onClose={() => setIsModalPayrollOpen(false)}
                 onSubmit={handleSubmitPayroll}
+                defaultEmpleado={empleadoSeleccionado}
             />
         </div>
     );

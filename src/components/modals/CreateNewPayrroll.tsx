@@ -6,21 +6,28 @@ interface CreatePayrollModalProps {
     onClose: () => void;
     onSubmit: (newNomina: {
         fecha: string;
-        prestamos: string;
-        infonavit: string;
-        sueldo: string;
-        id_empleado: string;
+        prestamos: number;
+        infonavit: number;
+        sueldo: number;
+        id_empleado: number;
     }) => void;
     empleados: { id_empleado: number; nombre: string; apellido: string }[];
+    defaultEmpleado?: number;
 }
 
-const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit, empleados }) => {
+const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
+    isOpen,
+    onClose,
+    onSubmit,
+    empleados,
+    defaultEmpleado,
+}) => {
     const [newNomina, setNewNomina] = useState({
         fecha: new Date().toISOString(),
-        prestamos: '',
-        infonavit: '',
-        sueldo: '',
-        id_empleado: '',
+        prestamos: 0,
+        infonavit: 0,
+        sueldo: 0,
+        id_empleado: 0,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -46,7 +53,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose
                 <label className='mb-2 block text-gray-700'>Empleado:</label>
                 <select
                     name='id_empleado'
-                    value={newNomina.id_empleado}
+                    value={defaultEmpleado ? defaultEmpleado : newNomina.id_empleado}
                     onChange={handleChange}
                     className='mb-4 w-full rounded-lg border p-2'
                     aria-label='Seleccionar Empleado'>

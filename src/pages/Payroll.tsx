@@ -37,7 +37,13 @@ const Payroll: React.FC = () => {
             .catch(() => setNominas([]));
     }, []);
 
-    const handleSubmit = (newNomina: any) => {
+    const handleSubmit = (newNomina: {
+        fecha: string;
+        prestamos: number;
+        infonavit: number;
+        sueldo: number;
+        id_empleado: number;
+    }) => {
         createPayroll(newNomina)
             .then(response => {
                 if (response && response.data && response.data.nomina) {

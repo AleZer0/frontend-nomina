@@ -1,102 +1,30 @@
 import { useEffect, useState } from 'react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import { FaFilePdf } from 'react-icons/fa6';
+import { downloadWeeklyReportsPDF } from '../services/pdf.service';
+import { ReportesSemanales } from '../services/weeklyReport.service';
 
-interface Nomina {
-    folio: number;
-    fecha: string;
-    prestamos: number;
-    infonavit: number;
-    sueldo: number;
-    id_empleado: number;
-}
-
-interface WeeklyReportData {
+export interface WeeklyReportData {
     semana: string;
-    totalEmpleados: number;
-    totalSueldos: number;
-    totalPrestamos: number;
-    totalInfonavit: number;
-    totalNeto: number;
+    empleados_pagados: number;
+    total_sueldos: number;
+    total_prestamos: number;
+    total_infonavit: number;
+    total_neto: number;
 }
 
 const WeeklyReport: React.FC = () => {
     const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
 
     useEffect(() => {
-        // Simulación de datos, aquí puedes hacer una petición a tu API
-        const fakeData: Nomina[] = [
-            { folio: 1, fecha: '2024-02-01', prestamos: 500, infonavit: 300, sueldo: 15000, id_empleado: 1 },
-            { folio: 2, fecha: '2024-02-02', prestamos: 1000, infonavit: 500, sueldo: 17000, id_empleado: 2 },
-            { folio: 3, fecha: '2024-02-08', prestamos: 200, infonavit: 100, sueldo: 14000, id_empleado: 3 },
-            { folio: 4, fecha: '2024-02-10', prestamos: 800, infonavit: 400, sueldo: 18000, id_empleado: 4 },
-        ];
-
-        const groupByWeek = (nominas: Nomina[]) => {
-            const weeks: Record<string, WeeklyReportData> = {};
-
-            nominas.forEach(item => {
-                const date = new Date(item.fecha);
-                const year = date.getFullYear();
-                const weekNumber = getWeekNumber(date);
-                const weekKey = `Semana ${weekNumber}, ${year}`;
-
-                if (!weeks[weekKey]) {
-                    weeks[weekKey] = {
-                        semana: weekKey,
-                        totalEmpleados: 0,
-                        totalSueldos: 0,
-                        totalPrestamos: 0,
-                        totalInfonavit: 0,
-                        totalNeto: 0,
-                    };
-                }
-
-                weeks[weekKey].totalEmpleados += 1;
-                weeks[weekKey].totalSueldos += item.sueldo;
-                weeks[weekKey].totalPrestamos += item.prestamos;
-                weeks[weekKey].totalInfonavit += item.infonavit;
-                weeks[weekKey].totalNeto += item.sueldo - item.prestamos - item.infonavit;
-            });
-
-            return Object.values(weeks);
-        };
-
-        setReportes(groupByWeek(fakeData));
+        ReportesSemanales.getReportsList()
+            .then(response => {
+                if (response && Array.isArray(response.data)) setReportes(response.data);
+                else setReportes([]);
+            })
+            .catch(() => setReportes([]));
     }, []);
-
-    // Función para obtener el número de semana del año
-    const getWeekNumber = (date: Date) => {
-        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-        const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
-        return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-    };
-
-    // Función para generar PDF por reporte semanal
-    const generatePDF = (reporte: WeeklyReportData) => {
-        const doc = new jsPDF();
-        doc.text('Reporte Semanal', 14, 10);
-
-        autoTable(doc, {
-            startY: 20,
-            head: [['Semana', 'Empleados Pagados', 'Total Sueldos', 'Préstamos', 'Infonavit', 'Total Neto']],
-            body: [
-                [
-                    reporte.semana,
-                    reporte.totalEmpleados,
-                    `$${reporte.totalSueldos.toFixed(2)}`,
-                    `$${reporte.totalPrestamos.toFixed(2)}`,
-                    `$${reporte.totalInfonavit.toFixed(2)}`,
-                    `$${reporte.totalNeto.toFixed(2)}`,
-                ],
-            ],
-        });
-
-        doc.save(`reporte_semanal_${reporte.semana.replace(/ /g, '_')}.pdf`);
-    };
 
     return (
         <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
@@ -121,14 +49,14 @@ const WeeklyReport: React.FC = () => {
                                 key={index}
                                 className='grid grid-cols-7 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                 <div>{item.semana}</div>
-                                <div>{item.totalEmpleados}</div>
-                                <div>${item.totalSueldos.toFixed(2)}</div>
-                                <div>${item.totalPrestamos.toFixed(2)}</div>
-                                <div>${item.totalInfonavit.toFixed(2)}</div>
-                                <div className='font-semibold text-green-600'>${item.totalNeto.toFixed(2)}</div>
+                                <div>{item.empleados_pagados}</div>
+                                <div>${item.total_sueldos.toFixed(2)}</div>
+                                <div>${item.total_prestamos.toFixed(2)}</div>
+                                <div>${item.total_infonavit.toFixed(2)}</div>
+                                <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
                                 <div className='flex justify-center gap-2'>
                                     <Button
-                                        onClick={() => generatePDF(item)}
+                                        onClick={() => downloadWeeklyReportsPDF(item)}
                                         design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                         <span className='relative pt-0.5'>
                                             <FaFilePdf size={17} />

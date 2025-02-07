@@ -7,7 +7,7 @@ import { ReportesSemanales } from '../services/weeklyReport.service';
 
 export interface WeeklyReportData {
     semana: string;
-    empleados_pagados: number;
+    empleados_pagados: Array<number>;
     total_sueldos: number;
     total_prestamos: number;
     total_infonavit: number;
@@ -49,7 +49,7 @@ const WeeklyReport: React.FC = () => {
                                 key={index}
                                 className='grid grid-cols-7 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                 <div>{item.semana}</div>
-                                <div>{item.empleados_pagados}</div>
+                                <div>{`Semana ${item.empleados_pagados.length}, 2025`}</div>
                                 <div>${item.total_sueldos.toFixed(2)}</div>
                                 <div>${item.total_prestamos.toFixed(2)}</div>
                                 <div>${item.total_infonavit.toFixed(2)}</div>

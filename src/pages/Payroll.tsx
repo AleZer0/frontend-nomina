@@ -90,7 +90,7 @@ const Payroll: React.FC = () => {
                         {nominas.length > 0 ? (
                             nominas.map(item => (
                                 <div
-                                    key={item.folio}
+                                    key={`NOM${item.folio.toString().padStart(4, '0')}`}
                                     className='grid grid-cols-8 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                     <div>{item.folio}</div>
                                     <div>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>

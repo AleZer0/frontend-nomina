@@ -60,7 +60,7 @@ const Employees: React.FC = () => {
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     disabled={false}
-                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 cursor-pointer text-black'
+                    design='hover:opacity-100 hover:shadow-xl hover:bg-green-400 bg-green-500 opacity-50 cursor-pointer text-black rounded transition'
                     icon={null}>
                     <span className='relative pt-1'>
                         <IoIosPersonAdd size={17} />
@@ -69,7 +69,7 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
             <main className='p-6'>
-                <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
+                <div className='rounded-lg shadow-lg'>
                     <div className='grid grid-cols-6 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Nombre</div>
                         <div>Apellidos</div>

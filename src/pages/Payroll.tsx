@@ -66,7 +66,7 @@ const Payroll: React.FC = () => {
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     disabled={false}
-                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 cursor-pointer text-black'
+                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded cursor-pointer text-black'
                     icon={null}>
                     <span className='relative pt-1'>
                         <HiDocumentPlus size={17} />

@@ -48,7 +48,7 @@ const WeeklyReport: React.FC = () => {
                                 <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
                                 <div className='flex justify-center gap-2'>
                                     <Button
-                                        onClick={() => downloadWeeklyReportsPDF(2025, item.semana)}
+                                        onClick={() => downloadWeeklyReportsPDF(2025, item)}
                                         design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                         <span className='relative pt-0.5'>
                                             <FaFilePdf size={17} />

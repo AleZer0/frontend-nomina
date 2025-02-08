@@ -9,6 +9,7 @@ import { FaFilePdf } from 'react-icons/fa6';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 
 import { HiDocumentPlus } from 'react-icons/hi2';
+import WaterMark from '../components/WaterMark';
 
 const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
@@ -115,6 +116,9 @@ const Payroll: React.FC = () => {
                             <div className='p-3 text-center text-gray-500'>No hay nóminas disponibles</div>
                         )}
                     </div>
+                </div>
+                <div className='pointer-events-none relative right-0 bottom-0'>
+                    <WaterMark />
                 </div>
             </main>
             <CreatePayrollModal

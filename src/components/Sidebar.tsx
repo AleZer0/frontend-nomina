@@ -6,6 +6,7 @@ import { PiUsersThreeFill } from 'react-icons/pi';
 import { IoDocuments } from 'react-icons/io5';
 import { BiSolidReport } from 'react-icons/bi';
 import { GiEntryDoor } from 'react-icons/gi';
+import xromlogo from '../assets/xromlogo.png';
 
 const Sidebar: React.FC = () => {
     const { logout } = useAuth();
@@ -21,14 +22,14 @@ const Sidebar: React.FC = () => {
     };
 
     return (
-        <div className='fixed flex h-screen w-64 flex-col bg-slate-800 bg-gradient-to-r to-slate-600 text-white'>
-            <h1 className='flex h-20 items-center border-b border-slate-500 px-4 text-lg font-bold'>
-                Nombre y Logo de Empresa
-            </h1>
+        <div className='fixed flex h-screen w-64 flex-col bg-slate-600 bg-gradient-to-r to-slate-500 text-white'>
+            <div className='flex h-20 items-center border-b border-slate-400 px-4'>
+                <img src={xromlogo} alt='Logo' className='mr-1 h-10 w-full' />
+            </div>
             <nav className='flex-grow'>
                 <ul>
                     {routes.map((route, index) => (
-                        <li key={index} className='border-b-1 border-slate-500'>
+                        <li key={index} className='border-b-1 border-slate-400'>
                             <Button
                                 onClick={() => navigate(route.path)}
                                 design='cursor-pointer w-full text-md font-medium text-white hover:bg-blue-100 hover:text-black'>
@@ -49,7 +50,7 @@ const Sidebar: React.FC = () => {
                     ))}
                 </ul>
             </nav>
-            <div className='border-t-1 border-slate-500'>
+            <div className='border-t-1 border-slate-700'>
                 <Button
                     onClick={handleLogout}
                     design='cursor-pointer w-full text-md font-medium text-white hover:bg-blue-100 hover:text-black'

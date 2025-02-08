@@ -10,6 +10,7 @@ import { HiDocumentPlus } from 'react-icons/hi2';
 
 import { IoIosPersonAdd } from 'react-icons/io';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
+import WaterMark from '../components/WaterMark';
 
 interface Employee {
     id_empleado: number;
@@ -69,8 +70,8 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
             <main className='p-6'>
-                <div className='rounded-lg shadow-lg'>
-                    <div className='grid grid-cols-6 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
+                <div className='overflow-visible rounded-lg bg-white shadow-lg'>
+                    <div className='grid grid-cols-8 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
                         <div>Nombre</div>
                         <div>Apellidos</div>
                         <div>Puesto</div>
@@ -134,6 +135,9 @@ const Employees: React.FC = () => {
                             );
                         })}
                     </div>
+                </div>
+                <div className='pointer-events-none relative right-0 bottom-0'>
+                    <WaterMark />
                 </div>
             </main>
 

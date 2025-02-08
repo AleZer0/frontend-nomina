@@ -11,7 +11,7 @@ const downloadPayrollPDF = async (folio: number) => {
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
         const a = document.createElement('a');
         a.href = url;
-        a.download = `nomina_${folio}.pdf`;
+        a.download = `NOM${folio.toString().padStart(4, '0')}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

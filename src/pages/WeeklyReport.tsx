@@ -5,7 +5,6 @@ import { FaFilePdf } from 'react-icons/fa6';
 import { downloadWeeklyReportsPDF } from '../services/pdf.service';
 import { ReportesSemanales } from '../services/weeklyReport.service';
 import { WeeklyReportData } from '../types';
-import WaterMark from '../components/WaterMark';
 
 const WeeklyReport: React.FC = () => {
     const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
@@ -60,9 +59,6 @@ const WeeklyReport: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                </div>
-                <div className='pointer-events-none relative right-0 bottom-0'>
-                    <WaterMark />
                 </div>
             </main>
         </div>

@@ -10,7 +10,6 @@ import { HiDocumentPlus } from 'react-icons/hi2';
 
 import { IoIosPersonAdd } from 'react-icons/io';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
-import WaterMark from '../components/WaterMark';
 
 interface Employee {
     id_empleado: number;
@@ -135,9 +134,6 @@ const Employees: React.FC = () => {
                             );
                         })}
                     </div>
-                </div>
-                <div className='pointer-events-none relative right-0 bottom-0'>
-                    <WaterMark />
                 </div>
             </main>
 

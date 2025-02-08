@@ -46,3 +46,11 @@ export interface PayrollInterface {
     };
 }
 
+export interface WeeklyReportData {
+    semana: number;
+    empleados_pagados: Array<number>;
+    total_sueldos: number;
+    total_prestamos: number;
+    total_infonavit: number;
+    total_neto: number;
+}

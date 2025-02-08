@@ -4,15 +4,7 @@ import Button from '../components/Button';
 import { FaFilePdf } from 'react-icons/fa6';
 import { downloadWeeklyReportsPDF } from '../services/pdf.service';
 import { ReportesSemanales } from '../services/weeklyReport.service';
-
-export interface WeeklyReportData {
-    semana: string;
-    empleados_pagados: Array<number>;
-    total_sueldos: number;
-    total_prestamos: number;
-    total_infonavit: number;
-    total_neto: number;
-}
+import { WeeklyReportData } from '../types';
 
 const WeeklyReport: React.FC = () => {
     const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
@@ -56,7 +48,7 @@ const WeeklyReport: React.FC = () => {
                                 <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
                                 <div className='flex justify-center gap-2'>
                                     <Button
-                                        onClick={() => downloadWeeklyReportsPDF(item)}
+                                        onClick={() => downloadWeeklyReportsPDF(2025, item.semana)}
                                         design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                         <span className='relative pt-0.5'>
                                             <FaFilePdf size={17} />

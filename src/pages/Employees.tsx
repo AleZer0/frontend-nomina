@@ -60,7 +60,7 @@ const Employees: React.FC = () => {
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     disabled={false}
-                    design='hover:opacity-100 hover:shadow-xl hover:bg-green-400 bg-green-500 opacity-50 cursor-pointer text-black rounded transition'
+                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded cursor-pointer text-black'
                     icon={null}>
                     <span className='relative pt-1'>
                         <IoIosPersonAdd size={17} />

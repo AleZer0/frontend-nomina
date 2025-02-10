@@ -15,12 +15,14 @@ interface Employee {
     id_empleado: number;
     nombre: string;
     apellido: string;
+    fecha_incorporacion: string;
+    departamento: string;
     puesto: string;
     sueldo: number;
 }
 
 const Employees: React.FC = () => {
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(0);
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<number>();
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalPayrollOpen, setIsModalPayrollOpen] = useState(false);
@@ -37,7 +39,14 @@ const Employees: React.FC = () => {
     }, []);
 
     // Agregar un nuevo empleado
-    const handleAddEmployee = (newEmployee: { nombre: string; apellido: string; puesto: string; sueldo: number }) => {
+    const handleAddEmployee = (newEmployee: {
+        nombre: string;
+        apellido: string;
+        fecha_incorporacion: string;
+        departamento: string;
+        puesto: string;
+        sueldo: number;
+    }) => {
         Empleado.createEmployee(newEmployee).then(() => {
             Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
         });
@@ -66,10 +75,17 @@ const Employees: React.FC = () => {
     };
 
     // Enviar datos para crear una nómina
-    const handleSubmitPayroll = (newNomina: any) => {
+    const handleSubmitPayroll = (newNomina: {
+        fecha: string;
+        dias_trabajados: number;
+        prestamos: number;
+        infonavit: number;
+        sueldo: number;
+        id_empleado: number;
+    }) => {
         createPayroll(newNomina)
             .then(response => {
-                if (response && response.data && response.data.nomina) {
+                if (response && response.nomina) {
                     alert('Nómina creada correctamente.');
                     setIsModalPayrollOpen(false);
                 } else {
@@ -155,7 +171,7 @@ const Employees: React.FC = () => {
                 isOpen={isModalPayrollOpen}
                 onClose={() => setIsModalPayrollOpen(false)}
                 onSubmit={handleSubmitPayroll}
-                defaultEmpleado={empleadoSeleccionado}
+                empleadoSeleccionado={empleadoSeleccionado}
             />
             <EditEmployeeModal
                 isOpen={isEditModalOpen}

@@ -4,11 +4,25 @@ import Button from '../Button';
 interface CreateEmployeeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newEmployee: { nombre: string; apellido: string; puesto: string; sueldo: number }) => void;
+    onSubmit: (newEmployee: {
+        nombre: string;
+        apellido: string;
+        fecha_incorporacion: string;
+        departamento: string;
+        puesto: string;
+        sueldo: number;
+    }) => void;
 }
 
 const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const [newEmployee, setNewEmployee] = useState({ nombre: '', apellido: '', puesto: '', sueldo: '' });
+    const [newEmployee, setNewEmployee] = useState({
+        nombre: '',
+        apellido: '',
+        fecha_incorporacion: '',
+        departamento: '',
+        puesto: '',
+        sueldo: '',
+    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewEmployee({ ...newEmployee, [e.target.name]: e.target.value });
@@ -22,6 +36,8 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
         onSubmit({
             nombre: newEmployee.nombre,
             apellido: newEmployee.apellido,
+            fecha_incorporacion: newEmployee.fecha_incorporacion,
+            departamento: newEmployee.departamento,
             puesto: newEmployee.puesto,
             sueldo: parseFloat(newEmployee.sueldo),
         });
@@ -51,6 +67,26 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                     value={newEmployee.apellido}
                     onChange={handleChange}
                     placeholder='Apellido'
+                    className='mb-4 w-full rounded-lg border p-2'
+                />
+
+                <label className='mb-2 block text-gray-700'>Fecha de incorporación:</label>
+                <input
+                    type='date'
+                    name='fecha_incorporacion'
+                    value={newEmployee.fecha_incorporacion}
+                    onChange={handleChange}
+                    placeholder='Fecha de incorporación'
+                    className='mb-4 w-full rounded-lg border p-2'
+                />
+
+                <label className='mb-2 block text-gray-700'>Departamento:</label>
+                <input
+                    type='text'
+                    name='departamento'
+                    value={newEmployee.departamento}
+                    onChange={handleChange}
+                    placeholder='Departamento'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
 

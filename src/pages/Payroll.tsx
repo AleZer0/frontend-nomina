@@ -39,6 +39,7 @@ const Payroll: React.FC = () => {
 
     const handleSubmit = (newNomina: {
         fecha: string;
+        dias_trabajados: number;
         prestamos: number;
         infonavit: number;
         sueldo: number;
@@ -46,7 +47,7 @@ const Payroll: React.FC = () => {
     }) => {
         createPayroll(newNomina)
             .then(response => {
-                if (response && response.data && response.data.nomina) {
+                if (response && response.nomina) {
                     setNominas([...nominas, response.data.nomina]);
                     setIsModalOpen(false);
                 } else {

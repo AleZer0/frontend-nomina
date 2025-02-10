@@ -5,6 +5,8 @@ import Button from '../Button';
 interface Employee {
     id_empleado: number;
     nombre: string;
+    fecha_incorporacion: string;
+    departamento: string;
     apellido: string;
     puesto: string;
     sueldo: number;
@@ -22,6 +24,8 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
         id_empleado: 0,
         nombre: '',
         apellido: '',
+        fecha_incorporacion: '',
+        departamento: '',
         puesto: '',
         sueldo: 0,
     });
@@ -45,7 +49,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
 
     return (
         <div className='bg-opacity-30 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md'>
-            <div className='w-96 rounded-2xl rounded-lg bg-white p-6 shadow-lg'>
+            <div className='w-96 rounded-2xl bg-white p-6 shadow-lg'>
                 <h2 className='mb-4 text-lg font-semibold'>Editar Empleado</h2>
                 <input
                     type='text'
@@ -62,6 +66,25 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     onChange={handleChange}
                     placeholder='Apellido'
                     className='mb-2 w-full border p-2'
+                />
+                <label className='mb-2 block text-gray-700'>Fecha de incorporación:</label>
+                <input
+                    type='date'
+                    name='fecha_incorporacion'
+                    value={formData.fecha_incorporacion}
+                    onChange={handleChange}
+                    placeholder='Fecha de incorporación'
+                    className='mb-4 w-full rounded-lg border p-2'
+                />
+
+                <label className='mb-2 block text-gray-700'>Departamento:</label>
+                <input
+                    type='text'
+                    name='departamento'
+                    value={formData.departamento}
+                    onChange={handleChange}
+                    placeholder='Departamento'
+                    className='mb-4 w-full rounded-lg border p-2'
                 />
                 <input
                     type='text'

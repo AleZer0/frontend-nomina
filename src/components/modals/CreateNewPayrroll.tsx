@@ -6,13 +6,14 @@ interface CreatePayrollModalProps {
     onClose: () => void;
     onSubmit: (newNomina: {
         fecha: string;
+        dias_trabajados: number;
         prestamos: number;
         infonavit: number;
         sueldo: number;
         id_empleado: number;
     }) => void;
     empleados: { id_empleado: number; nombre: string; apellido: string }[];
-    defaultEmpleado?: number;
+    empleadoSeleccionado?: number;
 }
 
 const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
@@ -20,18 +21,22 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
     onClose,
     onSubmit,
     empleados,
-    defaultEmpleado,
+    empleadoSeleccionado,
 }) => {
     const [newNomina, setNewNomina] = useState({
         fecha: new Date().toISOString(),
+        dias_trabajados: 0,
         prestamos: 0,
         infonavit: 0,
         sueldo: 0,
-        id_empleado: 0,
+        id_empleado: empleadoSeleccionado ? empleadoSeleccionado : 0,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setNewNomina({ ...newNomina, [e.target.name]: e.target.value });
+        setNewNomina({
+            ...newNomina,
+            [e.target.name]: e.target.value,
+        });
     };
 
     const handleSubmit = () => {
@@ -53,7 +58,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 <label className='mb-2 block text-gray-700'>Empleado:</label>
                 <select
                     name='id_empleado'
-                    value={defaultEmpleado ? defaultEmpleado : newNomina.id_empleado}
+                    value={empleadoSeleccionado ? empleadoSeleccionado : newNomina.id_empleado}
                     onChange={handleChange}
                     className='mb-4 w-full rounded-lg border p-2'
                     aria-label='Seleccionar Empleado'>
@@ -66,6 +71,16 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 </select>
 
                 {/* Campos de sueldo, préstamos, infonavit */}
+                <label className='mb-2 block text-gray-700'>Días trabajados:</label>
+                <input
+                    type='number'
+                    name='dias_trabajados'
+                    value={newNomina.dias_trabajados}
+                    onChange={handleChange}
+                    className='mb-4 w-full rounded-lg border p-2'
+                    placeholder='Ingrese los días trabajados'
+                />
+
                 <label className='mb-2 block text-gray-700'>Sueldo:</label>
                 <input
                     type='number'

@@ -4,12 +4,7 @@ import Button from '../Button';
 interface CreateEmployeeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newEmployee: {
-        nombre: string;
-        apellido: string;
-        puesto: string;
-        sueldo: number;
-    }) => void;
+    onSubmit: (newEmployee: { nombre: string; apellido: string; puesto: string; sueldo: number }) => void;
 }
 
 const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -80,8 +75,18 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 />
 
                 <div className='flex justify-end gap-2'>
-                    <Button onClick={onClose} children='Cancelar' disabled={false} design='bg-gray-400 text-white cursor-pointer' />
-                    <Button onClick={handleSubmit} children='Guardar' disabled={false} design='bg-green-500 text-white cursor-pointer' />
+                    <Button
+                        onClick={onClose}
+                        children='Cancelar'
+                        disabled={false}
+                        design='rounded bg-red-500 hover:bg-red-600 text-white cursor-pointer'
+                    />
+                    <Button
+                        onClick={handleSubmit}
+                        children='Guardar'
+                        disabled={false}
+                        design='rounded bg-green-500 hover:bg-green-600 text-white cursor-pointer'
+                    />
                 </div>
             </div>
         </div>

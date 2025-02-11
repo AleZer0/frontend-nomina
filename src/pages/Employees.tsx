@@ -42,14 +42,7 @@ const Employees: React.FC = () => {
     }, []);
 
     // Agregar un nuevo empleado
-    const handleAddEmployee = (newEmployee: {
-        nombre: string;
-        apellido: string;
-        fecha_incorporacion: string;
-        departamento: string;
-        puesto: string;
-        sueldo: number;
-    }) => {
+    const handleAddEmployee = (newEmployee: Employee) => {
         Empleado.createEmployee(newEmployee).then(() => {
             Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
         });

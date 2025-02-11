@@ -1,4 +1,5 @@
 import axiosInstance from '.';
+import { Employee } from '../pages/Employees';
 import { EmpleadoType } from '../types';
 
 export class Empleado {
@@ -17,7 +18,7 @@ export class Empleado {
         return response.data;
     };
 
-    static updateEmployee = async (id: number, data: Empleado) => {
+    static updateEmployee = async (id: number, data: Employee) => {
         const response = await axiosInstance.put(`/empleado/${id}`, data);
         return response.data;
     };

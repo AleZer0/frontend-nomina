@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../Button';
-
-// Definir el tipo de Employee aquí (si no está en un archivo compartido)
-interface Employee {
-    id_empleado: number;
-    nombre: string;
-    fecha_incorporacion: string;
-    departamento: string;
-    apellido: string;
-    puesto: string;
-    sueldo: number;
-}
+import { Employee } from '../../pages/Employees';
 
 interface EditEmployeeModalProps {
     isOpen: boolean;
@@ -41,10 +31,6 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
         }
     }, [employee]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
     const handleSubmit = () => {
         onSave(formData);
         onClose();
@@ -62,7 +48,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     type='text'
                     name='nombre'
                     value={formData.nombre}
-                    onChange={handleChange}
+                    onChange={e => setFormData({ ...formData, nombre: e.target.value })}
                     placeholder='Nombre'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
@@ -72,7 +58,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     type='text'
                     name='apellido'
                     value={formData.apellido}
-                    onChange={handleChange}
+                    onChange={e => setFormData({ ...formData, apellido: e.target.value })}
                     placeholder='Apellido'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
@@ -82,7 +68,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     type='date'
                     name='fecha_incorporacion'
                     value={formData.fecha_incorporacion}
-                    onChange={handleChange}
+                    onChange={e => setFormData({ ...formData, fecha_incorporacion: e.target.value })}
                     placeholder='Fecha de incorporación'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
@@ -92,7 +78,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     type='text'
                     name='departamento'
                     value={formData.departamento}
-                    onChange={handleChange}
+                    onChange={e => setFormData({ ...formData, departamento: e.target.value })}
                     placeholder='Departamento'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
@@ -102,7 +88,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     type='text'
                     name='puesto'
                     value={formData.puesto}
-                    onChange={handleChange}
+                    onChange={e => setFormData({ ...formData, puesto: e.target.value })}
                     placeholder='Puesto'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
@@ -112,7 +98,9 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     type='number'
                     name='sueldo'
                     value={formData.sueldo}
-                    onChange={handleChange}
+                    onChange={e =>
+                        setFormData({ ...formData, sueldo: parseFloat(e.target.value ? e.target.value : '0') })
+                    }
                     placeholder='Sueldo'
                     className='mb-4 w-full rounded-lg border p-2'
                 />

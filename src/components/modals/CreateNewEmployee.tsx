@@ -1,17 +1,11 @@
 import { useState } from 'react';
 import Button from '../Button';
+import { Employee } from '../../pages/Employees';
 
 interface CreateEmployeeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newEmployee: {
-        nombre: string;
-        apellido: string;
-        fecha_incorporacion: string;
-        departamento: string;
-        puesto: string;
-        sueldo: number;
-    }) => void;
+    onSubmit: (newEmployee: Employee) => void;
 }
 
 const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -34,6 +28,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
             return;
         }
         onSubmit({
+            id_empleado: 0,
             nombre: newEmployee.nombre,
             apellido: newEmployee.apellido,
             fecha_incorporacion: newEmployee.fecha_incorporacion,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../Button';
 import { Employee } from '../../pages/Employees';
 
@@ -30,19 +30,23 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
         prestamos: 0,
         infonavit: 0,
         sueldo: 0,
-        id_empleado: empleadoSeleccionado ? empleadoSeleccionado.id_empleado : 0,
+        id_empleado: 0,
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setNewNomina({
-            ...newNomina,
-            [e.target.name]: e.target.value,
-        });
-    };
+    // 👇 Se actualiza el estado cuando cambia el empleado seleccionado
+    useEffect(() => {
+        if (empleadoSeleccionado) {
+            setNewNomina(prevNomina => ({
+                ...prevNomina,
+                sueldo: empleadoSeleccionado.sueldo,
+                id_empleado: empleadoSeleccionado.id_empleado,
+            }));
+        }
+    }, [empleadoSeleccionado]);
 
     const handleSubmit = () => {
-        if (!newNomina.id_empleado || !newNomina.sueldo) {
-            alert('Por favor, completa todos los campos.');
+        if (!newNomina.id_empleado || newNomina.sueldo <= 0) {
+            alert('Por favor, selecciona un empleado y verifica el sueldo.');
             return;
         }
         onSubmit(newNomina);
@@ -59,23 +63,20 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 <label className='mb-2 block text-gray-700'>Empleado:</label>
                 <select
                     name='id_empleado'
-                    value={empleadoSeleccionado ? empleadoSeleccionado.id_empleado : newNomina.id_empleado}
-                    onChange={e =>
-                        setNewNomina({
-                            ...newNomina,
-                            id_empleado: parseInt(e.target.value ? e.target.value : '0'),
-                            sueldo: empleadoSeleccionado
-                                ? empleadoSeleccionado.sueldo
-                                : (empleados.find(
-                                      emp => emp.id_empleado === parseInt(e.target.value ? e.target.value : '0')
-                                  )?.sueldo ?? 0),
-                        })
-                    }
+                    value={newNomina.id_empleado}
+                    onChange={e => {
+                        const selectedEmployee = empleados.find(emp => emp.id_empleado === parseInt(e.target.value));
+                        setNewNomina(prevNomina => ({
+                            ...prevNomina,
+                            id_empleado: selectedEmployee?.id_empleado || 0,
+                            sueldo: selectedEmployee?.sueldo || 0,
+                        }));
+                    }}
                     className='mb-4 w-full rounded-lg border p-2'
                     aria-label='Seleccionar Empleado'>
                     <option value=''>Seleccione un empleado</option>
                     {empleados.map(emp => (
-                        <option key={emp.id_empleado} value={emp.id_empleado.toString()}>
+                        <option key={emp.id_empleado} value={emp.id_empleado}>
                             {emp.nombre} {emp.apellido}
                         </option>
                     ))}
@@ -87,23 +88,17 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                     type='number'
                     name='dias_trabajados'
                     value={newNomina.dias_trabajados}
-                    onChange={handleChange}
+                    onChange={e => setNewNomina({ ...newNomina, dias_trabajados: parseInt(e.target.value) || 0 })}
                     className='mb-4 w-full rounded-lg border p-2'
-                    placeholder='Ingrese los días trabajados'
                 />
 
                 <label className='mb-2 block text-gray-700'>Sueldo:</label>
                 <input
                     type='number'
                     name='sueldo'
-                    value={
-                        empleadoSeleccionado
-                            ? empleadoSeleccionado.sueldo
-                            : (empleados.find(emp => emp.id_empleado === newNomina.id_empleado)?.sueldo ?? 0)
-                    }
-                    onChange={handleChange}
+                    value={newNomina.sueldo}
+                    onChange={e => setNewNomina({ ...newNomina, sueldo: parseFloat(e.target.value) || 0 })}
                     className='mb-4 w-full rounded-lg border p-2'
-                    placeholder='Ingrese el sueldo'
                 />
 
                 <label className='mb-2 block text-gray-700'>Préstamos:</label>
@@ -111,9 +106,8 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                     type='number'
                     name='prestamos'
                     value={newNomina.prestamos}
-                    onChange={handleChange}
+                    onChange={e => setNewNomina({ ...newNomina, prestamos: parseFloat(e.target.value) || 0 })}
                     className='mb-4 w-full rounded-lg border p-2'
-                    placeholder='Ingrese los préstamos'
                 />
 
                 <label className='mb-2 block text-gray-700'>Infonavit:</label>
@@ -121,25 +115,14 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                     type='number'
                     name='infonavit'
                     value={newNomina.infonavit}
-                    onChange={handleChange}
+                    onChange={e => setNewNomina({ ...newNomina, infonavit: parseFloat(e.target.value) || 0 })}
                     className='mb-4 w-full rounded-lg border p-2'
-                    placeholder='Ingrese el infonavit'
                 />
 
                 {/* Botones de acción */}
                 <div className='flex justify-end gap-2'>
-                    <Button
-                        onClick={onClose}
-                        children='Cancelar'
-                        disabled={false}
-                        design='bg-gray-400 text-white cursor-pointer'
-                    />
-                    <Button
-                        onClick={handleSubmit}
-                        children='Guardar'
-                        disabled={false}
-                        design='bg-green-500 text-white cursor-pointer'
-                    />
+                    <Button onClick={onClose} children='Cancelar' design='bg-gray-400 text-white cursor-pointer' />
+                    <Button onClick={handleSubmit} children='Guardar' design='bg-green-500 text-white cursor-pointer' />
                 </div>
             </div>
         </div>

@@ -146,7 +146,7 @@ const Employees: React.FC = () => {
                                     </Button>
                                     <DropdownMenu
                                         buttonRef={el => (buttonRefs.current[index] = el)}
-                                        onDelete={() => handleDelete}
+                                        onDelete={() => handleDelete(item.id_empleado)}
                                         onEdit={() => handleEdit(item)} // 👈 Corregido para pasar el empleado
                                     />
                                 </div>

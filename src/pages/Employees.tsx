@@ -11,7 +11,7 @@ import { HiDocumentPlus } from 'react-icons/hi2';
 import { IoIosPersonAdd } from 'react-icons/io';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 
-interface Employee {
+export interface Employee {
     id_empleado: number;
     nombre: string;
     apellido: string;
@@ -19,10 +19,13 @@ interface Employee {
     departamento: string;
     puesto: string;
     sueldo: number;
+    created_at?: string;
+    updated_at?: string;
+    estado?: number;
 }
 
 const Employees: React.FC = () => {
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<number>();
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee>();
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalPayrollOpen, setIsModalPayrollOpen] = useState(false);
@@ -140,7 +143,7 @@ const Employees: React.FC = () => {
                                     <Button
                                         onClick={() => {
                                             setIsModalPayrollOpen(true);
-                                            setEmpleadoSeleccionado(item.id_empleado);
+                                            setEmpleadoSeleccionado(item);
                                         }}
                                         design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                         <span className='relative pt-0.5'>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Button from '../Button';
+import { Employee } from '../../pages/Employees';
 
 interface CreatePayrollModalProps {
     isOpen: boolean;
@@ -12,8 +13,8 @@ interface CreatePayrollModalProps {
         sueldo: number;
         id_empleado: number;
     }) => void;
-    empleados: { id_empleado: number; nombre: string; apellido: string }[];
-    empleadoSeleccionado?: number;
+    empleados: Employee[];
+    empleadoSeleccionado?: Employee;
 }
 
 const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
@@ -29,7 +30,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
         prestamos: 0,
         infonavit: 0,
         sueldo: 0,
-        id_empleado: empleadoSeleccionado ? empleadoSeleccionado : 0,
+        id_empleado: empleadoSeleccionado ? empleadoSeleccionado.id_empleado : 0,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -58,8 +59,18 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 <label className='mb-2 block text-gray-700'>Empleado:</label>
                 <select
                     name='id_empleado'
-                    value={empleadoSeleccionado ? empleadoSeleccionado : newNomina.id_empleado}
-                    onChange={handleChange}
+                    value={empleadoSeleccionado ? empleadoSeleccionado.id_empleado : newNomina.id_empleado}
+                    onChange={e =>
+                        setNewNomina({
+                            ...newNomina,
+                            id_empleado: parseInt(e.target.value ? e.target.value : '0'),
+                            sueldo: empleadoSeleccionado
+                                ? empleadoSeleccionado.sueldo
+                                : (empleados.find(
+                                      emp => emp.id_empleado === parseInt(e.target.value ? e.target.value : '0')
+                                  )?.sueldo ?? 0),
+                        })
+                    }
                     className='mb-4 w-full rounded-lg border p-2'
                     aria-label='Seleccionar Empleado'>
                     <option value=''>Seleccione un empleado</option>
@@ -85,7 +96,11 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 <input
                     type='number'
                     name='sueldo'
-                    value={newNomina.sueldo}
+                    value={
+                        empleadoSeleccionado
+                            ? empleadoSeleccionado.sueldo
+                            : (empleados.find(emp => emp.id_empleado === newNomina.id_empleado)?.sueldo ?? 0)
+                    }
                     onChange={handleChange}
                     className='mb-4 w-full rounded-lg border p-2'
                     placeholder='Ingrese el sueldo'

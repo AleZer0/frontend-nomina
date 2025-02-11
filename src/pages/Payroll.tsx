@@ -9,10 +9,11 @@ import { FaFilePdf } from 'react-icons/fa6';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 
 import { HiDocumentPlus } from 'react-icons/hi2';
+import { Employee } from './Employees';
 
 const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
-    const [empleados, setEmpleados] = useState<PayrollInterface['empleado'][]>([]);
+    const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -48,7 +49,7 @@ const Payroll: React.FC = () => {
         createPayroll(newNomina)
             .then(response => {
                 if (response && response.nomina) {
-                    setNominas([...nominas, response.data.nomina]);
+                    setNominas([...nominas, response.nomina]);
                     setIsModalOpen(false);
                 } else {
                     alert('Error al crear la nómina.');
@@ -90,7 +91,7 @@ const Payroll: React.FC = () => {
                                     key={item.folio}
                                     className='grid grid-cols-8 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
                                     <div>{`NOM${item.folio.toString().padStart(4, '0')}`}</div>
-                                    <div>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
+                                    <div>{`${item.empleado?.nombre} ${item.empleado?.apellido}`}</div>
                                     <div>{new Date(item.fecha).toLocaleDateString()}</div>
                                     <div>${item.sueldo.toFixed(2)}</div>
                                     <div>${item.prestamos.toFixed(2)}</div>

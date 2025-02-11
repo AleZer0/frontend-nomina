@@ -51,22 +51,27 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
         <div className='bg-opacity-30 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md'>
             <div className='w-96 rounded-2xl bg-white p-6 shadow-lg'>
                 <h2 className='mb-4 text-lg font-semibold'>Editar Empleado</h2>
+
+                <label className='mb-2 block text-gray-700'>Nombre:</label>
                 <input
                     type='text'
                     name='nombre'
                     value={formData.nombre}
                     onChange={handleChange}
                     placeholder='Nombre'
-                    className='mb-2 w-full border p-2'
+                    className='mb-4 w-full rounded-lg border p-2'
                 />
+
+                <label className='mb-2 block text-gray-700'>Apellido:</label>
                 <input
                     type='text'
                     name='apellido'
                     value={formData.apellido}
                     onChange={handleChange}
                     placeholder='Apellido'
-                    className='mb-2 w-full border p-2'
+                    className='mb-4 w-full rounded-lg border p-2'
                 />
+
                 <label className='mb-2 block text-gray-700'>Fecha de incorporación:</label>
                 <input
                     type='date'
@@ -86,21 +91,25 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                     placeholder='Departamento'
                     className='mb-4 w-full rounded-lg border p-2'
                 />
+
+                <label className='mb-2 block text-gray-700'>Puesto:</label>
                 <input
                     type='text'
                     name='puesto'
                     value={formData.puesto}
                     onChange={handleChange}
                     placeholder='Puesto'
-                    className='mb-2 w-full border p-2'
+                    className='mb-4 w-full rounded-lg border p-2'
                 />
+
+                <label className='mb-2 block text-gray-700'>Sueldo:</label>
                 <input
                     type='number'
                     name='sueldo'
                     value={formData.sueldo}
                     onChange={handleChange}
                     placeholder='Sueldo'
-                    className='mb-4 w-full border p-2'
+                    className='mb-4 w-full rounded-lg border p-2'
                 />
                 <div className='flex justify-end gap-2'>
                     <Button onClick={onClose} design=' rounded cursor-pointer bg-red-500 text-white hover:bg-red-600'>

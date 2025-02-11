@@ -8,6 +8,16 @@ interface CreateEmployeeModalProps {
     onSubmit: (newEmployee: Employee) => void;
 }
 
+export const emptyEmployee = {
+    id_empleado: 0,
+    nombre: '',
+    apellido: '',
+    fecha_incorporacion: '',
+    departamento: '',
+    puesto: '',
+    sueldo: 0,
+};
+
 const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const [newEmployee, setNewEmployee] = useState({
         nombre: '',

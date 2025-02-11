@@ -17,6 +17,15 @@ interface CreatePayrollModalProps {
     empleadoSeleccionado?: Employee;
 }
 
+const emptyPayroll = {
+    fecha: new Date().toISOString(),
+    dias_trabajados: 0,
+    prestamos: 0,
+    infonavit: 0,
+    sueldo: 0,
+    id_empleado: 0,
+};
+
 const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
     isOpen,
     onClose,
@@ -24,14 +33,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
     empleados,
     empleadoSeleccionado,
 }) => {
-    const [newNomina, setNewNomina] = useState({
-        fecha: new Date().toISOString(),
-        dias_trabajados: 0,
-        prestamos: 0,
-        infonavit: 0,
-        sueldo: 0,
-        id_empleado: 0,
-    });
+    const [newNomina, setNewNomina] = useState(emptyPayroll);
 
     // 👇 Se actualiza el estado cuando cambia el empleado seleccionado
     useEffect(() => {
@@ -50,6 +52,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
             return;
         }
         onSubmit(newNomina);
+        setNewNomina(emptyPayroll);
     };
 
     if (!isOpen) return null;

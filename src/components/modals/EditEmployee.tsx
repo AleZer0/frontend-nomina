@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../Button';
 import { Employee } from '../../pages/Employees';
+import { emptyEmployee } from './CreateNewEmployee';
 
 interface EditEmployeeModalProps {
     isOpen: boolean;
@@ -10,15 +11,7 @@ interface EditEmployeeModalProps {
 }
 
 const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, employee, onSave }) => {
-    const [formData, setFormData] = useState<Employee>({
-        id_empleado: 0,
-        nombre: '',
-        apellido: '',
-        fecha_incorporacion: '',
-        departamento: '',
-        puesto: '',
-        sueldo: 0,
-    });
+    const [formData, setFormData] = useState<Employee>(emptyEmployee);
 
     useEffect(() => {
         if (employee) {
@@ -33,6 +26,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
 
     const handleSubmit = () => {
         onSave(formData);
+        setFormData(emptyEmployee);
         onClose();
     };
 

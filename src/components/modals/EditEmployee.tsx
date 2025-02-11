@@ -32,7 +32,12 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
 
     useEffect(() => {
         if (employee) {
-            setFormData(employee);
+            setFormData({
+                ...employee,
+                fecha_incorporacion: employee.fecha_incorporacion
+                    ? new Date(employee.fecha_incorporacion).toISOString().split('T')[0] // Convertir a YYYY-MM-DD
+                    : '',
+            });
         }
     }, [employee]);
 

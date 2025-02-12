@@ -10,7 +10,7 @@ import EditEmployeeModal from '../components/modals/EditEmployee';
 import { HiDocumentPlus } from 'react-icons/hi2';
 import { IoIosPersonAdd } from 'react-icons/io';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
-import TableData from '../components/TableData';
+import TableData from '../components/TableDataEmployee';
 
 export interface Employee {
     id_empleado: number;

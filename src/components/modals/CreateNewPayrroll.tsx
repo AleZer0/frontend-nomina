@@ -14,7 +14,7 @@ interface CreatePayrollModalProps {
         id_empleado: number;
     }) => void;
     empleados: Employee[];
-    empleadoSeleccionado?: Employee;
+    empleadoSeleccionado?: Employee | null;
 }
 
 const emptyPayroll = {

@@ -1,10 +1,18 @@
+// src/components/DropdownMenu.tsx
 import { useEffect, useRef, useState } from 'react';
 import { SlOptions } from 'react-icons/sl';
+import { MdEdit } from 'react-icons/md';
+import { RiDeleteBin6Fill } from 'react-icons/ri';
+import Button from './Button';
 
 interface DropdownMenuProps {
     onDelete?: () => void;
     onEdit?: () => void;
-    buttonRef: React.RefObject<HTMLButtonElement> | ((el: HTMLButtonElement | null) => void);
+    /**
+     * Podemos recibir un ref externo para el botón,
+     * o podemos no usarlo. Si no te hace falta, puedes volverlo opcional.
+     */
+    buttonRef?: React.RefObject<HTMLButtonElement> | ((el: HTMLButtonElement | null) => void);
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ onDelete, onEdit, buttonRef }) => {
@@ -13,7 +21,6 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onDelete, onEdit, buttonRef
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
-    // Cerrar el dropdown si se hace clic fuera
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -27,31 +34,37 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onDelete, onEdit, buttonRef
 
     return (
         <div ref={dropdownRef} className='relative'>
-            <button
-                ref={buttonRef as React.RefObject<HTMLButtonElement>}
+            <Button
+                ref={buttonRef} // el 'ref' se pasa a Button, que ya lo maneja con forwardRef
                 onClick={toggleMenu}
                 className='absolute flex cursor-pointer items-center justify-center rounded-lg p-2 text-gray-600 transition hover:bg-gray-200'
                 type='button'
                 title='Opciones'>
                 <SlOptions className='h-4 w-4' />
-            </button>
+            </Button>
 
             {isOpen && (
                 <div className='absolute top-9 -right-8 z-50 w-48 rounded-lg bg-blue-50 shadow-2xl'>
                     <ul className='py-2 text-sm text-gray-700'>
                         <li>
-                            <button
+                            <Button
                                 onClick={onEdit}
-                                className='block w-full cursor-pointer px-4 py-2 text-left hover:bg-blue-100 hover:font-bold'>
-                                ✏️ Editar empleado
-                            </button>
+                                design='block w-full cursor-pointer px-4 py-2 text-sm  text-left hover:bg-blue-100 hover:font-bold'>
+                                <span className='relative pt-0.5'>
+                                    <MdEdit size={17} />
+                                </span>
+                                Editar empleado
+                            </Button>
                         </li>
                         <li>
-                            <button
+                            <Button
                                 onClick={onDelete}
-                                className='block w-full cursor-pointer px-4 py-2 text-left text-red-600 hover:bg-blue-100 hover:font-bold'>
-                                ❌ Eliminar empleado
-                            </button>
+                                design='block w-full cursor-pointer px-4 py-2 text-sm text-left text-red-600 hover:bg-blue-100 hover:font-bold'>
+                                <span className='relative pt-0.5'>
+                                    <RiDeleteBin6Fill size={17} />
+                                </span>
+                                Eliminar empleado
+                            </Button>
                         </li>
                     </ul>
                 </div>

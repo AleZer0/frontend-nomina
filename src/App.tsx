@@ -1,44 +1,33 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from './pages/Login';
-
 import { routes } from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
-import Sidebar from './components/Sidebar';
+import Layout from './layout';
+import { useAuth } from './context/AuthContext';
 
 const App: React.FC = () => {
-    return (
-        <BrowserRouter>
-            <AuthProvider>
-                <Routes>
-                    <Route path='/login' element={<Login />} />
+    const { isAuthenticated } = useAuth();
 
-                    <Route path='/' element={<Navigate to='/employees' replace />} />
-                    <Route
-                        path='/*'
-                        element={
-                            <ProtectedRoute>
-                                <Routes>
-                                    {routes.map((route, index) => (
-                                        <Route
-                                            key={index}
-                                            path={route.path}
-                                            element={
-                                                <>
-                                                    <Sidebar />
-                                                    {route.element}
-                                                </>
-                                            }
-                                        />
-                                    ))}
-                                </Routes>
-                            </ProtectedRoute>
-                        }
-                    />
-                </Routes>
-            </AuthProvider>
-        </BrowserRouter>
+    return (
+        <Routes>
+            <Route
+                path='/'
+                element={isAuthenticated ? <Navigate to='/login' replace /> : <Navigate to='/employees' replace />}
+            />
+            <Route path='/login' element={<Login />} />
+            <Route
+                path='/*'
+                element={
+                    <ProtectedRoute>
+                        <Layout />
+                    </ProtectedRoute>
+                }>
+                {routes.map((route, index) => (
+                    <Route key={index} path={route.path} element={route.element} />
+                ))}
+            </Route>
+        </Routes>
     );
 };
 

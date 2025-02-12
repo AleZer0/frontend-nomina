@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const [usuario, setUsuario] = useState<UsuarioType | null>(null);
 
-    const checkAuthStatus = async () => {
+    const verify = async () => {
         setLoading(true);
 
         const data = await Autenticacion.usuarioVerify();
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     useEffect(() => {
-        checkAuthStatus();
+        verify();
     }, []);
 
     return (

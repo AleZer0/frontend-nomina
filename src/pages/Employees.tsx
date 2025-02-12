@@ -92,7 +92,7 @@ const Employees: React.FC = () => {
     };
 
     return (
-        <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
+        <>
             <Header tittle='Listado de Empleados'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
@@ -175,7 +175,7 @@ const Employees: React.FC = () => {
                 employee={editingEmployee}
                 onSave={handleSaveEdit}
             />
-        </div>
+        </>
     );
 };
 

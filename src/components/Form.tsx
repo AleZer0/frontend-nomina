@@ -1,5 +1,6 @@
-import Input from './Input';
 import { ReactNode, useState } from 'react';
+import { useError } from '../context/ErrorContext';
+import Input from './Input';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface Field {
@@ -8,29 +9,19 @@ interface Field {
     type: 'text' | 'number' | 'email' | 'password' | 'select' | 'checkbox' | 'textarea';
     options?: { value: string | number; label: string }[];
     placeholder?: string;
+    required?: boolean;
 }
 
 interface FormProps {
     fields: Field[];
     onSubmit: (data: Record<string, any>) => void;
-    title?: string;
-    buttonText?: string;
-    children?: ReactNode;
+    children: ReactNode;
 }
 
-const Form: React.FC<FormProps> = ({
-    fields,
-    onSubmit,
-    title,
-    buttonText = 'Enviar',
-    children = (
-        <button type='submit' className='rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600'>
-            {buttonText}
-        </button>
-    ),
-}) => {
+const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const { errors, setError, clearError } = useError();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -40,19 +31,38 @@ const Form: React.FC<FormProps> = ({
             ...prevData,
             [name]: type === 'checkbox' ? checked : value,
         }));
+
+        // Validación en tiempo real
+        if (value.trim() === '') {
+            setError(name, 'Este campo es obligatorio');
+        } else {
+            clearError(name);
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
+        let hasError = false;
+
+        fields.forEach(({ name, required }) => {
+            if (required && !formData[name]) {
+                setError(name, 'Este campo es obligatorio');
+                hasError = true;
+            }
+        });
+
+        if (!hasError) {
+            onSubmit(formData);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className='space-y-3'>
-            {title && <h1 className='font-sans text-2xl font-bold'>{title}</h1>}
-            {fields.map(({ name, label, type, options, placeholder }) => (
+            {fields.map(({ name, label, type, options, placeholder, required }) => (
                 <div key={name} className='flex flex-col'>
-                    <label className='font-medium'>{label}</label>
+                    <label className='font-medium'>
+                        {label} {required && <span className='text-red-500'>*</span>}
+                    </label>
                     {type === 'select' ? (
                         <select name={name} onChange={handleChange} className='rounded border p-2'>
                             {options?.map(option => (
@@ -78,18 +88,20 @@ const Form: React.FC<FormProps> = ({
                                 placeholder={placeholder}
                                 value={formData[name] || ''}
                                 onChange={handleChange}
+                                variant='normal'
                             />
 
                             {type === 'password' && (
                                 <button
                                     type='button'
-                                    className='absolute inset-y-0 right-3 bottom-3.5 flex cursor-pointer items-center text-gray-500 hover:text-gray-600'
+                                    className='absolute inset-y-0 right-3 flex cursor-pointer items-center text-gray-500 hover:text-gray-600'
                                     onClick={() => setShowPassword(prev => !prev)}>
                                     {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                                 </button>
                             )}
                         </div>
                     )}
+                    {errors[name] && <p className='text-sm text-red-500'>{errors[name]}</p>}
                 </div>
             ))}
             {children}

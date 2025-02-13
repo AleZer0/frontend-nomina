@@ -35,12 +35,14 @@ const Login: React.FC = () => {
                             label: 'Nombre de usuario',
                             type: 'text',
                             placeholder: 'Ingrese el nombre de usuario',
+                            required: true,
                         },
                         {
                             name: 'contrasena',
                             label: 'Contraseña',
                             type: 'password',
                             placeholder: 'Ingrese la contraseña',
+                            required: true,
                         },
                     ]}
                     onSubmit={handleLogin}>

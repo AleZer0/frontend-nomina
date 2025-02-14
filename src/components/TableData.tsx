@@ -10,9 +10,9 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
     const gridCols = `grid-cols-${fields.length}`; // Ajusta dinámicamente el número de columnas
 
     return (
-        <div className='overflow-visible rounded-lg bg-white shadow-lg'>
+        <div className={`grid ${gridCols} overflow-visible rounded-lg bg-white shadow-lg`}>
             {/* Encabezados */}
-            <div className={`grid ${gridCols} bg-gray-200 p-3 text-center font-semibold text-gray-700`}>
+            <div className={`flex justify-between bg-gray-200 p-3 text-center font-semibold text-gray-700`}>
                 {fields.map((field, index) => (
                     <div key={index}>{field}</div>
                 ))}
@@ -23,7 +23,7 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
                 {data.map((item, index) => (
                     <div
                         key={index}
-                        className={`grid ${gridCols} items-center p-3 text-center text-gray-800 odd:bg-gray-50`}>
+                        className={`flex items-center justify-between p-3 text-center text-gray-800 odd:bg-gray-50`}>
                         {renderRow(item, index)}
                     </div>
                 ))}

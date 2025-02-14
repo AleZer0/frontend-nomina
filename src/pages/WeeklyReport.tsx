@@ -5,6 +5,7 @@ import { FaFilePdf } from 'react-icons/fa6';
 import { downloadWeeklyReportsPDF } from '../services/pdf.service';
 import { ReportesSemanales } from '../services/weeklyReport.service';
 import { WeeklyReportData } from '../types';
+import TableData from '../components/TableData';
 
 const WeeklyReport: React.FC = () => {
     const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
@@ -21,25 +22,24 @@ const WeeklyReport: React.FC = () => {
     return (
         <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Reportes Semanales' />
+
             <main className='p-6'>
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
-                    {/* Encabezado de la tabla */}
-                    <div className='grid grid-cols-7 bg-gray-200 p-3 text-center font-semibold text-gray-700'>
-                        <div>Semana</div>
-                        <div>Empleados Pagados</div>
-                        <div>Total Sueldos</div>
-                        <div>Préstamos</div>
-                        <div>Infonavit</div>
-                        <div>Total Neto</div>
-                        <div>Acciones</div>
-                    </div>
-
-                    {/* Filas del reporte */}
-                    <div className='divide-y divide-gray-300'>
-                        {reportes.map((item, index) => (
-                            <div
-                                key={index}
-                                className='grid grid-cols-7 items-center p-3 text-center text-gray-800 odd:bg-gray-50'>
+                    <TableData
+                        // Encabezados para la tabla
+                        fields={[
+                            'Semana',
+                            'Empleados',
+                            'Total Sueldos',
+                            'Préstamos',
+                            'Infonavit',
+                            'Total Neto',
+                            'Acciones',
+                        ]}
+                        // Datos de la tabla
+                        data={reportes}
+                        renderRow={item => (
+                            <>
                                 <div>{`Semana ${item.semana}, 2025`}</div>
                                 <div>{item.empleados_pagados.length}</div>
                                 <div>${item.total_sueldos.toFixed(2)}</div>
@@ -56,9 +56,9 @@ const WeeklyReport: React.FC = () => {
                                         Generar PDF
                                     </Button>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            </>
+                        )}
+                    />
                 </div>
             </main>
         </div>

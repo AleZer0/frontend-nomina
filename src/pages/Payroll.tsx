@@ -6,8 +6,10 @@ import Button from '../components/Button';
 import Empleado from '../services/employees.service';
 import { HiDocumentPlus } from 'react-icons/hi2';
 import { Employee } from './Employees';
-import TableDataNomina from '../components/TableDataNomina';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
+import TableData from '../components/TableData';
+import { downloadPayrollPDF } from '../services/pdf.service';
+import { FaFilePdf } from 'react-icons/fa';
 
 const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
@@ -62,12 +64,46 @@ const Payroll: React.FC = () => {
             </Header>
 
             <main className='flex-1 p-6'>
-                <TableDataNomina
-                    fields={['Folio', 'Empleado', 'Fecha', 'Sueldo', 'Préstamos', 'Infonavit', 'Total a Pagar']}
+                <TableData
+                    fields={[
+                        'Folio',
+                        'Empleado',
+                        'Fecha',
+                        'Sueldo',
+                        'Préstamos',
+                        'Infonavit',
+                        'Total a Pagar',
+                        'Acciones',
+                    ]}
                     data={nominas}
+                    renderRow={item => (
+                        <>
+                            <div>{item.folio}</div>
+                            <div>
+                                {item.empleado.nombre} {item.empleado.apellido}
+                            </div>{' '}
+                            <div>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
+                            <div>${item.sueldo.toFixed(2)}</div>
+                            <div>${item.prestamos.toFixed(2)}</div>
+                            <div>${item.infonavit.toFixed(2)}</div>
+                            <div className='font-semibold text-green-600'>
+                                ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
+                            </div>
+                            {/* Acciones */}
+                            <div className='flex justify-center gap-2'>
+                                <Button
+                                    onClick={() => downloadPayrollPDF(item.folio)}
+                                    design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
+                                    <span className='relative pt-0.5'>
+                                        <FaFilePdf size={17} />
+                                    </span>
+                                    Generar PDF
+                                </Button>
+                            </div>
+                        </>
+                    )}
                 />
             </main>
-
             <CreatePayrollModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

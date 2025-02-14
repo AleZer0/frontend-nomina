@@ -62,7 +62,7 @@ const Login: React.FC = () => {
                 <Button
                     onClick={handleLogin}
                     disabled={nombre_usuario === '' || contrasena === ''}
-                    design={`${nombre_usuario === '' || contrasena === '' ? 'bg-gray-300 text-blue-50' : 'bg-blue-500 hover:bg-blue-400 text-blue-50 cursor-pointer'}`}>
+                    design={`${nombre_usuario === '' || contrasena === '' ? 'bg-gray-300 rounded text-blue-50' : 'bg-blue-500 hover:bg-blue-400 rounded text-blue-50 cursor-pointer'}`}>
                     {nombre_usuario === '' || contrasena === '' ? 'Esperando...' : 'Ingresar'}
                 </Button>
             </div>

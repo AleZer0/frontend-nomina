@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import { FaFilePdf } from 'react-icons/fa6';
-import { downloadWeeklyReportsPDF } from '../services/pdf.service';
+import { previewWeeklyReportsPDF } from '../services/pdf.service';
 import { ReportesSemanales } from '../services/weeklyReport.service';
 import { WeeklyReportData } from '../types';
 import TableData from '../components/TableData';
@@ -48,7 +48,7 @@ const WeeklyReport: React.FC = () => {
                                 <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
                                 <div className='flex justify-center gap-2'>
                                     <Button
-                                        onClick={() => downloadWeeklyReportsPDF(2025, item)}
+                                        onClick={() => previewWeeklyReportsPDF(2025, item)}
                                         design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                         <span className='relative pt-0.5'>
                                             <FaFilePdf size={17} />

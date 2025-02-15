@@ -8,7 +8,7 @@ import { HiDocumentPlus } from 'react-icons/hi2';
 import { Employee } from './Employees';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
-import { downloadPayrollPDF } from '../services/pdf.service';
+import { previewPayrollPDF } from '../services/pdf.service';
 import { FaFilePdf } from 'react-icons/fa';
 
 const Payroll: React.FC = () => {
@@ -51,7 +51,7 @@ const Payroll: React.FC = () => {
     };
 
     return (
-        <div className='ml-64 flex h-screen flex-col bg-gray-100'>
+        <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Listado de Nóminas'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
@@ -63,7 +63,7 @@ const Payroll: React.FC = () => {
                 </Button>
             </Header>
 
-            <main className='flex-1 p-6'>
+            <main className='p-6'>
                 <TableData
                     fields={[
                         'Folio',
@@ -78,21 +78,18 @@ const Payroll: React.FC = () => {
                     data={nominas}
                     renderRow={item => (
                         <>
-                            <div>{item.folio}</div>
-                            <div>
-                                {item.empleado.nombre} {item.empleado.apellido}
-                            </div>{' '}
-                            <div>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
-                            <div>${item.sueldo.toFixed(2)}</div>
-                            <div>${item.prestamos.toFixed(2)}</div>
-                            <div>${item.infonavit.toFixed(2)}</div>
-                            <div className='font-semibold text-green-600'>
+                            <div className='p-2'>{item.folio}</div>
+                            <div className='p-2'>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
+                            <div className='p-2'>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
+                            <div className='p-2'>${item.sueldo.toFixed(2)}</div>
+                            <div className='p-2'>${item.prestamos.toFixed(2)}</div>
+                            <div className='p-2'>${item.infonavit.toFixed(2)}</div>
+                            <div className='p-2 font-semibold text-green-600'>
                                 ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
                             </div>
-                            {/* Acciones */}
-                            <div className='flex justify-center gap-2'>
+                            <div className='flex justify-center gap-2 p-2'>
                                 <Button
-                                    onClick={() => downloadPayrollPDF(item.folio)}
+                                    onClick={() => previewPayrollPDF(item.folio)}
                                     design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                     <span className='relative pt-0.5'>
                                         <FaFilePdf size={17} />

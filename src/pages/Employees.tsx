@@ -107,48 +107,46 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
 
-            <main className='p-6'>
-                <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
-                    <TableData
-                        // Encabezados para la tabla
-                        fields={['Nombre', 'Apellidos', 'Puesto', 'Sueldo', 'Última Nómina', 'Acciones']}
-                        // Datos de la tabla
-                        data={employees}
-                        // Cómo renderizar cada fila
-                        renderRow={(item, index) => (
-                            <>
-                                <div>{item.nombre}</div>
-                                <div>{item.apellido}</div>
-                                <div>{item.puesto}</div>
-                                <div className='font-semibold text-green-600'>${item.sueldo.toFixed(2)}</div>
-                                <div>
-                                    Folio:
-                                    <Link to='/payroll' className='text-blue-600 underline'>
-                                        {' N/A'}
-                                    </Link>
-                                </div>
-                                <div className='flex justify-center gap-2'>
-                                    <Button
-                                        onClick={() => {
-                                            setIsModalPayrollOpen(true);
-                                            setEmpleadoSeleccionado(item);
-                                        }}
-                                        design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
-                                        <span className='relative pt-0.5'>
-                                            <HiDocumentPlus size={17} />
-                                        </span>
-                                        Generar Nómina
-                                    </Button>
-                                    <DropdownMenu
-                                        buttonRef={el => (buttonRefs.current[index] = el)}
-                                        onDelete={() => handleDelete(item.id_empleado)}
-                                        onEdit={() => handleEdit(item)}
-                                    />
-                                </div>
-                            </>
-                        )}
-                    />
-                </div>
+            <main className='overflow-visible p-6'>
+                <TableData
+                    // Encabezados para la tabla
+                    fields={['Nombre', 'Apellidos', 'Puesto', 'Sueldo', 'Última Nómina', 'Acciones']}
+                    // Datos de la tabla
+                    data={employees}
+                    // Cómo renderizar cada fila
+                    renderRow={(item, index) => (
+                        <>
+                            <div>{item.nombre}</div>
+                            <div>{item.apellido}</div>
+                            <div>{item.puesto}</div>
+                            <div className='font-semibold text-green-600'>${item.sueldo.toFixed(2)}</div>
+                            <div>
+                                Folio:
+                                <Link to='/payroll' className='text-blue-600 underline'>
+                                    {' N/A'}
+                                </Link>
+                            </div>
+                            <div className='flex justify-center gap-2'>
+                                <Button
+                                    onClick={() => {
+                                        setIsModalPayrollOpen(true);
+                                        setEmpleadoSeleccionado(item);
+                                    }}
+                                    design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
+                                    <span className='relative pt-0.5'>
+                                        <HiDocumentPlus size={17} />
+                                    </span>
+                                    Generar Nómina
+                                </Button>
+                                <DropdownMenu
+                                    buttonRef={el => (buttonRefs.current[index] = el)}
+                                    onDelete={() => handleDelete(item.id_empleado)}
+                                    onEdit={() => handleEdit(item)}
+                                />
+                            </div>
+                        </>
+                    )}
+                />
             </main>
 
             {/* MODALES */}

@@ -16,6 +16,7 @@ export const emptyEmployee = {
     departamento: '',
     puesto: '',
     sueldo: 0,
+    nomina: [],
 };
 
 const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -26,6 +27,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
         departamento: '',
         puesto: '',
         sueldo: '',
+        nomina: [],
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +47,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
             departamento: newEmployee.departamento,
             puesto: newEmployee.puesto,
             sueldo: parseFloat(newEmployee.sueldo),
+            nomina: newEmployee.nomina,
         });
     };
 

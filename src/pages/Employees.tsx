@@ -22,6 +22,7 @@ export interface Employee {
     created_at?: string;
     updated_at?: string;
     estado?: number;
+    nomina: number | Array<any>;
 }
 
 const Employees: React.FC = () => {
@@ -127,9 +128,9 @@ const Employees: React.FC = () => {
                                 <div>{item.puesto}</div>
                                 <div>${item.sueldo.toFixed(2)}</div>
                                 <div>
-                                    Folio:
+                                    {'Folio: '}
                                     <Link to='/payroll' className='text-blue-600 underline'>
-                                        {' N/A'}
+                                        {`NOM${item.nomina.toString().padStart(4, '0') || 'No tienen nomina'}`}
                                     </Link>
                                 </div>
                                 <div className='flex justify-center gap-2'>

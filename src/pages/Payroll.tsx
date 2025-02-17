@@ -10,24 +10,25 @@ import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
 import { previewPayrollPDF } from '../services/pdf.service';
 import { FaFilePdf } from 'react-icons/fa';
+import Loader from '../components/Loader';
 
 const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
     const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        Empleado.getEmployees(1)
-            .then(response => {
-                setEmpleados(response?.empleados || []);
+        // Ejecuta ambas peticiones en paralelo
+        Promise.all([
+            Empleado.getEmployees(1).then(response => setEmpleados(response?.empleados || [])),
+            getPayrolls(1).then(response => setNominas(response?.nominas || [])),
+        ])
+            .catch(() => {
+                setEmpleados([]);
+                setNominas([]);
             })
-            .catch(() => setEmpleados([]));
-
-        getPayrolls(1)
-            .then(response => {
-                setNominas(response?.nominas || []);
-            })
-            .catch(() => setNominas([]));
+            .finally(() => setLoading(false));
     }, []);
 
     const handleSubmit = (newNomina: {
@@ -51,7 +52,7 @@ const Payroll: React.FC = () => {
     };
 
     return (
-        <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
+        <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Listado de Nóminas'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
@@ -64,6 +65,8 @@ const Payroll: React.FC = () => {
             </Header>
 
             <main className='p-6'>
+                {loading && <Loader />}
+                <div className='overflow-hidden rounded-lg bg-white shadow-lg'></div>
                 <TableData
                     fields={[
                         'Folio',
@@ -102,10 +105,10 @@ const Payroll: React.FC = () => {
                 />
             </main>
             <CreatePayrollModal
+                empleados={empleados}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleSubmit}
-                empleados={empleados}
             />
         </div>
     );

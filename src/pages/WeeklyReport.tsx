@@ -6,9 +6,11 @@ import { previewWeeklyReportsPDF } from '../services/pdf.service';
 import { ReportesSemanales } from '../services/weeklyReport.service';
 import { WeeklyReportData } from '../types';
 import TableData from '../components/TableData';
+import Loader from '../components/Loader';
 
 const WeeklyReport: React.FC = () => {
     const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         ReportesSemanales.getReportsList()
@@ -16,7 +18,8 @@ const WeeklyReport: React.FC = () => {
                 if (response && Array.isArray(response.data)) setReportes(response.data);
                 else setReportes([]);
             })
-            .catch(() => setReportes([]));
+            .catch(() => setReportes([]))
+            .finally(() => setLoading(false));
     }, []);
 
     return (
@@ -24,6 +27,7 @@ const WeeklyReport: React.FC = () => {
             <Header tittle='Reportes Semanales' />
 
             <main className='p-6'>
+                {loading && <Loader />}
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
                     <TableData
                         // Encabezados para la tabla

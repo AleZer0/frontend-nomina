@@ -1,12 +1,10 @@
 import React, { ReactNode } from 'react';
-import Button from './Button';
 import { MdCancel } from 'react-icons/md';
 
-interface ModalProps {
+export interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     title: string;
-    name: string;
     children: ReactNode;
     footer?: ReactNode; // Botones personalizados
 }
@@ -15,13 +13,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer 
     if (!isOpen) return null;
 
     return (
-        <>
-            <div className='flex justify-between'>
-                <h1>{title}</h1>
-                <MdCancel onClick={onClose} />
+        <div className='bg-opacity-30 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md'>
+            <div className='relative w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
+                <div className='mb-4 flex items-center justify-between'>
+                    <h1 className='text-xl font-bold'>{title}</h1>
+                    <MdCancel className='cursor-pointer text-2xl' onClick={onClose} />
+                </div>
+                <div>{children}</div>
+                {footer && <div className='mt-4'>{footer}</div>}
             </div>
-            <div className='w-96 rounded-lg bg-white p-6 shadow-lg'>{children}</div>
-        </>
+        </div>
     );
 };
 

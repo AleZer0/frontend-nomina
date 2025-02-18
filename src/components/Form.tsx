@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { useError } from '../context/ErrorContext';
+import { useAppStatus } from '../context/AppStatusContext';
 import Input from './Input';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -21,7 +21,7 @@ interface FormProps {
 const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const { errors, setError, clearError } = useError();
+    const { errors, setError, clearError } = useAppStatus();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -33,8 +33,9 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
         }));
 
         // Validación en tiempo real
-        if (value.trim() === '') {
-            setError(name, 'Este campo es obligatorio');
+        const field = fields.find(f => f.name === name);
+        if (field?.required && value.trim() === '') {
+            setError(name, field.label);
         } else {
             clearError(name);
         }
@@ -44,9 +45,9 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
         e.preventDefault();
         let hasError = false;
 
-        fields.forEach(({ name, required }) => {
+        fields.forEach(({ name, label, required }) => {
             if (required && !formData[name]) {
-                setError(name, 'Este campo es obligatorio');
+                setError(name, label);
                 hasError = true;
             }
         });
@@ -57,14 +58,14 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className='space-y-3'>
+        <form onSubmit={handleSubmit} className='space-y-3 text-sm text-blue-950 md:text-base'>
             {fields.map(({ name, label, type, options, placeholder, required }) => (
                 <div key={name} className='flex flex-col'>
                     <label className='font-medium'>
                         {label} {required && <span className='text-red-500'>*</span>}
                     </label>
                     {type === 'select' ? (
-                        <select name={name} onChange={handleChange} className='rounded border p-2'>
+                        <select name={name} required={required} onChange={handleChange} className='rounded border p-2'>
                             {options?.map(option => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
@@ -72,10 +73,17 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
                             ))}
                         </select>
                     ) : type === 'checkbox' ? (
-                        <input type='checkbox' name={name} onChange={handleChange} className='mt-1' />
+                        <input
+                            type='checkbox'
+                            name={name}
+                            required={required}
+                            onChange={handleChange}
+                            className='mt-1'
+                        />
                     ) : type === 'textarea' ? (
                         <textarea
                             name={name}
+                            required={required}
                             placeholder={placeholder}
                             onChange={handleChange}
                             className='rounded border p-2'
@@ -88,7 +96,6 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
                                 placeholder={placeholder}
                                 value={formData[name] || ''}
                                 onChange={handleChange}
-                                variant='normal'
                             />
 
                             {type === 'password' && (
@@ -99,9 +106,13 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, children }) => {
                                     {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                                 </button>
                             )}
+
+                            {errors[name] && <p className='text-sm text-red-500'>{errors[name]}</p>}
+                            <p className='hidden text-sm text-red-500 peer-invalid:block'>
+                                El campo {label.toLowerCase()} es incorrecto
+                            </p>
                         </div>
                     )}
-                    {errors[name] && <p className='text-sm text-red-500'>{errors[name]}</p>}
                 </div>
             ))}
             {children}

@@ -26,8 +26,8 @@ const Login: React.FC = () => {
 
     return (
         <div className='flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-blue-50'>
-            <div className='w-96 rounded-lg bg-blue-50 px-8 py-8 shadow-2xl shadow-blue-300'>
-                <h1 className='mb-6 font-sans text-3xl font-bold text-blue-950'>Iniciar Sesión</h1>
+            <div className='w-80 rounded-xl bg-blue-50 px-8 py-8 shadow-2xl shadow-blue-300 md:w-96'>
+                <h1 className='mb-6 font-sans text-2xl font-bold text-blue-950 md:text-3xl'>Iniciar Sesión</h1>
                 <Form
                     fields={[
                         {
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
                     <div className='mb-4 text-right'>
                         <Link
                             to='/forgot-password' // Ruta para la página de recuperación
-                            className='text-sm text-blue-500 hover:underline'>
+                            className='text-xs text-blue-500 hover:underline md:text-sm'>
                             ¿Olvidaste tu contraseña?
                         </Link>
                     </div>

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Button from '../components/Button';
 import { FaFilePdf } from 'react-icons/fa6';
 import { previewWeeklyReportsPDF } from '../services/pdf.service';
 import { ReportesSemanales } from '../services/weeklyReport.service';
 import { WeeklyReportData } from '../types';
 import TableData from '../components/TableData';
 import Loader from '../components/Loader';
+import LoadingButton from '../components/LoadingButton';
 
 const WeeklyReport: React.FC = () => {
     const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
@@ -25,7 +25,6 @@ const WeeklyReport: React.FC = () => {
     return (
         <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Reportes Semanales' />
-
             <main className='p-6'>
                 {loading && <Loader />}
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
@@ -51,14 +50,12 @@ const WeeklyReport: React.FC = () => {
                                 <div>${item.total_infonavit.toFixed(2)}</div>
                                 <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
                                 <div className='flex justify-center gap-2'>
-                                    <Button
-                                        onClick={() => previewWeeklyReportsPDF(2025, item)}
-                                        design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
+                                    <LoadingButton onClick={() => previewWeeklyReportsPDF(2025, item)}>
                                         <span className='relative pt-0.5'>
                                             <FaFilePdf size={17} />
                                         </span>
                                         Generar PDF
-                                    </Button>
+                                    </LoadingButton>
                                 </div>
                             </>
                         )}

@@ -3,7 +3,7 @@ import Button from '../Button';
 import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
 
-interface CreatePayrollModalProps {
+interface CreateLoanModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (newNomina: {
@@ -13,6 +13,8 @@ interface CreatePayrollModalProps {
         infonavit: number;
         sueldo: number;
         id_empleado: number;
+        monto_total: number;
+        saldo_pendiente: number;
     }) => void;
     empleados: Employee[];
     empleadoSeleccionado?: Employee | null;
@@ -25,16 +27,41 @@ const emptyPayroll = {
     infonavit: 0,
     sueldo: 0,
     id_empleado: 0,
+    monto_total: 0,
+    saldo_pendiente: 0,
 };
 
-const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
+const CreatePayrollModal: React.FC<CreateLoanModalProps> = ({
     isOpen,
     onClose,
     onSubmit,
     empleados,
     empleadoSeleccionado,
 }) => {
+    // Estado para la nueva nómina
     const [newNomina, setNewNomina] = useState(emptyPayroll);
+    // Estado para controlar si el saldo ha sido editado manualmente
+    const [isSaldoModified, setIsSaldoModified] = useState(false);
+
+    const handleMontoTotalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value) || 0;
+        setNewNomina(prevNomina => ({
+            ...prevNomina,
+            monto_total: value,
+            // Solo actualiza saldo_pendiente con el mismo valor de monto_total
+            // si NO ha sido modificado manualmente
+            saldo_pendiente: isSaldoModified ? prevNomina.saldo_pendiente : value,
+        }));
+    };
+
+    const handleSaldoPendienteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value) || 0;
+        setNewNomina(prevNomina => ({
+            ...prevNomina,
+            saldo_pendiente: value,
+        }));
+        setIsSaldoModified(true); // Marcar que se editó manualmente
+    };
 
     useEffect(() => {
         if (empleadoSeleccionado) {
@@ -52,13 +79,15 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
             return;
         }
         onSubmit(newNomina);
+        // Resetear campos
         setNewNomina(emptyPayroll);
+        setIsSaldoModified(false);
     };
 
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Añadir una nómina'>
+        <Modal isOpen={true} onClose={onClose} title='Añadir un préstamo'>
             {/* Selección de Empleado */}
             <label className='mb-2 block text-gray-700'>Empleado:</label>
             <select
@@ -71,6 +100,8 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                         id_empleado: selectedEmployee?.id_empleado || 0,
                         sueldo: selectedEmployee?.sueldo || 0,
                     }));
+                    // Si cambiamos de empleado, podemos decidir resetear o no el estado del saldo:
+                    setIsSaldoModified(false);
                 }}
                 className='mb-4 w-full rounded-lg border p-2'
                 aria-label='Seleccionar Empleado'>
@@ -82,46 +113,32 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 ))}
             </select>
 
-            {/* Campos de sueldo, préstamos, infonavit */}
-            <label className='mb-2 block text-gray-700'>Días trabajados:</label>
+            {/* Campo de Monto Total */}
+            <label className='mb-2 block text-gray-700'>Monto Total</label>
             <input
                 type='number'
-                name='dias_trabajados'
-                value={newNomina.dias_trabajados}
-                onChange={e => setNewNomina({ ...newNomina, dias_trabajados: parseInt(e.target.value) || 0 })}
+                name='monto_total'
+                value={newNomina.monto_total}
+                onChange={handleMontoTotalChange}
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
-            <label className='mb-2 block text-gray-700'>Sueldo:</label>
+            {/* Campo de Saldo Pendiente (Editable) */}
+            <label className='mb-2 block text-gray-700'>Saldo Pendiente</label>
             <input
                 type='number'
-                name='sueldo'
-                value={newNomina.sueldo}
-                onChange={e => setNewNomina({ ...newNomina, sueldo: parseFloat(e.target.value) || 0 })}
+                name='saldo_pendiente'
+                value={newNomina.saldo_pendiente}
+                onChange={handleSaldoPendienteChange}
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
-            <label className='mb-2 block text-gray-700'>Préstamos:</label>
-            <input
-                type='number'
-                name='prestamos'
-                value={newNomina.prestamos}
-                onChange={e => setNewNomina({ ...newNomina, prestamos: parseFloat(e.target.value) || 0 })}
-                className='mb-4 w-full rounded-lg border p-2'
-            />
-
-            <label className='mb-2 block text-gray-700'>Infonavit:</label>
-            <input
-                type='number'
-                name='infonavit'
-                value={newNomina.infonavit}
-                onChange={e => setNewNomina({ ...newNomina, infonavit: parseFloat(e.target.value) || 0 })}
-                className='mb-4 w-full rounded-lg border p-2'
-            />
-
-            {/* Botones de acción */}
             <div className='flex justify-end gap-2'>
-                <Button onClick={handleSubmit} children='Guardar' design='bg-green-500 text-white cursor-pointer' />
+                <Button
+                    onClick={handleSubmit}
+                    design='rounded cursor-pointer bg-green-500 text-white hover:bg-green-600'>
+                    Guardar
+                </Button>
             </div>
         </Modal>
     );

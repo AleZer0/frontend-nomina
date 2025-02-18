@@ -8,6 +8,7 @@ import Button from './Button';
 interface DropdownMenuProps {
     onDelete?: () => void;
     onEdit?: () => void;
+    onView?: () => void;
     /**
      * Podemos recibir un ref externo para el botón,
      * o podemos no usarlo. Si no te hace falta, puedes volverlo opcional.
@@ -15,7 +16,7 @@ interface DropdownMenuProps {
     buttonRef?: React.RefObject<HTMLButtonElement> | ((el: HTMLButtonElement | null) => void);
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ onDelete, onEdit, buttonRef }) => {
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ onDelete, onEdit, onView, buttonRef }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +49,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onDelete, onEdit, buttonRef
                     <ul className='py-2 text-sm text-gray-700'>
                         <li>
                             <Button
-                                onClick={onEdit}
+                                onClick={onView}
                                 design='block w-full cursor-pointer px-4 py-2 text-sm  text-left hover:bg-blue-100 hover:font-bold'>
                                 <span className='relative pt-0.5'>
                                     <MdEdit size={17} />

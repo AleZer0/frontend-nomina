@@ -12,9 +12,10 @@ const previewPayrollPDF = async (folio: number) => {
         const fileName = `NOM${folio.toString().padStart(4, '0')}.pdf`;
 
         // Abre una nueva ventana con HTML para pr|evisualizar el PDF y un botón de descarga
-        const newWindow = window.open('');
-        if (newWindow) {
-            newWindow.document.write(`
+        setTimeout(() => {
+            const newWindow = window.open('');
+            if (newWindow) {
+                newWindow.document.write(`
         <!DOCTYPE html>
         <html lang="es">
           <head>
@@ -51,7 +52,8 @@ const previewPayrollPDF = async (folio: number) => {
           </body>
         </html>
       `);
-        }
+            }
+        }, 3000);
     } catch (error) {
         console.error('❌ Error al previsualizar la nómina:', error);
     }
@@ -68,9 +70,10 @@ const previewWeeklyReportsPDF = async (year: number, data: WeeklyReportData) => 
         const fileName = `RS_${data.semana}.pdf`;
 
         // Abre una nueva ventana con HTML para previsualizar el PDF y un botón de descarga
-        const newWindow = window.open('');
-        if (newWindow) {
-            newWindow.document.write(`
+        setTimeout(() => {
+            const newWindow = window.open('');
+            if (newWindow) {
+                newWindow.document.write(`
         <!DOCTYPE html>
         <html lang="es">
           <head>
@@ -107,7 +110,8 @@ const previewWeeklyReportsPDF = async (year: number, data: WeeklyReportData) => 
           </body>
         </html>
       `);
-        }
+            }
+        }, 3000);
     } catch (error) {
         console.error('❌ Error al previsualizar el reporte semanal:', error);
     }

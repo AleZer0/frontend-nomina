@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
 import Empleado from '../services/employees.service';
-import DropdownMenu from '../components/DropdownMenu';
 import Button from '../components/Button';
 import { createPayroll } from '../services/payroll.service';
 import CreateEmployeeModal from '../components/modals/CreateNewEmployee';
@@ -12,6 +11,7 @@ import { IoIosPersonAdd } from 'react-icons/io';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
 import Loader from '../components/Loader';
+import ViewEmployeeModal from '../components/modals/ViewEmployee';
 
 export interface Employee {
     id_empleado: number;
@@ -27,22 +27,27 @@ export interface Employee {
 }
 
 const Employees: React.FC = () => {
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee>();
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalPayrollOpen, setIsModalPayrollOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
     useEffect(() => {
-        (async () => {
-            const data = await Empleado.getEmployees(1);
-            setEmployees(data.empleados || []);
-            setLoading(false);
-        })();
+        const fetchEmployees = async () => {
+            try {
+                const data = await Empleado.getEmployees(1);
+                setEmployees(data.empleados || []);
+            } catch (error) {
+                console.error('Error al obtener empleados:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEmployees();
     }, []);
 
     const handleAddEmployee = (newEmployee: Employee) => {
@@ -59,11 +64,19 @@ const Employees: React.FC = () => {
         setIsEditModalOpen(false);
     };
 
+    // Abre el modal de vista (Detalles)
+    const handleViewEmployee = (employee: Employee) => {
+        setEmpleadoSeleccionado(employee);
+        setIsViewModalOpen(true);
+    };
+
+    // Al hacer clic en "Editar" desde el modal
     const handleEdit = (employee: Employee) => {
         setEditingEmployee(employee);
         setIsEditModalOpen(true);
     };
 
+    // Al hacer clic en "Eliminar" desde el modal
     const handleDelete = (id_empleado: number) => {
         Empleado.deleteEmployee(id_empleado).then(() => {
             Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
@@ -125,8 +138,8 @@ const Employees: React.FC = () => {
                             <div className='flex justify-center gap-2'>
                                 <Button
                                     onClick={() => {
-                                        setIsModalPayrollOpen(true);
                                         setEmpleadoSeleccionado(item);
+                                        setIsModalPayrollOpen(true);
                                     }}
                                     design='cursor-pointer rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700'>
                                     <span className='relative pt-0.5'>
@@ -134,34 +147,46 @@ const Employees: React.FC = () => {
                                     </span>
                                     Generar Nómina
                                 </Button>
-                                <DropdownMenu
-                                    buttonRef={el => (buttonRefs.current[index] = el)}
-                                    onDelete={() => handleDelete(item.id_empleado)}
-                                    onEdit={() => handleEdit(item)}
-                                />
+                                <Button
+                                    design='cursor-pointer rounded bg-blue-500 border-blue-700 text-white hover:bg-blue-700'
+                                    onClick={() => handleViewEmployee(item)}>
+                                    Detalles
+                                </Button>
                             </div>
                         </>
                     )}
                 />
+
+                {/* MODALES */}
+                <ViewEmployeeModal
+                    isOpen={isViewModalOpen}
+                    onClose={() => setIsViewModalOpen(false)}
+                    employee={empleadoSeleccionado}
+                    onEdit={handleEdit} // Agregamos callbacks
+                    onDelete={handleDelete}
+                />
+
                 <CreateEmployeeModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onSubmit={handleAddEmployee}
                 />
+
+                <CreatePayrollModal
+                    empleados={employees}
+                    isOpen={isModalPayrollOpen}
+                    onClose={() => setIsModalPayrollOpen(false)}
+                    onSubmit={handleSubmitPayroll}
+                    empleadoSeleccionado={empleadoSeleccionado}
+                />
+
+                <EditEmployeeModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    employee={editingEmployee}
+                    onSave={handleSaveEdit}
+                />
             </main>
-            <CreatePayrollModal
-                empleados={employees}
-                isOpen={isModalPayrollOpen}
-                onClose={() => setIsModalPayrollOpen(false)}
-                onSubmit={handleSubmitPayroll}
-                empleadoSeleccionado={empleadoSeleccionado}
-            />
-            <EditEmployeeModal
-                isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
-                employee={editingEmployee}
-                onSave={handleSaveEdit}
-            />
         </div>
     );
 };

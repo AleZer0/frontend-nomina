@@ -115,12 +115,6 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
 
             <div className='flex justify-end gap-2'>
                 <Button
-                    onClick={onClose}
-                    disabled={false}
-                    design='rounded bg-red-500 hover:bg-red-600 text-white cursor-pointer'>
-                    Cancelar
-                </Button>
-                <Button
                     onClick={handleSubmit}
                     disabled={false}
                     design='rounded bg-green-500 hover:bg-green-600 text-white cursor-pointer'>

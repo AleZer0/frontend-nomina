@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import Button from '../Button';
 import { Employee } from '../../pages/Employees';
 import { emptyEmployee } from './CreateNewEmployee';
 import Modal from '../Modal';
+import Button from '../Button';
 
-interface EditEmployeeModalProps {
+interface ViewEmployeeProps {
     isOpen: boolean;
     onClose: () => void;
     employee: Employee | null;
-    onSave: (employee: Employee) => void;
+    onEdit: (employee: Employee) => void;
+    onDelete: (id_empleado: number) => void;
 }
 
-const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, employee, onSave }) => {
+const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, employee, onEdit, onDelete }) => {
     const [formData, setFormData] = useState<Employee>(emptyEmployee);
 
     useEffect(() => {
@@ -19,32 +20,23 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
             setFormData({
                 ...employee,
                 fecha_incorporacion: employee.fecha_incorporacion
-                    ? new Date(employee.fecha_incorporacion).toISOString().split('T')[0] // Convertir a YYYY-MM-DD
+                    ? new Date(employee.fecha_incorporacion).toISOString().split('T')[0]
                     : '',
             });
         }
     }, [employee]);
 
-    const handleSubmit = () => {
-        onSave(formData);
-        setFormData(emptyEmployee);
-        onClose();
-    };
-
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Editar Empleado'>
-            <h2 className='mb-4 text-lg font-semibold'></h2>
-
+        <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado' className='size-40'>
             <label className='mb-2 block text-gray-700'>Nombre:</label>
             <input
                 type='text'
                 name='nombre'
                 value={formData.nombre}
-                onChange={e => setFormData({ ...formData, nombre: e.target.value })}
-                placeholder='Nombre'
-                className='mb-4 w-full rounded-lg border p-2'
+                readOnly
+                className='mb-4 w-full rounded-lg border bg-gray-100 p-2'
             />
 
             <label className='mb-2 block text-gray-700'>Apellido:</label>
@@ -52,9 +44,8 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 type='text'
                 name='apellido'
                 value={formData.apellido}
-                onChange={e => setFormData({ ...formData, apellido: e.target.value })}
-                placeholder='Apellido'
-                className='mb-4 w-full rounded-lg border p-2'
+                readOnly
+                className='mb-4 w-full rounded-lg border bg-gray-100 p-2'
             />
 
             <label className='mb-2 block text-gray-700'>Fecha de incorporación:</label>
@@ -62,9 +53,8 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 type='date'
                 name='fecha_incorporacion'
                 value={formData.fecha_incorporacion}
-                onChange={e => setFormData({ ...formData, fecha_incorporacion: e.target.value })}
-                placeholder='Fecha de incorporación'
-                className='mb-4 w-full rounded-lg border p-2'
+                readOnly
+                className='mb-4 w-full rounded-lg border bg-gray-100 p-2'
             />
 
             <label className='mb-2 block text-gray-700'>Departamento:</label>
@@ -72,9 +62,8 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 type='text'
                 name='departamento'
                 value={formData.departamento}
-                onChange={e => setFormData({ ...formData, departamento: e.target.value })}
-                placeholder='Departamento'
-                className='mb-4 w-full rounded-lg border p-2'
+                readOnly
+                className='mb-4 w-full rounded-lg border bg-gray-100 p-2'
             />
 
             <label className='mb-2 block text-gray-700'>Puesto:</label>
@@ -82,9 +71,8 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 type='text'
                 name='puesto'
                 value={formData.puesto}
-                onChange={e => setFormData({ ...formData, puesto: e.target.value })}
-                placeholder='Puesto'
-                className='mb-4 w-full rounded-lg border p-2'
+                readOnly
+                className='mb-4 w-full rounded-lg border bg-gray-100 p-2'
             />
 
             <label className='mb-2 block text-gray-700'>Sueldo:</label>
@@ -92,19 +80,32 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 type='number'
                 name='sueldo'
                 value={formData.sueldo}
-                onChange={e => setFormData({ ...formData, sueldo: parseFloat(e.target.value ? e.target.value : '0') })}
-                placeholder='Sueldo'
-                className='mb-4 w-full rounded-lg border p-2'
+                readOnly
+                className='mb-4 w-full rounded-lg border bg-gray-100 p-2'
             />
             <div className='flex justify-end gap-2'>
                 <Button
-                    onClick={handleSubmit}
-                    design='rounded cursor-pointer bg-green-500 text-white hover:bg-green-600'>
-                    Guardar
+                    onClick={() => {
+                        if (!employee) return;
+                        onEdit(employee); // Llamamos callback para editar
+                        onClose(); // Cerramos este modal
+                    }}
+                    design='rounded-2xl cursor-pointer bg-blue-500 text-white hover:bg-blue-600'>
+                    Editar
+                </Button>
+
+                <Button
+                    onClick={() => {
+                        if (!employee) return;
+                        onDelete(employee.id_empleado); // Llamamos callback para eliminar
+                        onClose();
+                    }}
+                    design='rounded-2xl cursor-pointer bg-red-500 text-white hover:bg-red-600'>
+                    Eliminar
                 </Button>
             </div>
         </Modal>
     );
 };
 
-export default EditEmployeeModal;
+export default ViewEmployee;

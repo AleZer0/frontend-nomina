@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-
 import Input from '../components/Input';
-import Button from '../components/Button';
+import LoadingButton from '../components/LoadingButton';
 
 const Login: React.FC = () => {
     const [nombre_usuario, setUsername] = useState<string>('');
@@ -59,12 +58,12 @@ const Login: React.FC = () => {
                         ¿Olvidaste tu contraseña?
                     </Link>
                 </div>
-                <Button
+                <LoadingButton
                     onClick={handleLogin}
                     disabled={nombre_usuario === '' || contrasena === ''}
-                    design={`${nombre_usuario === '' || contrasena === '' ? 'bg-gray-300 text-blue-50' : 'bg-blue-500 hover:bg-blue-400 text-blue-50 cursor-pointer'}`}>
+                    className={`${nombre_usuario === '' || contrasena === '' ? 'rounded bg-gray-300 text-blue-50' : 'cursor-pointer rounded bg-blue-500 text-blue-50 hover:bg-blue-400'}`}>
                     {nombre_usuario === '' || contrasena === '' ? 'Esperando...' : 'Ingresar'}
-                </Button>
+                </LoadingButton>
             </div>
         </div>
     );

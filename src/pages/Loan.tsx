@@ -4,23 +4,17 @@ import { createPayroll, getPayrolls } from '../services/payroll.service';
 import { PayrollInterface } from '../types';
 import Button from '../components/Button';
 import Empleado from '../services/employees.service';
-import { HiDocumentPlus } from 'react-icons/hi2';
 import { Employee } from './Employees';
-import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
-import TableData from '../components/TableData';
-import { previewPayrollPDF } from '../services/pdf.service';
-import { FaFilePdf } from 'react-icons/fa';
 import Loader from '../components/Loader';
-import LoadingButton from '../components/LoadingButton';
+import CreateNewLoan from '../components/modals/CreateNewLoan';
+import { MdAttachMoney } from 'react-icons/md';
+import TableData from '../components/TableData';
 
 const Payroll: React.FC = () => {
     const [nominas, setNominas] = useState<PayrollInterface[]>([]);
     const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
-
-    // Estado para deshabilitar botones de generación de PDF
-    const [disabledButtons, setDisabledButtons] = useState<{ [key: number]: boolean }>({});
 
     useEffect(() => {
         // Ejecuta ambas peticiones en paralelo
@@ -55,47 +49,29 @@ const Payroll: React.FC = () => {
             .catch(() => alert('Error al crear la nómina.'));
     };
 
-    // Manejar la deshabilitación del botón de generación de PDF
-    const handleGeneratePDF = (folio: number) => {
-        setDisabledButtons(prev => ({ ...prev, [folio]: true }));
-        previewPayrollPDF(folio);
-
-        setTimeout(() => {
-            setDisabledButtons(prev => ({ ...prev, [folio]: false }));
-        }, 3000);
-    };
-
     return (
         <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Listado de Nóminas'>
+            <Header tittle='Listado de prestamos'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded cursor-pointer text-black'>
                     <span className='relative pt-1'>
-                        <HiDocumentPlus size={17} />
+                        <MdAttachMoney size={17} />
                     </span>
-                    Nueva nómina
+                    Añadir Prestamo
                 </Button>
             </Header>
             <main className='p-6'>
+                <div className='rounded bg-white shadow-lg'></div>
                 {loading && <Loader />}
-                <div className='overflow-hidden rounded-lg bg-white shadow-lg'></div>
                 <TableData
-                    fields={[
-                        'Folio',
-                        'Empleado',
-                        'Fecha',
-                        'Sueldo',
-                        'Préstamos',
-                        'Infonavit',
-                        'Total a Pagar',
-                        'Acciones',
-                    ]}
+                    fields={['Empleado', 'Fecha', 'Monto total', 'Saldo Pendiente', 'Último Abono']}
                     data={nominas}
                     renderRow={item => (
                         <>
-                            <div className='p-2'>{item.folio}</div>
                             <div className='p-2'>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
+                            <div className='p-2'>{new Date(item.fecha).toLocaleDateString('es-MX')} </div>
+                            {/* <div className='p-2'>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
                             <div className='p-2'>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
                             <div className='p-2'>${item.sueldo.toFixed(2)}</div>
                             <div className='p-2'>${item.prestamos.toFixed(2)}</div>
@@ -110,12 +86,12 @@ const Payroll: React.FC = () => {
                                     </span>
                                     Generar PDF
                                 </LoadingButton>
-                            </div>
+                            </div> */}
                         </>
                     )}
                 />
             </main>
-            <CreatePayrollModal
+            <CreateNewLoan
                 empleados={empleados}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

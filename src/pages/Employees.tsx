@@ -136,8 +136,11 @@ const Employees: React.FC = () => {
                                 {item.sueldo ? `$${item.sueldo.toFixed(2)}` : 'No definido'}
                             </div>
                             <div>
+                                {'Folio: '}
                                 <Link to='/payroll' className='text-blue-600 underline'>
-                                    {`NOM${item.nomina.toString().padStart(4, '0') || 'No tienen nominas'}`}
+                                    {typeof item.nomina === 'number'
+                                        ? `NOM${item.nomina.toString().padStart(4, '0')}`
+                                        : 'No tiene nominas'}
                                 </Link>
                             </div>
                             <div className='flex justify-center gap-2'>

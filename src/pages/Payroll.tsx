@@ -81,7 +81,7 @@ const Payroll: React.FC = () => {
                     data={nominas}
                     renderRow={item => (
                         <>
-                            <div className='p-2'>{item.folio}</div>
+                            <div className='p-2'>{`NOM${item.folio.toString().padStart(4, '0')}`}</div>
                             <div className='p-2'>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
                             <div className='p-2'>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
                             <div className='p-2'>${item.sueldo.toFixed(2)}</div>

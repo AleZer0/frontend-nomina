@@ -31,13 +31,17 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
 
             {/* Contenido */}
             <div className='divide-y divide-gray-300'>
-                {data.map((item, index) => (
-                    <div
-                        key={index}
-                        className={`grid ${colClass} items-center p-3 text-center text-gray-800 odd:bg-gray-50`}>
-                        {renderRow(item, index)}
-                    </div>
-                ))}
+                {data.length > 0 ? (
+                    data.map((item, index) => (
+                        <div
+                            key={index}
+                            className={`grid ${colClass} items-center p-3 text-center text-gray-800 odd:bg-gray-50`}>
+                            {renderRow(item, index)}
+                        </div>
+                    ))
+                ) : (
+                    <div className='grid items-center p-6 text-center text-gray-500'>No hay registros disponibles</div>
+                )}
             </div>
         </div>
     );

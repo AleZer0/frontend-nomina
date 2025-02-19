@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../Button';
 import { Employee } from '../../pages/Employees';
-import { emptyEmployee } from './CreateNewEmployee';
 import Modal from '../Modal';
 
 interface EditEmployeeModalProps {
@@ -10,6 +9,17 @@ interface EditEmployeeModalProps {
     employee: Employee | null;
     onSave: (employee: Employee) => void;
 }
+
+const emptyEmployee = {
+    id_empleado: 0,
+    nombre: '',
+    apellido: '',
+    fecha_incorporacion: '',
+    departamento: '',
+    puesto: '',
+    sueldo: 0,
+    nomina: [],
+};
 
 const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, employee, onSave }) => {
     const [formData, setFormData] = useState<Employee>(emptyEmployee);
@@ -27,7 +37,16 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
 
     const handleSubmit = () => {
         onSave(formData);
-        setFormData(emptyEmployee);
+        setFormData({
+            id_empleado: 0,
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            fecha_incorporacion: formData.fecha_incorporacion,
+            departamento: formData.departamento,
+            puesto: formData.puesto,
+            sueldo: formData.sueldo ?? 0,
+            nomina: formData.nomina,
+        });
         onClose();
     };
 
@@ -43,7 +62,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 name='nombre'
                 value={formData.nombre}
                 onChange={e => setFormData({ ...formData, nombre: e.target.value })}
-                placeholder='Nombre'
+                placeholder='Ingrese el nombre'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -53,7 +72,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 name='apellido'
                 value={formData.apellido}
                 onChange={e => setFormData({ ...formData, apellido: e.target.value })}
-                placeholder='Apellido'
+                placeholder='Ingrese el apellido'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -63,7 +82,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 name='fecha_incorporacion'
                 value={formData.fecha_incorporacion}
                 onChange={e => setFormData({ ...formData, fecha_incorporacion: e.target.value })}
-                placeholder='Fecha de incorporación'
+                placeholder='Ingrese la echa de incorporación'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -73,7 +92,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 name='departamento'
                 value={formData.departamento}
                 onChange={e => setFormData({ ...formData, departamento: e.target.value })}
-                placeholder='Departamento'
+                placeholder='Ingrese el departamento'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -83,7 +102,7 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
                 name='puesto'
                 value={formData.puesto}
                 onChange={e => setFormData({ ...formData, puesto: e.target.value })}
-                placeholder='Puesto'
+                placeholder='Ingrese el puesto'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -91,9 +110,9 @@ const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, 
             <input
                 type='number'
                 name='sueldo'
-                value={formData.sueldo}
+                value={formData.sueldo || ''}
                 onChange={e => setFormData({ ...formData, sueldo: parseFloat(e.target.value ? e.target.value : '0') })}
-                placeholder='Sueldo'
+                placeholder='Ingrese el sueldo'
                 className='mb-4 w-full rounded-lg border p-2'
             />
             <div className='flex justify-end gap-2'>

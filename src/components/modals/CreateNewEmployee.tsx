@@ -10,7 +10,6 @@ interface CreateEmployeeModalProps {
 }
 
 export const emptyEmployee = {
-    id_empleado: 0,
     nombre: '',
     apellido: '',
     fecha_incorporacion: '',
@@ -21,25 +20,23 @@ export const emptyEmployee = {
 };
 
 const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const [newEmployee, setNewEmployee] = useState({
-        nombre: '',
-        apellido: '',
-        fecha_incorporacion: '',
-        departamento: '',
-        puesto: '',
-        sueldo: '',
-        nomina: [],
-    });
+    const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id_empleado'>>(emptyEmployee);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewEmployee({ ...newEmployee, [e.target.name]: e.target.value });
+        const { name, value, type } = e.target;
+
+        setNewEmployee(prevEmployee => ({
+            ...prevEmployee,
+            [name]: type === 'number' ? (value === '' ? 0 : parseFloat(value)) : value,
+        }));
     };
 
     const handleSubmit = () => {
-        if (!newEmployee.nombre || !newEmployee.apellido || !newEmployee.puesto || !newEmployee.sueldo) {
+        if (!newEmployee.nombre || !newEmployee.apellido || !newEmployee.puesto) {
             alert('Por favor, completa todos los campos.');
             return;
         }
+
         onSubmit({
             id_empleado: 0,
             nombre: newEmployee.nombre,
@@ -47,22 +44,31 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
             fecha_incorporacion: newEmployee.fecha_incorporacion,
             departamento: newEmployee.departamento,
             puesto: newEmployee.puesto,
-            sueldo: parseFloat(newEmployee.sueldo),
+            sueldo: newEmployee.sueldo ?? 0, // 🔹 Asegura que sueldo nunca sea undefined
             nomina: newEmployee.nomina,
         });
+
+        setNewEmployee(emptyEmployee);
+        onClose();
     };
 
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Añadir un nuevo empleado'>
+        <Modal
+            isOpen={true}
+            onClose={() => {
+                onClose();
+                setNewEmployee(emptyEmployee);
+            }}
+            title='Añadir un nuevo empleado'>
             <label className='mb-2 block text-gray-700'>Nombre:</label>
             <input
                 type='text'
                 name='nombre'
                 value={newEmployee.nombre}
                 onChange={handleChange}
-                placeholder='Nombre'
+                placeholder='Ingrese el nombre'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -72,7 +78,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 name='apellido'
                 value={newEmployee.apellido}
                 onChange={handleChange}
-                placeholder='Apellido'
+                placeholder='Ingrese el apellido(s)'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -82,7 +88,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 name='fecha_incorporacion'
                 value={newEmployee.fecha_incorporacion}
                 onChange={handleChange}
-                placeholder='Fecha de incorporación'
+                placeholder='Ingrese la fecha de incorporación'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -92,7 +98,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 name='departamento'
                 value={newEmployee.departamento}
                 onChange={handleChange}
-                placeholder='Departamento'
+                placeholder='Ingrese el departamento'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -102,7 +108,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 name='puesto'
                 value={newEmployee.puesto}
                 onChange={handleChange}
-                placeholder='Puesto'
+                placeholder='Ingrese el puesto'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -110,9 +116,9 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
             <input
                 type='number'
                 name='sueldo'
-                value={newEmployee.sueldo}
+                value={newEmployee.sueldo || ''}
                 onChange={handleChange}
-                placeholder='Sueldo'
+                placeholder='Ingrese el sueldo'
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
@@ -120,7 +126,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 <Button
                     onClick={handleSubmit}
                     disabled={false}
-                    design='rounded bg-green-500 hover:bg-green-600 text-white cursor-pointer'>
+                    design='rounded-2xl bg-green-500 hover:bg-green-600 text-white cursor-pointer'>
                     Guardar
                 </Button>
             </div>

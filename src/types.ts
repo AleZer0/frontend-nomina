@@ -17,11 +17,16 @@ export interface AuthResponse {
     usuario: UsuarioType;
 }
 
-export interface EmpleadoType {
-    nombre: string;
-    apellido: string;
-    puesto: string;
-    sueldo: number;
+export interface LoanType {
+    id_prestamo: number;
+    id_empleado: number;
+    monto_total: number;
+    saldo_pendiente: number;
+    estado?: number;
+    created_at?: string;
+    updated_at?: string;
+    empleado: string;
+    abonos: number;
 }
 
 export interface PayrollInterface {

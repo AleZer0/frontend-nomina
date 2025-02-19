@@ -7,7 +7,7 @@ import { IoDocuments } from 'react-icons/io5';
 import { BiSolidReport } from 'react-icons/bi';
 import { GiEntryDoor } from 'react-icons/gi';
 import { BsCash } from 'react-icons/bs';
-import logo_transportes from '../assets/logotransportes.png';
+import xrom_logo_1 from '../assets/xrom_logo_1.png';
 
 const Sidebar: React.FC = () => {
     const { logout } = useAuth();
@@ -24,7 +24,9 @@ const Sidebar: React.FC = () => {
 
     return (
         <div className='fixed flex h-screen w-64 flex-col bg-slate-600 bg-gradient-to-r to-slate-500 text-white'>
-            <div className='flex h-20 items-center px-4'></div>
+            <div className='flex h-20 items-center justify-center px-4'>
+                <img src={xrom_logo_1} alt='Logo' className='h-10' />
+            </div>
             <nav className='flex-grow'>
                 <ul className='border-t border-slate-400'>
                     {routes.map((route, index) => (

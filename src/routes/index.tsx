@@ -14,6 +14,6 @@ interface Route {
 export const routes: Route[] = [
     { path: '/employees', element: <Employees />, name: 'Empleados' },
     { path: '/payroll', element: <Payroll />, name: 'Nominas' },
-    { path: '/loan', element: <Loan />, name: 'Préstamos' },
+    { path: '/loans', element: <Loan />, name: 'Préstamos' },
     { path: '/weekly_report', element: <WeeklyReport />, name: 'Reportes semanales' },
 ];

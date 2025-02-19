@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Employee } from '../../pages/Employees';
-import { emptyEmployee } from './CreateNewEmployee';
 import Modal from '../Modal';
 import Button from '../Button';
+import { HiDocumentPlus } from 'react-icons/hi2';
 
 interface ViewEmployeeProps {
     isOpen: boolean;
@@ -10,9 +10,28 @@ interface ViewEmployeeProps {
     employee: Employee | null;
     onEdit: (employee: Employee) => void;
     onDelete: (id_empleado: number) => void;
+    onCreatePayroll: (employee: Employee) => void;
 }
 
-const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, employee, onEdit, onDelete }) => {
+const emptyEmployee = {
+    id_empleado: 0,
+    nombre: '',
+    apellido: '',
+    fecha_incorporacion: '',
+    departamento: '',
+    puesto: '',
+    sueldo: 0,
+    nomina: [],
+};
+
+const ViewEmployee: React.FC<ViewEmployeeProps> = ({
+    isOpen,
+    onClose,
+    employee,
+    onEdit,
+    onDelete,
+    onCreatePayroll,
+}) => {
     const [formData, setFormData] = useState<Employee>(emptyEmployee);
 
     useEffect(() => {
@@ -87,10 +106,22 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, employee, 
                 <Button
                     onClick={() => {
                         if (!employee) return;
+                        onCreatePayroll(employee);
+                        onClose();
+                    }}
+                    design='rounded-2xl cursor-pointer bg-blue-500 text-white hover:bg-blue-600'>
+                    <span className='relative pt-0.5'>
+                        <HiDocumentPlus size={17} />
+                    </span>
+                    Generar Nómina
+                </Button>
+                <Button
+                    onClick={() => {
+                        if (!employee) return;
                         onEdit(employee); // Llamamos callback para editar
                         onClose(); // Cerramos este modal
                     }}
-                    design='rounded-2xl cursor-pointer bg-blue-500 text-white hover:bg-blue-600'>
+                    design='rounded-2xl cursor-pointer bg-orange-500 text-white hover:bg-orange-600'>
                     Editar
                 </Button>
 

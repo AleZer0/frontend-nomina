@@ -19,9 +19,6 @@ const Payroll: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Estado para deshabilitar botones de generación de PDF
-    const [disabledButtons, setDisabledButtons] = useState<{ [key: number]: boolean }>({});
-
     useEffect(() => {
         // Ejecuta ambas peticiones en paralelo
         Promise.all([
@@ -55,22 +52,12 @@ const Payroll: React.FC = () => {
             .catch(() => alert('Error al crear la nómina.'));
     };
 
-    // Manejar la deshabilitación del botón de generación de PDF
-    const handleGeneratePDF = (folio: number) => {
-        setDisabledButtons(prev => ({ ...prev, [folio]: true }));
-        previewPayrollPDF(folio);
-
-        setTimeout(() => {
-            setDisabledButtons(prev => ({ ...prev, [folio]: false }));
-        }, 3000);
-    };
-
     return (
         <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
             <Header tittle='Listado de Nóminas'>
                 <Button
                     onClick={() => setIsModalOpen(true)}
-                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded cursor-pointer text-black'>
+                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded-2xl cursor-pointer text-black'>
                     <span className='relative pt-1'>
                         <HiDocumentPlus size={17} />
                     </span>

@@ -1,10 +1,9 @@
 import axiosInstance from '.';
 import { Employee } from '../pages/Employees';
-import { EmpleadoType } from '../types';
 
 export class Empleado {
-    static getEmployees = async (id: number) => {
-        const response = await axiosInstance.get(`/empleado/estado/${id}`);
+    static getEmployees = async (estado: number) => {
+        const response = await axiosInstance.get(`/empleado/estado/${estado}`);
         return response.data;
     };
 
@@ -13,7 +12,7 @@ export class Empleado {
         return response.data;
     };
 
-    static createEmployee = async (data: EmpleadoType) => {
+    static createEmployee = async (data: Employee) => {
         const response = await axiosInstance.post('/empleado', data);
         return response.data;
     };

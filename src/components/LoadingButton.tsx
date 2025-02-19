@@ -32,7 +32,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
         <button
             onClick={handleClick}
             disabled={isDisabled || isLoading || disabled}
-            className={`inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-medium transition ${
+            className={`inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-medium transition ${
                 isDisabled || isLoading || disabled
                     ? 'cursor-not-allowed border-gray-400 bg-gray-300 text-gray-700'
                     : 'cursor-pointer border-blue-700 bg-blue-500 text-white hover:bg-blue-700'

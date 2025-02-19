@@ -14,7 +14,6 @@ const Loan: React.FC = () => {
     const [prestamos, setPrestamos] = useState<LoanType[]>([]);
     const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalAbono, setModalAbono] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

@@ -20,7 +20,7 @@ RUN apk add --no-cache openssl
 RUN rm -rf /usr/local/apache2/htdocs/*
 
 # Copia los archivos compilados de la aplicación
-COPY --from=builder /app/build/ /usr/local/apache2/htdocs/
+COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
 
 # Habilita módulos necesarios de Apache
 RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf

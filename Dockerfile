@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copiamos archivos de configuración e instalamos dependencias
 COPY package*.json ./
-RUN npm install
+RUN npm ci  # Más seguro y rápido que "npm install"
 
 # Copiamos el resto del código y construimos la aplicación
 COPY . .
@@ -12,9 +12,6 @@ RUN npm run build
 
 # Etapa de producción con Apache y SSL
 FROM httpd:2.4-alpine
-
-# Instala OpenSSL (opcional, solo si lo necesitas para otros comandos)
-RUN apk add --no-cache openssl
 
 # Elimina el contenido por defecto de Apache
 RUN rm -rf /usr/local/apache2/htdocs/*
@@ -27,7 +24,7 @@ RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2
 RUN sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf
 RUN sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' /usr/local/apache2/conf/httpd.conf
 
-# Copia tus certificados SSL a la ubicación que usará Apache
+# Copia certificados SSL (asegúrate de que existan en la carpeta)
 COPY ./certs/_.xrom.cc.crt /usr/local/apache2/conf/ssl/_.xrom.cc.crt
 COPY ./certs/_.xrom.cc.key /usr/local/apache2/conf/ssl/_.xrom.cc.key
 
@@ -35,17 +32,17 @@ COPY ./certs/_.xrom.cc.key /usr/local/apache2/conf/ssl/_.xrom.cc.key
 RUN chmod 644 /usr/local/apache2/conf/ssl/_.xrom.cc.crt
 RUN chmod 600 /usr/local/apache2/conf/ssl/_.xrom.cc.key
 
-# Copia el archivo de configuración SSL
+# Copia la configuración SSL de Apache
 COPY conf/httpd-ssl.conf /usr/local/apache2/conf/extra/httpd-ssl.conf
 
-# Incluye la configuración SSL en el archivo principal de Apache
+# Incluye la configuración SSL en Apache
 RUN echo "Include conf/extra/httpd-ssl.conf" >> /usr/local/apache2/conf/httpd.conf
 
 # Verifica la configuración de Apache
 RUN httpd -t
 
-# Expone los puertos 443
-EXPOSE 443
+# Expone los puertos HTTP y HTTPS
+EXPOSE 80 443
 
 # Inicia Apache en primer plano
 CMD ["httpd-foreground"]

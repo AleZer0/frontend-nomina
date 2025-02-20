@@ -10,7 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 certs
-confssl
+conf
 dist-ssr
 *.local
 

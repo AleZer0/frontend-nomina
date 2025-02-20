@@ -3,5 +3,7 @@ build
 coverage
 node_modules/
 dist/
+certs/
+conf/
 package-lock.json
 *.config.js

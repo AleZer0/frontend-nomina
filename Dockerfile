@@ -10,36 +10,34 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Verificar que la carpeta `dist/` existe antes de copiarla
+# Verificar que la carpeta `dist/` se generó correctamente
 RUN ls -lah /app/dist
 
 # Etapa de producción con Apache y SSL
 FROM httpd:2.4-alpine
+WORKDIR /usr/local/apache2/htdocs/
 
-# Elimina el contenido por defecto de Apache
-RUN rm -rf /usr/local/apache2/htdocs/*
-
-# Asegurar que el directorio `htdocs/` existe
-RUN mkdir -p /usr/local/apache2/htdocs/
+# Limpiar contenido por defecto de Apache y asegurar la estructura
+RUN rm -rf /usr/local/apache2/htdocs/* && mkdir -p /usr/local/apache2/htdocs/
 
 # Copia los archivos compilados de React
 COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
 
-# Verifica que los archivos fueron copiados correctamente
+# Verificar que los archivos se copiaron correctamente
 RUN ls -lah /usr/local/apache2/htdocs/
 
 # Habilita módulos necesarios de Apache
-RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf
-RUN sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf
-RUN sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' /usr/local/apache2/conf/httpd.conf
+RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf \
+    && sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
+    && sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' /usr/local/apache2/conf/httpd.conf
 
 # Copia certificados SSL (asegúrate de que existan en la carpeta)
 COPY ./certs/_.xrom.cc.crt /usr/local/apache2/conf/ssl/_.xrom.cc.crt
 COPY ./certs/_.xrom.cc.key /usr/local/apache2/conf/ssl/_.xrom.cc.key
 
 # Ajusta los permisos de los certificados
-RUN chmod 644 /usr/local/apache2/conf/ssl/_.xrom.cc.crt
-RUN chmod 600 /usr/local/apache2/conf/ssl/_.xrom.cc.key
+RUN chmod 644 /usr/local/apache2/conf/ssl/_.xrom.cc.crt \
+    && chmod 600 /usr/local/apache2/conf/ssl/_.xrom.cc.key
 
 # Copia la configuración SSL de Apache
 COPY conf/httpd-ssl.conf /usr/local/apache2/conf/extra/httpd-ssl.conf
@@ -50,7 +48,7 @@ RUN echo "Include conf/extra/httpd-ssl.conf" >> /usr/local/apache2/conf/httpd.co
 # Verifica la configuración de Apache
 RUN httpd -t
 
-# Expone los puertos HTTP y HTTPS
+# Exponer puertos HTTP y HTTPS
 EXPOSE 80 443
 
 # Inicia Apache en primer plano

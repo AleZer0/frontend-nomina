@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Modal from '../Modal';
-
+import { BsCash } from 'react-icons/bs';
 interface CreateSubscriptionModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -52,6 +52,9 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                 <Button
                     onClick={handleSubmit}
                     design='rounded-2xl cursor-pointer bg-green-500 text-white hover:bg-green-600'>
+                    <span className='relative pt-1'>
+                        <BsCash size={17} />
+                    </span>
                     Abonar
                 </Button>
             </div>

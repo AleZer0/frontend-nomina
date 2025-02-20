@@ -53,7 +53,7 @@ const previewPayrollPDF = async (folio: number) => {
         </html>
       `);
             }
-        }, 1000);
+        }, 500);
     } catch (error) {
         console.error('❌ Error al previsualizar la nómina:', error);
     }
@@ -111,7 +111,7 @@ const previewWeeklyReportsPDF = async (year: number, data: WeeklyReportData) => 
         </html>
       `);
             }
-        }, 1000);
+        }, 500);
     } catch (error) {
         console.error('❌ Error al previsualizar el reporte semanal:', error);
     }

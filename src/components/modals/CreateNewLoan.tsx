@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Modal from '../Modal';
+import { BsCash } from 'react-icons/bs';
 
 interface CreateLoanModalProps {
     isOpen: boolean;
@@ -119,6 +120,9 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
                 <Button
                     onClick={handleSubmit}
                     design='rounded-2xl cursor-pointer bg-green-500 text-white hover:bg-green-600'>
+                    <span className='relative pt-1'>
+                        <BsCash size={17} />
+                    </span>
                     Guardar
                 </Button>
             </div>

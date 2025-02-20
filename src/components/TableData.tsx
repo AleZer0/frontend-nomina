@@ -20,8 +20,28 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
                 ? 'grid-cols-7'
                 : 'grid-cols-7'; // Fallback si no coincide
 
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const totalPages = Math.ceil(data.length / itemsPerPage); // Total de páginas disponibles
+
+    // // 4. Obtener los datos para la página actual
+    // const startIndex = (currentPage - 1) * itemsPerPage;
+    // const currentPageData = data.slice(startIndex, startIndex + itemsPerPage);
+
+    // // 5. Cambiar la página
+    // const handlePreviousPage = () => {
+    //     if (currentPage > 1) {
+    //         setCurrentPage(currentPage - 1);
+    //     }
+    // };
+
+    // const handleNextPage = () => {
+    //     if (currentPage < totalPages) {
+    //         setCurrentPage(currentPage + 1);
+    //     }
+    // };
+
     return (
-        <div className='overflow-visible rounded-lg bg-white shadow-lg'>
+        <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
             {/* Encabezados */}
             <div className={`grid ${colClass} bg-gray-200 p-3 text-center font-semibold text-gray-700`}>
                 {fields.map((field, index) => (
@@ -31,6 +51,8 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
 
             {/* Contenido */}
             <div className='divide-y divide-gray-300'>
+                {/* {currentPageData.length > 0 ? (
+                    currentPageData.map((item, index) => ( */}
                 {data.length > 0 ? (
                     data.map((item, index) => (
                         <div
@@ -44,6 +66,13 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
                 )}
             </div>
         </div>
+        //
+        //         currentPage={currentPage}
+        //         totalPages={totalPages}
+        //         onPrevious={handlePreviousPage}
+        //         onNext={handleNextPage}
+        //     />
+        // </div>
     );
 }
 

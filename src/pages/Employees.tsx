@@ -7,6 +7,7 @@ import { createPayroll } from '../services/payroll.service';
 import CreateEmployeeModal from '../components/modals/CreateNewEmployee';
 import EditEmployeeModal from '../components/modals/EditEmployee';
 import { IoIosPersonAdd } from 'react-icons/io';
+import { BsPersonVcard } from 'react-icons/bs';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
 import Loader from '../components/Loader';
@@ -23,7 +24,8 @@ export interface Employee {
     created_at?: string;
     updated_at?: string;
     estado?: number;
-    nomina: number | Array<any>;
+    nomina: Array<any>;
+    ultima_nomina?: number;
 }
 
 const Employees: React.FC = () => {
@@ -122,13 +124,14 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
 
-            <main className='overflow-visible p-6'>
+            <main className='p-6'>
                 {loading && <Loader />}
                 <TableData
-                    fields={['Nombre', 'Apellidos', 'Puesto', 'Sueldo', 'Última Nómina', 'Acciones']}
+                    fields={['No. Empleado', 'Nombre', 'Apellidos', 'Puesto', 'Sueldo', 'Última Nómina', 'Acciones']}
                     data={employees}
                     renderRow={item => (
                         <>
+                            <div>{item.id_empleado}</div>
                             <div>{item.nombre}</div>
                             <div>{item.apellido}</div>
                             <div>{item.puesto}</div>
@@ -138,8 +141,8 @@ const Employees: React.FC = () => {
                             <div>
                                 {'Folio: '}
                                 <Link to='/payroll' className='text-blue-600 underline'>
-                                    {typeof item.nomina === 'number'
-                                        ? `NOM${item.nomina.toString().padStart(4, '0')}`
+                                    {item.ultima_nomina
+                                        ? `NOM${item.ultima_nomina.toString().padStart(4, '0')}`
                                         : 'No tiene nominas'}
                                 </Link>
                             </div>
@@ -147,6 +150,9 @@ const Employees: React.FC = () => {
                                 <Button
                                     design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'
                                     onClick={() => handleViewEmployee(item)}>
+                                    <span className='relative pt-1'>
+                                        <BsPersonVcard size={17} />
+                                    </span>
                                     Detalles
                                 </Button>
                             </div>

@@ -92,7 +92,7 @@ const Payroll: React.FC = () => {
                             </div>
                             <div className='flex justify-center gap-2 p-2'>
                                 <LoadingButton onClick={() => previewPayrollPDF(item.folio)}>
-                                    <span className='relative pt-0.5'>
+                                    <span className='relative'>
                                         <FaFilePdf size={17} />
                                     </span>
                                     Generar PDF

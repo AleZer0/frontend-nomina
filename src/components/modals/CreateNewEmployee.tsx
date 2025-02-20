@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from '../Button';
 import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
+import { FaRegSave } from 'react-icons/fa';
 
 interface CreateEmployeeModalProps {
     isOpen: boolean;
@@ -127,6 +128,9 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                     onClick={handleSubmit}
                     disabled={false}
                     design='rounded-2xl bg-green-500 hover:bg-green-600 text-white cursor-pointer'>
+                    <span className='relative pt-1'>
+                        <FaRegSave size={17} />
+                    </span>
                     Guardar
                 </Button>
             </div>

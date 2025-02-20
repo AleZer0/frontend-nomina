@@ -51,7 +51,7 @@ const WeeklyReport: React.FC = () => {
                                 <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
                                 <div className='flex justify-center gap-2'>
                                     <LoadingButton onClick={() => previewWeeklyReportsPDF(2025, item)}>
-                                        <span className='relative pt-0.5'>
+                                        <span className='relative'>
                                             <FaFilePdf size={17} />
                                         </span>
                                         Generar PDF

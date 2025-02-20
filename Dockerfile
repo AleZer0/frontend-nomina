@@ -1,4 +1,4 @@
-# Etapa de construcción
+# Etapa de construcción de React
 FROM node:22-alpine AS builder
 WORKDIR /app
 
@@ -10,14 +10,23 @@ RUN npm install
 COPY . .
 RUN npm run build
 
+# Verificar que la carpeta `dist/` existe antes de copiarla
+RUN ls -lah /app/dist
+
 # Etapa de producción con Apache y SSL
 FROM httpd:2.4-alpine
 
 # Elimina el contenido por defecto de Apache
 RUN rm -rf /usr/local/apache2/htdocs/*
 
-# Copia los archivos compilados de la aplicación
+# Asegurar que el directorio `htdocs/` existe
+RUN mkdir -p /usr/local/apache2/htdocs/
+
+# Copia los archivos compilados de React
 COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
+
+# Verifica que los archivos fueron copiados correctamente
+RUN ls -lah /usr/local/apache2/htdocs/
 
 # Habilita módulos necesarios de Apache
 RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf

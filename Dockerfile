@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copiamos archivos de configuración e instalamos dependencias
 COPY package*.json ./
-RUN npm ci  # Más seguro y rápido que "npm install"
+RUN npm install
 
 # Copiamos el resto del código y construimos la aplicación
 COPY . .

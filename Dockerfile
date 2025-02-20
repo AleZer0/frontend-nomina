@@ -36,7 +36,7 @@ RUN chmod 644 /usr/local/apache2/conf/ssl/_.xrom.cc.crt
 RUN chmod 600 /usr/local/apache2/conf/ssl/_.xrom.cc.key
 
 # Copia el archivo de configuración SSL
-COPY config/httpd-ssl.conf /usr/local/apache2/conf/extra/httpd-ssl.conf
+COPY configssl/httpd-ssl.conf /usr/local/apache2/conf/extra/httpd-ssl.conf
 
 # Incluye la configuración SSL en el archivo principal de Apache
 RUN echo "Include conf/extra/httpd-ssl.conf" >> /usr/local/apache2/conf/httpd.conf

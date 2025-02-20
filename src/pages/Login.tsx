@@ -15,7 +15,6 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
 
     const handleShowPassword = () => {
-        console.log(showPassword);
         setShowPassword(!showPassword);
     };
 

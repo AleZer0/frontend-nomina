@@ -1,5 +1,5 @@
 # Etapa 1: Construcción de la aplicación Vite (React)
-FROM node:18 AS builder
+FROM node:20 AS builder
 
 # Establecer directorio de trabajo dentro del contenedor
 WORKDIR /app

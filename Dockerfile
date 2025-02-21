@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y \
 # Habilitar módulos necesarios de Apache
 RUN sed -i '/LoadModule ssl_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
     sed -i '/LoadModule socache_shmcb_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    sed -i '/LoadModule authz_core_module/s/^#//g' /usr/local/apache2/conf/httpd.conf
+    sed -i '/LoadModule authz_core_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
+    sed -i '/LoadModule log_config_module/s/^#//g' /usr/local/apache2/conf/httpd.conf
 
 # Copiar archivos de configuración
 COPY apache-config.conf /usr/local/apache2/conf/httpd.conf

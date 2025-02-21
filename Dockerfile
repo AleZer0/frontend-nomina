@@ -1,45 +1,31 @@
-# Etapa 1: Construcción de la aplicación React con Vite
-FROM node:20 AS builder
+# 1. Construcción de la aplicación en una imagen de Node.js
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copiar archivos necesarios y ejecutar instalación
-COPY package*.json ./
+# Copiar archivos y dependencias
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copiar el resto del código y construir la aplicación
+# Copiar el resto del código y compilar la aplicación
 COPY . .
 RUN npm run build
 
-# Etapa 2: Servir la aplicación con Apache
-FROM httpd:latest
+# 2. Servir la aplicación con Nginx
+FROM nginx:alpine
 
-# Instalar módulos necesarios para Apache, incluyendo SSL
-RUN apt-get update && apt-get install -y \
-    apache2-utils \
-    openssl \
-    && apt-get clean
+# Copiar la configuración de Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Habilitar módulos necesarios de Apache
-RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf \
-    && sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
-    && sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' /usr/local/apache2/conf/httpd.conf
+# Copiar los archivos compilados de React
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar archivos de configuración
-COPY apache-config.conf /usr/local/apache2/conf/httpd.conf
+# Copiar certificados SSL
+COPY certs/_.xrom.cc.crt /etc/nginx/ssl/_.xrom.cc.crt
+COPY certs/_.xrom.cc.key /etc/nginx/ssl/_.xrom.cc.key
 
-# Crear carpeta para los certificados SSL si no existe
-RUN mkdir -p /usr/local/apache2/conf/ssl
+# Exponer solo el puerto 443 (HTTPS)
+EXPOSE 443
 
-# Copiar certificados SSL al contenedor
-COPY certs/_.xrom.cc.crt /usr/local/apache2/conf/ssl/
-COPY certs/_.xrom.cc.key /usr/local/apache2/conf/ssl/
-
-# Copiar los archivos de la aplicación de Vite a Apache
-COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
-
-# Exponer puertos
-EXPOSE 80 443
-
-# Ejecutar Apache en primer plano
-CMD ["httpd", "-D", "FOREGROUND"]
+# Iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]

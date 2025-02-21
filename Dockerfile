@@ -1,57 +1,37 @@
-# Etapa de construcción de React
-FROM node:22-alpine AS builder
+# Etapa 1: Construcción de la aplicación Vite (React)
+FROM node:18 AS builder
+
+# Establecer directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiamos archivos de configuración e instalamos dependencias
-COPY package*.json ./
+# Copiar archivos del proyecto
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copiamos el resto del código y construimos la aplicación
+# Copiar el resto de los archivos del proyecto
 COPY . .
+
+# Construir la aplicación con Vite
 RUN npm run build
 
-# Verificar que la carpeta `dist/` se generó correctamente
-RUN ls -lah /app/dist
+# Etapa 2: Servir la aplicación con Apache y SSL
+FROM httpd:latest
 
-# Etapa de producción con Apache y SSL
-FROM httpd:2.4-alpine
-WORKDIR /usr/local/apache2/htdocs/
+# Instalar curl para pruebas dentro del contenedor
+RUN apt-get update && apt-get install -y curl
 
-RUN apk add --no-cache curl
+# Copiar los archivos de configuración de Apache
+COPY apache-config.conf /usr/local/apache2/conf/httpd.conf
 
-# Limpiar contenido por defecto de Apache y asegurar la estructura
-RUN rm -rf /usr/local/apache2/htdocs/* && mkdir -p /usr/local/apache2/htdocs/
+# Copiar los certificados SSL
+COPY certs/_xrom.cc.crt /usr/local/apache2/conf/server.crt
+COPY certs/_xrom.cc.key /usr/local/apache2/conf/server.key
 
-# Copia los archivos compilados de React
+# Copiar los archivos generados por Vite en la etapa anterior
 COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
-
-# Verificar que los archivos se copiaron correctamente
-RUN ls -lah /usr/local/apache2/htdocs/
-
-# Habilita módulos necesarios de Apache
-RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf \
-    && sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
-    && sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' /usr/local/apache2/conf/httpd.conf
-
-# Copia certificados SSL (asegúrate de que existan en la carpeta)
-COPY ./certs/_.xrom.cc.crt /usr/local/apache2/conf/ssl/_.xrom.cc.crt
-COPY ./certs/_.xrom.cc.key /usr/local/apache2/conf/ssl/_.xrom.cc.key
-
-# Ajusta los permisos de los certificados
-RUN chmod 644 /usr/local/apache2/conf/ssl/_.xrom.cc.crt \
-    && chmod 600 /usr/local/apache2/conf/ssl/_.xrom.cc.key
-
-# Copia la configuración SSL de Apache
-COPY conf/httpd-ssl.conf /usr/local/apache2/conf/extra/httpd-ssl.conf
-
-# Incluye la configuración SSL en Apache
-RUN echo "Include conf/extra/httpd-ssl.conf" >> /usr/local/apache2/conf/httpd.conf
-
-# Verifica la configuración de Apache
-RUN httpd -t
 
 # Exponer puertos HTTP y HTTPS
 EXPOSE 80 443
 
-# Inicia Apache en primer plano
-CMD ["httpd-foreground"]
+# Iniciar Apache en primer plano
+CMD ["httpd", "-D", "FOREGROUND"]

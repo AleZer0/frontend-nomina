@@ -1,5 +1,5 @@
 # Etapa 1: Construcción de la aplicación React con Vite
-FROM node:18 AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -21,10 +21,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Habilitar módulos necesarios de Apache
-RUN sed -i '/LoadModule ssl_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    sed -i '/LoadModule socache_shmcb_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    sed -i '/LoadModule authz_core_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    sed -i '/LoadModule log_config_module/s/^#//g' /usr/local/apache2/conf/httpd.conf
+RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' /usr/local/apache2/conf/httpd.conf \
+    && sed -i 's/^#LoadModule rewrite_module/LoadModule rewrite_module/' /usr/local/apache2/conf/httpd.conf \
+    && sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' /usr/local/apache2/conf/httpd.conf
 
 # Copiar archivos de configuración
 COPY apache-config.conf /usr/local/apache2/conf/httpd.conf

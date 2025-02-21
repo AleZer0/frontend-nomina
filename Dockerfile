@@ -17,6 +17,8 @@ RUN ls -lah /app/dist
 FROM httpd:2.4-alpine
 WORKDIR /usr/local/apache2/htdocs/
 
+RUN apk add --no-cache curl
+
 # Limpiar contenido por defecto de Apache y asegurar la estructura
 RUN rm -rf /usr/local/apache2/htdocs/* && mkdir -p /usr/local/apache2/htdocs/
 

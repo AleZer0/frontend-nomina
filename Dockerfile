@@ -5,7 +5,7 @@ FROM node:18 AS builder
 WORKDIR /app
 
 # Copiar archivos del proyecto
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm install
 
 # Copiar el resto de los archivos del proyecto

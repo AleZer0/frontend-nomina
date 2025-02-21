@@ -24,8 +24,8 @@ RUN apt-get update && apt-get install -y curl
 COPY apache-config.conf /usr/local/apache2/conf/httpd.conf
 
 # Copiar los certificados SSL
-COPY certs/_xrom.cc.crt /usr/local/apache2/conf/server.crt
-COPY certs/_xrom.cc.key /usr/local/apache2/conf/server.key
+COPY ./certs/_.xrom.cc.crt /usr/local/apache2/conf/ssl/_.xrom.cc.crt
+COPY ./certs/_.xrom.cc.key /usr/local/apache2/conf/ssl/_.xrom.cc.key
 
 # Copiar los archivos generados por Vite en la etapa anterior
 COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/

@@ -23,7 +23,7 @@ const Login: React.FC = () => {
         try {
             await login({ nombre_usuario, contrasena });
         } catch (error) {
-            setError('Error al iniciar sesión.');
+            setError('Contraseña o usuario incorrecto.');
             throw new Error(`Error al iniciar sesión: ${error}`);
         }
     };

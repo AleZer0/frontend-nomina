@@ -26,7 +26,8 @@ export interface LoanType {
     created_at?: string;
     updated_at?: string;
     empleado: string;
-    abonos: number;
+    abonos: Array<any>;
+    ultimo_abono?: number;
 }
 
 export interface PayrollInterface {

@@ -20,7 +20,6 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
     const [newPrestamo, setNewPrestamo] = useState(emptyLoan);
     const [isSaldoModified, setIsSaldoModified] = useState(false);
 
-    // Resetear el formulario cuando el modal se abre
     useEffect(() => {
         if (isOpen) {
             setNewPrestamo(emptyLoan);
@@ -28,7 +27,6 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
         }
     }, [isOpen]);
 
-    // Manejar cambio de empleado
     const handleEmpleadoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedEmployee = empleados.find(emp => emp.id_empleado === parseInt(e.target.value));
         setNewPrestamo(prev => ({
@@ -37,7 +35,6 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
         }));
     };
 
-    // Manejar cambio de Monto Total y ajustar Saldo Pendiente si no ha sido editado manualmente
     const handleMontoTotalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value) || 0;
         setNewPrestamo(prev => ({
@@ -47,7 +44,6 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
         }));
     };
 
-    // Manejar cambio manual en Saldo Pendiente
     const handleSaldoPendienteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value) || 0;
         setNewPrestamo(prev => ({
@@ -57,7 +53,6 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
         setIsSaldoModified(true);
     };
 
-    // Enviar datos y limpiar el formulario
     const handleSubmit = () => {
         if (!newPrestamo.id_empleado || newPrestamo.monto_total <= 0) {
             alert('Por favor, selecciona un empleado y verifica los montos.');
@@ -77,7 +72,7 @@ const CreateLoanModal: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSu
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Nuevo Prestamo'>
+        <Modal isOpen={true} onClose={onClose} title='Nuevo Préstamo'>
             {/* Selección de Empleado */}
             <label className='mb-2 block text-gray-700'>Empleado:</label>
             <select

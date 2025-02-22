@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Modal from '../Modal';
 import { BsCash } from 'react-icons/bs';
+import { Employee } from '../../pages/Employees';
+import TableData from '../TableData';
+
 interface CreateSubscriptionModalProps {
     isOpen: boolean;
     onClose: () => void;
+    employee: Employee | null;
     onSubmit: (id_prestamo: number, monto_abonado: number) => void;
     id_prestamo: number;
 }
@@ -14,6 +18,7 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
     onClose,
     onSubmit,
     id_prestamo,
+    employee,
 }) => {
     const [montoAbonado, setMontoAbonado] = useState<number>(0);
 
@@ -30,7 +35,6 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
         }
 
         onSubmit(id_prestamo, montoAbonado);
-
         setMontoAbonado(0);
         onClose();
     };
@@ -38,7 +42,7 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Registrar Abono'>
+        <Modal isOpen={true} onClose={onClose} title='Añadir un abono'>
             <label className='mb-2 block text-gray-700'>Monto Abonado</label>
             <input
                 type='number'
@@ -57,6 +61,22 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                     </span>
                     Abonar
                 </Button>
+            </div>
+
+            {/* Tabla de todos los abonos */}
+            <div className='mt-6'>
+                <h2 className='mb-2 text-lg font-semibold text-gray-800'>Historial de Abonos</h2>
+                <TableData
+                    fields={['No. Abono', 'Fecha', 'Monto Abonado']}
+                    data={employee?.abonos ?? []}
+                    renderRow={abono => (
+                        <>
+                            <div className='p-2'>{`ABN${abono.id_abono.toString().padStart(4, '0')}`}</div>
+                            <div className='p-2'>{new Date(abono.created_at).toLocaleDateString()}</div>
+                            <div className='p-2 font-semibold text-green-600'>${abono.monto_abonado.toFixed(2)}</div>
+                        </>
+                    )}
+                />
             </div>
         </Modal>
     );

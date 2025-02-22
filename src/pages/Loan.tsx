@@ -13,53 +13,65 @@ import { Employee } from './Employees';
 import Empleado from '../services/employees.service';
 
 const Loan: React.FC = () => {
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee | null>(null);
     const [prestamos, setPrestamos] = useState<LoanType[]>([]);
     const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isLoanModalOpen, setIsLoanModalOpen] = useState(false);
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
-    const [selectedLoan, setSelectedLoan] = useState<{
-        id_prestamo: number;
-        id_empleado: number;
-        empleado: string;
-    } | null>(null);
+    const [selectedLoan, setSelectedLoan] = useState<LoanType | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchPrestamos = async () => {
-            setLoading(true);
-            try {
-                const data = await Prestamos.getLoans(1);
-                setPrestamos(data.prestamos || []);
-            } catch (error) {
-                console.error('Error al obtener préstamos:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        const fetchEmpleados = async () => {
-            setLoading(true);
-            try {
-                const data = await Empleado.getEmployees(1);
-                setEmpleados(data.empleados || []);
-            } catch (error) {
-                console.error('Error al obtener empleados:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPrestamos();
         fetchEmpleados();
     }, []);
 
-    const handleSubmit = async (newLoan: { id_empleado: number; monto_total: number; saldo_pendiente: number }) => {
+    const fetchPrestamos = async () => {
+        setLoading(true);
         try {
-            await Prestamos.createLoan(newLoan);
-
-            // 🔹 Volvemos a cargar la lista completa desde el backend
             const data = await Prestamos.getLoans(1);
             setPrestamos(data.prestamos || []);
+        } catch (error) {
+            console.error('Error al obtener préstamos:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchEmpleados = async () => {
+        setLoading(true);
+        try {
+            const data = await Empleado.getEmployees(1);
+            setEmpleados(data.empleados || []);
+        } catch (error) {
+            console.error('Error al obtener empleados:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleViewLoan = async (loan: LoanType) => {
+        try {
+            const data = await Prestamos.getLoans(1); // Obtener todos los préstamos y sus abonos
+            const updatedLoan = data.prestamos.find((p: LoanType) => p.id_prestamo === loan.id_prestamo);
+
+            if (updatedLoan) {
+                setSelectedLoan(updatedLoan);
+
+                // Buscar el empleado correspondiente al préstamo
+                const employeeData = empleados.find(emp => emp.id_empleado === updatedLoan.id_empleado) || null;
+                setEmpleadoSeleccionado(employeeData);
+            }
+        } catch (error) {
+            console.error('Error al obtener datos del préstamo:', error);
+        }
+        setIsSubscriptionModalOpen(true);
+    };
+
+    const handleSubmitLoan = async (newLoan: { id_empleado: number; monto_total: number; saldo_pendiente: number }) => {
+        try {
+            await Prestamos.createLoan(newLoan);
+            fetchPrestamos();
         } catch (error) {
             console.error('Error al crear préstamo:', error);
         }
@@ -68,10 +80,7 @@ const Loan: React.FC = () => {
     const handleSubscriptionSubmit = async (id_prestamo: number, monto_abonado: number) => {
         try {
             await Prestamos.payLoan(id_prestamo, { monto_abonado });
-
-            // 🔹 Volver a cargar los préstamos desde el servidor
-            const data = await Prestamos.getLoans(1);
-            setPrestamos(data.prestamos || []);
+            fetchPrestamos(); // Volver a cargar los préstamos actualizados
         } catch (error) {
             console.error('Error al registrar abono:', error);
         }
@@ -90,14 +99,22 @@ const Loan: React.FC = () => {
                 </Button>
             </Header>
             <main className='p-6'>
-                <div className='rounded bg-white shadow-lg'></div>
                 {loading && <Loader />}
                 <TableData
-                    fields={['Empleado', 'Fecha', 'Monto total', 'Saldo Pendiente', 'Último Abono', 'Acciones']}
+                    fields={[
+                        'No. Empleado',
+                        'Empleado',
+                        'Fecha',
+                        'Monto total',
+                        'Saldo Pendiente',
+                        'Último Abono',
+                        'Acciones',
+                    ]}
                     data={prestamos}
                     renderRow={item => (
                         <>
-                            <div className='p-2'>{item.empleado}</div> {/* ✅ Ahora usamos `empleado` correctamente */}
+                            <div>{item.id_empleado}</div>
+                            <div className='p-2'>{item.empleado}</div>
                             <div className='p-2'>
                                 {item.created_at
                                     ? new Date(item.created_at).toLocaleDateString('es-MX')
@@ -105,39 +122,36 @@ const Loan: React.FC = () => {
                             </div>
                             <div className='p-2'>{`$${(item.monto_total ?? 0).toFixed(2)}`}</div>
                             <div className='p-2'>{`$${(item.saldo_pendiente ?? 0).toFixed(2)}`}</div>
-                            <div className='p-2'>{`$${(typeof item.abonos === 'number' ? item.abonos : 0).toFixed(2)}`}</div>
+                            <div className='p-2'>{`$${(item.ultimo_abono ?? 0).toFixed(2)}`}</div>
                             <div className='flex justify-center gap-2 p-2'>
                                 <Button
                                     design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'
-                                    onClick={() => {
-                                        setSelectedLoan({
-                                            id_prestamo: item.id_prestamo,
-                                            id_empleado: item.id_empleado,
-                                            empleado: item.empleado,
-                                        });
-                                        setIsSubscriptionModalOpen(true);
-                                    }}>
+                                    onClick={() => handleViewLoan(item)}>
                                     <span className='relative pt-1'>
                                         <TbPigMoney size={17} />
                                     </span>
-                                    Abonar
+                                    Ver Abonos
                                 </Button>
                             </div>
                         </>
                     )}
                 />
             </main>
+
+            {/* Modales */}
             <CreateLoanModal
                 isOpen={isLoanModalOpen}
                 onClose={() => setIsLoanModalOpen(false)}
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmitLoan}
                 empleados={empleados}
             />
+
             <CreateSubscriptionModal
                 isOpen={isSubscriptionModalOpen}
                 onClose={() => setIsSubscriptionModalOpen(false)}
                 onSubmit={handleSubscriptionSubmit}
                 id_prestamo={selectedLoan?.id_prestamo ?? 0}
+                employee={empleadoSeleccionado}
             />
         </div>
     );

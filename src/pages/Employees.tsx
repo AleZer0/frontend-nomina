@@ -23,9 +23,8 @@ export interface Employee {
     created_at?: string;
     updated_at?: string;
     estado?: number;
-    nomina: number | Array<any>;
-    abonos: Array<any>;
-    ultimo_abono?: number;
+    nomina: Array<any>;
+    ultima_nomina?: number;
 }
 
 const Employees: React.FC = () => {
@@ -140,9 +139,7 @@ const Employees: React.FC = () => {
                             <div>
                                 {'Folio: '}
                                 <Link to='/payroll' className='text-blue-600 underline'>
-                                    {typeof item.nomina === 'number'
-                                        ? `NOM${item.nomina.toString().padStart(4, '0')}`
-                                        : 'No tiene nominas'}
+                                    {item.ultima_nomina ? `NOM${item.ultima_nomina}` : 'No tiene nominas'}
                                 </Link>
                             </div>
                             <div className='flex justify-center gap-2'>

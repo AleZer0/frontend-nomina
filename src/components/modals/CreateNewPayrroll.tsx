@@ -7,7 +7,7 @@ interface CreatePayrollModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (newNomina: {
-        fecha: string;
+        fecha: string; // 🔹 Se mantiene la propiedad correcta
         dias_trabajados: number;
         prestamos: number;
         infonavit: number;
@@ -18,8 +18,14 @@ interface CreatePayrollModalProps {
     empleadoSeleccionado?: Employee | null;
 }
 
+// 🔹 Función para obtener la fecha actual en formato YYYY-MM-DD sin cambiar la zona horaria
+const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // Se obtiene solo la parte de la fecha (YYYY-MM-DD)
+};
+
 const emptyPayroll = {
-    fecha: new Date().toISOString(),
+    fecha: getCurrentDate(), // 🔹 Ahora se inicializa correctamente
     dias_trabajados: 0,
     prestamos: 0,
     infonavit: 0,
@@ -40,7 +46,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
         if (empleadoSeleccionado) {
             setNewNomina(prevNomina => ({
                 ...prevNomina,
-                sueldo: empleadoSeleccionado.sueldo ?? 0, // Usa ?? para asignar 0 si es undefined
+                sueldo: empleadoSeleccionado.sueldo ?? 0,
                 id_empleado: empleadoSeleccionado.id_empleado,
             }));
         }
@@ -52,7 +58,7 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
             return;
         }
         onSubmit(newNomina);
-        setNewNomina(emptyPayroll);
+        setNewNomina({ ...emptyPayroll, fecha: getCurrentDate() }); // 🔹 Resetea con la fecha correcta
     };
 
     if (!isOpen) return null;
@@ -82,6 +88,16 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 ))}
             </select>
 
+            {/* Campo de fecha de nómina */}
+            <label className='mb-2 block text-gray-700'>Fecha de Nómina:</label>
+            <input
+                type='date'
+                name='fecha'
+                value={newNomina.fecha}
+                onChange={e => setNewNomina({ ...newNomina, fecha: e.target.value })}
+                className='mb-4 w-full rounded-lg border p-2'
+            />
+
             {/* Campos de sueldo, préstamos, infonavit */}
             <label className='mb-2 block text-gray-700'>Días laborados:</label>
             <input
@@ -103,9 +119,9 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                 className='mb-4 w-full rounded-lg border p-2'
             />
 
-            <label className='mb-2 block text-gray-700'>Abono a prestamo:</label>
+            <label className='mb-2 block text-gray-700'>Abono a préstamo:</label>
             <input
-                placeholder='Ingrese el abono al prestamo del empleado.'
+                placeholder='Ingrese el abono al préstamo del empleado'
                 type='number'
                 name='prestamos'
                 value={newNomina.prestamos || ''}

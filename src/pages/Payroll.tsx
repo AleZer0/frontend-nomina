@@ -32,6 +32,10 @@ const Payroll: React.FC = () => {
             .finally(() => setLoading(false));
     }, []);
 
+    const formatDate = (fecha: string) => {
+        const datosFecha = fecha.split('-');
+        return `${datosFecha[2]}/${datosFecha[1]}/${datosFecha[0]}`;
+    };
     const handleSubmit = (newNomina: {
         fecha: string;
         dias_trabajados: number;
@@ -83,7 +87,7 @@ const Payroll: React.FC = () => {
                         <>
                             <div className='p-2'>{`NOM${item.folio.toString().padStart(4, '0')}`}</div>
                             <div className='p-2'>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
-                            <div className='p-2'>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
+                            <div className='p-2'>{formatDate(item.fecha.split('T')[0])}</div>
                             <div className='p-2'>${item.sueldo.toFixed(2)}</div>
                             <div className='p-2'>${item.prestamos.toFixed(2)}</div>
                             <div className='p-2'>${item.infonavit.toFixed(2)}</div>

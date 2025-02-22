@@ -24,6 +24,8 @@ export interface Employee {
     updated_at?: string;
     estado?: number;
     nomina: number | Array<any>;
+    abonos: Array<any>;
+    ultimo_abono?: number;
 }
 
 const Employees: React.FC = () => {

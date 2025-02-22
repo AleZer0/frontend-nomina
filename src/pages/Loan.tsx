@@ -105,7 +105,7 @@ const Loan: React.FC = () => {
                             </div>
                             <div className='p-2'>{`$${(item.monto_total ?? 0).toFixed(2)}`}</div>
                             <div className='p-2'>{`$${(item.saldo_pendiente ?? 0).toFixed(2)}`}</div>
-                            <div className='p-2'>{`$${(typeof item.abonos === 'number' ? item.abonos : 0).toFixed(2)}`}</div>
+                            <div className='p-2'>{`$${(item.ultimo_abono ?? 0).toFixed(2)}`}</div>
                             <div className='flex justify-center gap-2 p-2'>
                                 <Button
                                     design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'

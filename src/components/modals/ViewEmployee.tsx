@@ -25,7 +25,15 @@ const emptyEmployee: Employee = {
     puesto: '',
     sueldo: 0,
     nomina: [],
-    abonos: [],
+};
+
+const fieldMapping: Record<string, keyof Employee> = {
+    'Id Empleado': 'id_empleado',
+    'Fecha Incorporacion': 'fecha_incorporacion',
+    Nombre: 'nombre',
+    Apellido: 'apellido',
+    Puesto: 'puesto',
+    Sueldo: 'sueldo',
 };
 
 const ViewEmployee: React.FC<ViewEmployeeProps> = ({
@@ -55,18 +63,20 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
         <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado' className='max-w-4xl'>
             <div className='flex flex-col space-y-8'>
                 {/* Sección de Datos del Empleado */}
-                <div className='max-h-96 overflow-y-auto'>
-                    {['Nombre', 'Apellido', 'Fecha de incorporación', 'Puesto', 'Sueldo'].map((label, index) => (
-                        <div key={index} className='mb-4'>
-                            <label className='mb-2 block text-gray-700'>{label}:</label>
-                            <input
-                                type={label === 'Fecha de incorporación' ? 'date' : 'text'}
-                                value={formData[label.toLowerCase() as keyof Employee] as string}
-                                readOnly
-                                className='w-full rounded-lg border bg-gray-100 p-2'
-                            />
-                        </div>
-                    ))}
+                <div className='grid max-h-96 grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2'>
+                    {['Id Empleado', 'Fecha Incorporacion', 'Nombre', 'Apellido', 'Puesto', 'Sueldo'].map(
+                        (label, index) => (
+                            <div key={index} className='mb-4'>
+                                <label className='mb-2 block text-gray-700'>{label}:</label>
+                                <input
+                                    type={label === 'Fecha Incorporacion' ? 'date' : 'text'}
+                                    value={formData[fieldMapping[label]] ?? ''}
+                                    readOnly
+                                    className='w-full rounded-lg border bg-gray-100 p-2'
+                                />
+                            </div>
+                        )
+                    )}
                 </div>
                 {/* Sección de Nóminas con TableData */}
                 <TableData
@@ -81,7 +91,6 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                         </>
                     )}
                 />
-
                 {/* Botones de acción */}
                 <div className='mt-4 flex justify-end gap-2'>
                     <Button

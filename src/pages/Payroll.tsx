@@ -39,6 +39,9 @@ const Payroll: React.FC = () => {
         infonavit: number;
         sueldo: number;
         id_empleado: number;
+        finiquito?: number;
+        vacaciones?: number;
+        aguinaldo?: number;
     }) => {
         createPayroll(newNomina)
             .then(response => {

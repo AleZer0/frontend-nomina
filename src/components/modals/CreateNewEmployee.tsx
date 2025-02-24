@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Button from '../Button';
 import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
-import { FaRegSave } from 'react-icons/fa';
 
 interface CreateEmployeeModalProps {
     isOpen: boolean;
@@ -45,7 +44,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
             fecha_incorporacion: newEmployee.fecha_incorporacion,
             departamento: newEmployee.departamento,
             puesto: newEmployee.puesto,
-            sueldo: newEmployee.sueldo ?? 0, // 🔹 Asegura que sueldo nunca sea undefined
+            sueldo: newEmployee.sueldo ?? 0,
             nomina: newEmployee.nomina,
         });
 
@@ -63,74 +62,92 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClo
                 setNewEmployee(emptyEmployee);
             }}
             title='Añadir un nuevo empleado'>
-            <label className='mb-2 block text-gray-700'>Nombre:</label>
-            <input
-                type='text'
-                name='nombre'
-                value={newEmployee.nombre}
-                onChange={handleChange}
-                placeholder='Ingrese el nombre'
-                className='mb-4 w-full rounded-lg border p-2'
-            />
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                {/* Nombre */}
+                <div>
+                    <label className='mb-2 block text-gray-700'>Nombre:</label>
+                    <input
+                        type='text'
+                        name='nombre'
+                        value={newEmployee.nombre}
+                        onChange={handleChange}
+                        placeholder='Ingrese el nombre'
+                        className='w-full rounded-lg border p-2'
+                    />
+                </div>
 
-            <label className='mb-2 block text-gray-700'>Apellido:</label>
-            <input
-                type='text'
-                name='apellido'
-                value={newEmployee.apellido}
-                onChange={handleChange}
-                placeholder='Ingrese el apellido(s)'
-                className='mb-4 w-full rounded-lg border p-2'
-            />
+                {/* Apellido */}
+                <div>
+                    <label className='mb-2 block text-gray-700'>Apellido:</label>
+                    <input
+                        type='text'
+                        name='apellido'
+                        value={newEmployee.apellido}
+                        onChange={handleChange}
+                        placeholder='Ingrese el apellido'
+                        className='w-full rounded-lg border p-2'
+                    />
+                </div>
 
-            <label className='mb-2 block text-gray-700'>Fecha de incorporación:</label>
-            <input
-                type='date'
-                name='fecha_incorporacion'
-                value={newEmployee.fecha_incorporacion}
-                onChange={handleChange}
-                placeholder='Ingrese la fecha de incorporación'
-                className='mb-4 w-full rounded-lg border p-2'
-            />
+                {/* Fecha de Incorporación */}
+                <div>
+                    <label className='mb-2 block text-gray-700'>Fecha de incorporación:</label>
+                    <input
+                        type='date'
+                        name='fecha_incorporacion'
+                        value={newEmployee.fecha_incorporacion}
+                        onChange={handleChange}
+                        placeholder='Ingrese la fecha de incorporación'
+                        className='w-full rounded-lg border p-2'
+                    />
+                </div>
 
-            <label className='mb-2 block text-gray-700'>Departamento:</label>
-            <input
-                type='text'
-                name='departamento'
-                value={newEmployee.departamento}
-                onChange={handleChange}
-                placeholder='Ingrese el departamento'
-                className='mb-4 w-full rounded-lg border p-2'
-            />
+                {/* Departamento */}
+                <div>
+                    <label className='mb-2 block text-gray-700'>Departamento:</label>
+                    <input
+                        type='text'
+                        name='departamento'
+                        value={newEmployee.departamento}
+                        onChange={handleChange}
+                        placeholder='Ingrese el departamento'
+                        className='w-full rounded-lg border p-2'
+                    />
+                </div>
 
-            <label className='mb-2 block text-gray-700'>Puesto:</label>
-            <input
-                type='text'
-                name='puesto'
-                value={newEmployee.puesto}
-                onChange={handleChange}
-                placeholder='Ingrese el puesto'
-                className='mb-4 w-full rounded-lg border p-2'
-            />
+                {/* Puesto */}
+                <div>
+                    <label className='mb-2 block text-gray-700'>Puesto:</label>
+                    <input
+                        type='text'
+                        name='puesto'
+                        value={newEmployee.puesto}
+                        onChange={handleChange}
+                        placeholder='Ingrese el puesto'
+                        className='w-full rounded-lg border p-2'
+                    />
+                </div>
 
-            <label className='mb-2 block text-gray-700'>Sueldo:</label>
-            <input
-                type='number'
-                name='sueldo'
-                value={newEmployee.sueldo || ''}
-                onChange={handleChange}
-                placeholder='Ingrese el sueldo'
-                className='mb-4 w-full rounded-lg border p-2'
-            />
+                {/* Sueldo */}
+                <div>
+                    <label className='mb-2 block text-gray-700'>Sueldo:</label>
+                    <input
+                        type='number'
+                        name='sueldo'
+                        value={newEmployee.sueldo || ''}
+                        onChange={handleChange}
+                        placeholder='Ingrese el sueldo'
+                        className='w-full rounded-lg border p-2'
+                    />
+                </div>
+            </div>
 
-            <div className='flex justify-end gap-2'>
+            {/* Botón de acción */}
+            <div className='mt-6 flex justify-end'>
                 <Button
                     onClick={handleSubmit}
                     disabled={false}
-                    design='rounded-2xl bg-green-500 hover:bg-green-600 text-white cursor-pointer'>
-                    <span className='relative pt-1'>
-                        <FaRegSave size={17} />
-                    </span>
+                    className='rounded-2xl bg-green-500 px-4 py-2 text-white hover:bg-green-600'>
                     Guardar
                 </Button>
             </div>

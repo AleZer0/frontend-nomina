@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { createPayroll, getPayrolls } from '../services/payroll.service';
-import { PayrollInterface } from '../types';
+import { Employee, PayrollType } from '../types';
 import Button from '../components/Button';
 import Empleado from '../services/employees.service';
 import { HiDocumentPlus } from 'react-icons/hi2';
-import { Employee } from './Employees';
 import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
 import { previewPayrollPDF } from '../services/pdf.service';
@@ -14,7 +13,7 @@ import Loader from '../components/Loader';
 import LoadingButton from '../components/LoadingButton';
 
 const Payroll: React.FC = () => {
-    const [nominas, setNominas] = useState<PayrollInterface[]>([]);
+    const [nominas, setNominas] = useState<PayrollType[]>([]);
     const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -32,17 +31,7 @@ const Payroll: React.FC = () => {
             .finally(() => setLoading(false));
     }, []);
 
-    const handleSubmit = (newNomina: {
-        fecha: string;
-        dias_trabajados: number;
-        prestamos: number;
-        infonavit: number;
-        sueldo: number;
-        id_empleado: number;
-        finiquito?: number;
-        vacaciones?: number;
-        aguinaldo?: number;
-    }) => {
+    const handleSubmit = (newNomina: Omit<PayrollType, 'folio'>) => {
         createPayroll(newNomina)
             .then(response => {
                 if (response?.nomina) {
@@ -85,13 +74,15 @@ const Payroll: React.FC = () => {
                     renderRow={item => (
                         <>
                             <div className='p-2'>{`NOM${item.folio.toString().padStart(4, '0')}`}</div>
-                            <div className='p-2'>{`${item.empleado.nombre} ${item.empleado.apellido}`}</div>
+                            <div className='p-2'>
+                                {item.empleado ? `${item.empleado.nombre} ${item.empleado.apellido}` : ''}
+                            </div>
                             <div className='p-2'>{new Date(item.fecha).toLocaleDateString('es-MX')}</div>
                             <div className='p-2'>${item.sueldo.toFixed(2)}</div>
-                            <div className='p-2'>${item.prestamos.toFixed(2)}</div>
+                            <div className='p-2'>${item.prestamos ? item.prestamos.toFixed(2) : 0}</div>
                             <div className='p-2'>${item.infonavit.toFixed(2)}</div>
                             <div className='p-2 font-semibold text-green-600'>
-                                ${(item.sueldo - item.prestamos - item.infonavit).toFixed(2)}
+                                ${(item.sueldo - (item.prestamos ? item.prestamos : 0) - item.infonavit).toFixed(2)}
                             </div>
                             <div className='flex justify-center gap-2 p-2'>
                                 <LoadingButton onClick={() => previewPayrollPDF(item.folio)}>

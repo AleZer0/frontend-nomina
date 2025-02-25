@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
 import Button from '../Button';
 import TableData from '../TableData';
 import { HiDocumentPlus } from 'react-icons/hi2';
 import { FaUserEdit } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
+import { Employee } from '../../types';
 
 interface ViewEmployeeProps {
     isOpen: boolean;
@@ -28,7 +28,7 @@ const emptyEmployee: Employee = {
 };
 
 const fieldMapping: Record<string, keyof Employee> = {
-    'Id Empleado': 'id_empleado',
+    'No. Empleado': 'id_empleado',
     'Fecha Incorporacion': 'fecha_incorporacion',
     Nombre: 'nombre',
     Apellido: 'apellido',
@@ -58,24 +58,34 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     }, [employee]);
 
     if (!isOpen) return null;
+    const field = [{ label: 'No. Empleado' }];
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado' className='max-w-4xl'>
             <div className='flex flex-col space-y-8'>
                 {/* Sección de Datos del Empleado */}
                 <div className='grid max-h-96 grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2'>
-                    {['Id Empleado', 'Fecha Incorporacion', 'Nombre', 'Apellido', 'Puesto', 'Sueldo'].map(
-                        (label, index) => (
-                            <div key={index} className='mb-4'>
-                                <label className='mb-2 block text-gray-700'>{label}:</label>
-                                <input
-                                    type={label === 'Fecha Incorporacion' ? 'date' : 'text'}
-                                    value={formData[fieldMapping[label]] ?? ''}
-                                    readOnly
-                                    className='w-full rounded-lg border bg-gray-100 p-2'
-                                />
-                            </div>
-                        )
+                    {['No. Empleado', 'Fecha Incorporacion', 'Nombre', 'Apellido', 'Puesto', 'Sueldo'].map(
+                        (label, index) => {
+                            let value = loan ? loan[key as keyof typeof loan] : '';
+
+                            // Si el campo es de tipo "date", lo convierte a "YYYY-MM-DD"
+                            if (type === 'date' && value) {
+                                const dateValue = new Date(value as string);
+                                value = !isNaN(dateValue.getTime()) ? dateValue.toISOString().split('T')[0] : '';
+                            }
+                            return (
+                                <div key={index} className='mb-4'>
+                                    <label className='mb-2 block text-gray-700'>{label}:</label>
+                                    <input
+                                        type={label === 'Fecha Incorporacion' ? 'date' : 'text'}
+                                        value={formData[fieldMapping[label]] ?? ''}
+                                        readOnly
+                                        className='w-full rounded-lg border bg-gray-100 p-2'
+                                    />
+                                </div>
+                            );
+                        }
                     )}
                 </div>
                 {/* Sección de Nóminas con TableData */}

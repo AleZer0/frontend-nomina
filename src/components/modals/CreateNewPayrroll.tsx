@@ -1,39 +1,39 @@
 import { useEffect, useState } from 'react';
 import Button from '../Button';
-import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
+import { FaRegSave } from 'react-icons/fa';
+import { Employee, PayrollType, LoanType } from '../../types';
+
+interface PrestamoAbono {
+    id_prestamo: number;
+    monto_abonado: number;
+}
 
 interface CreatePayrollModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newNomina: {
-        fecha: string;
-        dias_trabajados: number;
-        prestamos: number;
-        infonavit: number;
-        sueldo: number;
-        id_empleado: number;
-        finiquito: number;
-        dias_vacaciones: number;
-        aguinaldo: number;
-    }) => void;
+    onSubmit: (newNomina: Omit<PayrollType, 'folio'>) => void;
     empleados: Employee[];
     empleadoSeleccionado?: Employee | null;
 }
 
+// Función para obtener la fecha actual en YYYY-MM-DD
 const getCurrentDate = () => new Date().toISOString().split('T')[0];
 
+// Estructura inicial de la nómina
 const emptyPayroll = {
     fecha: getCurrentDate(),
     dias_trabajados: 0,
-    prestamos: 0,
     infonavit: 0,
     sueldo: 0,
     finiquito: 0,
-    dias_vacaciones: 0,
+    vacaciones: 0,
     aguinaldo: 0,
     id_empleado: 0,
+    // Aquí guardaremos los préstamos seleccionados y el abono
+    prestamos: [] as PrestamoAbono[],
 };
+
 const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
     isOpen,
     onClose,
@@ -41,23 +41,47 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
     empleados,
     empleadoSeleccionado,
 }) => {
-    const [newNomina, setNewNomina] = useState(emptyPayroll);
-    const [visibleFields, setVisibleFields] = useState({
-        vacaciones: false,
-        finiquito: false,
-        aguinaldo: false,
-    });
+    const [newNomina, setNewNomina] = useState<typeof emptyPayroll>(emptyPayroll);
 
     useEffect(() => {
         if (empleadoSeleccionado) {
             setNewNomina(prevNomina => ({
-                ...prevNomina,
-                sueldo: empleadoSeleccionado.sueldo ?? 0,
+                ...emptyPayroll,
                 id_empleado: empleadoSeleccionado.id_empleado,
+                sueldo: empleadoSeleccionado.sueldo ?? 0,
+                // Reiniciamos el array de prestamos seleccionados
+                prestamos: [],
             }));
         }
     }, [empleadoSeleccionado]);
 
+    // Función para manejar la selección múltiple de préstamos
+    const handleSelectPrestamos = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedOptions = Array.from(event.target.selectedOptions);
+        const selectedIds = selectedOptions.map(option => parseInt(option.value, 10));
+
+        setNewNomina(prev => {
+            // Construimos un nuevo array de préstamos seleccionados
+            // Si un préstamo ya existe en prev.prestamos, conservamos su monto_abonado
+            const newPrestamos = selectedIds.map(id => {
+                const existing = prev.prestamos.find(p => p.id_prestamo === id);
+                return existing || { id_prestamo: id, monto_abonado: 0 };
+            });
+            return { ...prev, prestamos: newPrestamos };
+        });
+    };
+
+    // Función para cambiar el monto de abono en un préstamo seleccionado
+    const handleChangeMontoAbonado = (id_prestamo: number, monto_abonado: number) => {
+        setNewNomina(prev => ({
+            ...prev,
+            prestamos: prev.prestamos.map(prestamo =>
+                prestamo.id_prestamo === id_prestamo ? { ...prestamo, monto_abonado } : prestamo
+            ),
+        }));
+    };
+
+    // Enviamos la nómina al padre
     const handleSubmit = () => {
         if (!newNomina.id_empleado || newNomina.sueldo <= 0) {
             alert('Por favor, selecciona un empleado y verifica el sueldo.');
@@ -66,6 +90,9 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
         onSubmit(newNomina);
         setNewNomina({ ...emptyPayroll, fecha: getCurrentDate() });
     };
+
+    // Empleado seleccionado localmente según el ID en newNomina
+    const selectedEmployeeLocal = empleados.find(emp => emp.id_empleado === newNomina.id_empleado);
 
     if (!isOpen) return null;
 
@@ -80,13 +107,14 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                         value={newNomina.id_empleado}
                         onChange={e => {
                             const selectedEmployee = empleados.find(
-                                emp => emp.id_empleado === parseInt(e.target.value)
+                                emp => emp.id_empleado === parseInt(e.target.value, 10)
                             );
-                            setNewNomina(prevNomina => ({
-                                ...prevNomina,
+                            setNewNomina({
+                                ...emptyPayroll,
                                 id_empleado: selectedEmployee?.id_empleado || 0,
                                 sueldo: selectedEmployee?.sueldo || 0,
-                            }));
+                                prestamos: [],
+                            });
                         }}
                         className='w-full rounded-lg border p-2'>
                         <option value=''>Seleccione un empleado</option>
@@ -119,90 +147,62 @@ const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
                     <div key={field.name}>
                         <label className='mb-2 block text-gray-700'>{field.label}:</label>
                         <input
-                            placeholder={`Ingrese ${field.label.toLowerCase()}`}
                             type='number'
                             name={field.name}
                             value={newNomina[field.name as keyof typeof newNomina] || ''}
                             onChange={e =>
-                                setNewNomina({ ...newNomina, [field.name]: parseFloat(e.target.value) || 0 })
+                                setNewNomina({
+                                    ...newNomina,
+                                    [field.name]: parseFloat(e.target.value) || 0,
+                                })
                             }
                             className='w-full rounded-lg border p-2'
                         />
                     </div>
                 ))}
 
-                {empleadoSeleccionado?.prestamos && empleadoSeleccionado.prestamos.length > 0 && (
-                    <div>
-                        <label className='mb-2 block text-gray-700'>Abono a préstamo:</label>
-                        <input
-                            placeholder='Ingrese abono a préstamo'
-                            type='number'
-                            name='prestamos'
-                            value={newNomina.prestamos || ''}
-                            onChange={e => setNewNomina({ ...newNomina, prestamos: parseFloat(e.target.value) || 0 })}
+                {/* Selección múltiple de préstamos (si el empleado tiene) */}
+                {selectedEmployeeLocal?.prestamos && selectedEmployeeLocal.prestamos.length > 0 && (
+                    <div className='md:col-span-2'>
+                        <label className='mb-2 block text-gray-700'>Préstamos (seleccione uno o varios):</label>
+                        <select
+                            multiple
                             className='w-full rounded-lg border p-2'
-                        />
+                            onChange={handleSelectPrestamos}
+                            // Arma un array de ID_prestamo seleccionados
+                            value={newNomina.prestamos.map(p => p.id_prestamo.toString())}>
+                            {selectedEmployeeLocal.prestamos.map(prestamo => (
+                                <option key={prestamo.id_prestamo} value={prestamo.id_prestamo}>
+                                    {`Préstamo #${prestamo.id_prestamo}`}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 )}
 
-                {/* Sección de Toggles con Inputs debajo */}
-                {[
-                    { label: 'Vacaciones', field: 'vacaciones', inputName: 'dias_vacaciones' },
-                    { label: 'Finiquito', field: 'finiquito', inputName: 'finiquito' },
-                    { label: 'Aguinaldo', field: 'aguinaldo', inputName: 'aguinaldo' },
-                ].map(({ label, field, inputName }) => (
-                    <div key={field} className='flex flex-col gap-2'>
-                        {/* Toggle y Label alineados */}
-                        <div className='flex items-center gap-3'>
-                            <label className='inline-flex cursor-pointer items-center'>
-                                <input
-                                    type='checkbox'
-                                    className='peer sr-only'
-                                    checked={visibleFields[field as keyof typeof visibleFields]}
-                                    onChange={() =>
-                                        setVisibleFields(prev => ({
-                                            ...prev,
-                                            [field]: !prev[field as keyof typeof visibleFields],
-                                        }))
-                                    }
-                                />
-                                <div className='relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300'>
-                                    <div
-                                        className={`absolute start-[2px] top-[2px] h-5 w-5 rounded-full border border-gray-300 bg-white transition-all ${
-                                            visibleFields[field as keyof typeof visibleFields] ? 'translate-x-full' : ''
-                                        }`}></div>
-                                </div>
-                            </label>
-                            <label className='block text-gray-700'>{label}:</label>
+                {/* Inputs para abonar a cada préstamo seleccionado */}
+                {newNomina.prestamos.length > 0 &&
+                    newNomina.prestamos.map((p, idx) => (
+                        <div key={p.id_prestamo} className='flex items-center gap-4 md:col-span-2'>
+                            <label className='w-1/2 text-gray-700'>Monto a abonar en préstamo #{p.id_prestamo}:</label>
+                            <input
+                                type='number'
+                                placeholder='Ingrese abono'
+                                value={p.monto_abonado || ''}
+                                onChange={e => handleChangeMontoAbonado(p.id_prestamo, parseFloat(e.target.value) || 0)}
+                                className='w-1/2 rounded-lg border p-2'
+                            />
                         </div>
-
-                        {/* Input que aparece debajo del toggle */}
-                        {visibleFields[field as keyof typeof visibleFields] && (
-                            <div>
-                                {/* <label className='mb-2 block text-gray-700'>{label}:</label> */}
-                                <input
-                                    type='number'
-                                    placeholder={`Ingrese ${field.toLowerCase()}`}
-                                    name={inputName}
-                                    value={newNomina[inputName as keyof typeof newNomina] || ''}
-                                    onChange={e =>
-                                        setNewNomina({
-                                            ...newNomina,
-                                            [inputName]: parseFloat(e.target.value) || 0,
-                                        })
-                                    }
-                                    className='w-full rounded-lg border p-2'
-                                />
-                            </div>
-                        )}
-                    </div>
-                ))}
+                    ))}
             </div>
 
             <div className='mt-6 flex justify-end'>
                 <Button
                     onClick={handleSubmit}
                     className='rounded-2xl bg-green-500 px-4 py-2 text-white hover:bg-green-600'>
+                    <span className='relative pt-1'>
+                        <FaRegSave size={17} />
+                    </span>
                     Guardar
                 </Button>
             </div>

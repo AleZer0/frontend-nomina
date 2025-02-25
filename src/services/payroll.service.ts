@@ -1,5 +1,5 @@
 import axiosInstance from '.';
-import { PayrollInterface } from '../types';
+import { PayrollType } from '../types';
 
 const getPayrolls = async (id: number) => {
     const response = await axiosInstance.get(`/nomina/estado/${id}`);
@@ -10,14 +10,7 @@ const getPayroll = (id: number) => {
     return axiosInstance.get(`/nomina/${id}`);
 };
 
-const createPayroll = async (data: {
-    fecha: string;
-    dias_trabajados: number;
-    prestamos: number;
-    infonavit: number;
-    sueldo: number;
-    id_empleado: number;
-}) => {
+const createPayroll = async (data: Omit<PayrollType, 'folio'>) => {
     try {
         const response = await axiosInstance.post('/nomina', data);
         return response.data; // Devuelve solo los datos de la respuesta
@@ -27,7 +20,7 @@ const createPayroll = async (data: {
     }
 };
 
-const updatePayroll = (id: number, data: PayrollInterface) => {
+const updatePayroll = (id: number, data: Omit<PayrollType, 'folio'>) => {
     return axiosInstance.put(`/nomina/${id}`, data);
 };
 

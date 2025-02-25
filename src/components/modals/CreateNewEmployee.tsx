@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Button from '../Button';
-import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
+import { Employee } from '../../types';
 
 interface CreateEmployeeModalProps {
     isOpen: boolean;

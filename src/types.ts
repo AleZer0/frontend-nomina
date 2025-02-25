@@ -30,29 +30,43 @@ export interface LoanType {
     ultimo_abono?: number;
 }
 
-export interface PayrollInterface {
-    folio: number;
-    fecha: string;
-    dias_trabajados: number;
-    prestamos: number;
-    infonavit: number;
-    sueldo: number;
+export interface PrestamoAbono {
+    id_prestamo: number;
+    monto_abonado: number;
+}
+
+export interface Employee {
+    id_empleado: number;
+    nombre: string;
+    apellido: string;
+    fecha_incorporacion?: string;
+    departamento?: string;
+    puesto: string;
+    sueldo?: number;
     created_at?: string;
     updated_at?: string;
     estado?: number;
+    nomina: PayrollType[];
+    ultima_nomina?: number;
+    prestamos?: LoanType[];
+}
+
+export interface PayrollType {
+    folio: number;
+    fecha: string;
+    dias_trabajados: number;
+    infonavit: number;
+    vacaciones: number;
+    aguinaldo: number;
+    finiquito: number;
+    sueldo: number;
     id_empleado: number;
-    empleado: {
-        id_empleado: number;
-        nombre: string;
-        apellido: string;
-        fecha_incorporacion: string;
-        departamento: string;
-        puesto: string;
-        sueldo: number;
-        created_at?: string;
-        updated_at?: string;
-        estado?: number;
-    };
+    created_at?: string;
+    updated_at?: string;
+    estado?: number;
+    empleado?: Employee;
+    prestamos?: number;
+    ids_prestamos?: PrestamoAbono[];
 }
 
 export interface WeeklyReportData {

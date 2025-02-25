@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../Button';
-import { Employee } from '../../pages/Employees';
 import Modal from '../Modal';
 import { FaRegSave } from 'react-icons/fa';
+import { Employee } from '../../types';
 
 interface EditEmployeeModalProps {
     isOpen: boolean;

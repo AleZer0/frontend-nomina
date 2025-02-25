@@ -11,22 +11,8 @@ import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
 import Loader from '../components/Loader';
 import ViewEmployeeModal from '../components/modals/ViewEmployee';
-
-export interface Employee {
-    id_empleado: number;
-    nombre: string;
-    apellido: string;
-    fecha_incorporacion?: string;
-    departamento?: string;
-    puesto: string;
-    sueldo?: number;
-    created_at?: string;
-    updated_at?: string;
-    estado?: number;
-    nomina: Array<any>;
-    ultima_nomina?: number;
-    prestamos?: Array<any>;
-}
+import { Employee, PayrollType } from '../types';
+import { CgDetailsMore } from 'react-icons/cg';
 
 const Employees: React.FC = () => {
     const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee | null>(null);
@@ -91,14 +77,7 @@ const Employees: React.FC = () => {
         });
     };
 
-    const handleSubmitPayroll = (newNomina: {
-        fecha: string;
-        dias_trabajados: number;
-        prestamos: number;
-        infonavit: number;
-        sueldo: number;
-        id_empleado: number;
-    }) => {
+    const handleSubmitPayroll = (newNomina: Omit<PayrollType, 'folio'>) => {
         createPayroll(newNomina)
             .then(response => {
                 if (!response && !response.nomina) {
@@ -148,6 +127,9 @@ const Employees: React.FC = () => {
                                 <Button
                                     design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'
                                     onClick={() => handleViewEmployee(item)}>
+                                    <span className='relative pt-1'>
+                                        <CgDetailsMore size={17} />
+                                    </span>
                                     Detalles
                                 </Button>
                             </div>

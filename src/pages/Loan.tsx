@@ -3,28 +3,31 @@ import Header from '../components/Header';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
 import { MdAttachMoney } from 'react-icons/md';
-import { TbPigMoney } from 'react-icons/tb';
 import TableData from '../components/TableData';
-import { LoanType } from '../types';
+import { Employee, LoanType } from '../types';
 import { Prestamos } from '../services/prestamos.service';
 import CreateLoanModal from '../components/modals/CreateNewLoan';
-import CreateSubscriptionModal from '../components/modals/AddSubscription';
-import { Employee } from './Employees';
 import Empleado from '../services/employees.service';
+import ViewLoan from '../components/modals/ViewLoan';
+import { CgDetailsMore } from 'react-icons/cg';
+import Payloan from '../components/modals/Payloan';
 
 const Loan: React.FC = () => {
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee | null>(null);
     const [prestamos, setPrestamos] = useState<LoanType[]>([]);
     const [empleados, setEmpleados] = useState<Employee[]>([]);
     const [isLoanModalOpen, setIsLoanModalOpen] = useState(false);
-    const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+    const [isViewLoanModalOpen, setIsViewLoanModalOpen] = useState(false);
     const [selectedLoan, setSelectedLoan] = useState<LoanType | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
     useEffect(() => {
         fetchPrestamos();
         fetchEmpleados();
     }, []);
+
+    const closeCreateLoanModal = () => setIsSubscriptionModalOpen(false);
+    const openLoanPay = () => setIsSubscriptionModalOpen(true);
 
     const fetchPrestamos = async () => {
         setLoading(true);
@@ -50,24 +53,6 @@ const Loan: React.FC = () => {
         }
     };
 
-    const handleViewLoan = async (loan: LoanType) => {
-        try {
-            const data = await Prestamos.getLoans(1); // Obtener todos los préstamos y sus abonos
-            const updatedLoan = data.prestamos.find((p: LoanType) => p.id_prestamo === loan.id_prestamo);
-
-            if (updatedLoan) {
-                setSelectedLoan(updatedLoan);
-
-                // Buscar el empleado correspondiente al préstamo
-                const employeeData = empleados.find(emp => emp.id_empleado === updatedLoan.id_empleado) || null;
-                setEmpleadoSeleccionado(employeeData);
-            }
-        } catch (error) {
-            console.error('Error al obtener datos del préstamo:', error);
-        }
-        setIsSubscriptionModalOpen(true);
-    };
-
     const handleSubmitLoan = async (newLoan: { id_empleado: number; monto_total: number; saldo_pendiente: number }) => {
         try {
             await Prestamos.createLoan(newLoan);
@@ -80,7 +65,7 @@ const Loan: React.FC = () => {
     const handleSubscriptionSubmit = async (id_prestamo: number, monto_abonado: number) => {
         try {
             await Prestamos.payLoan(id_prestamo, { monto_abonado });
-            fetchPrestamos(); // Volver a cargar los préstamos actualizados
+            fetchPrestamos();
         } catch (error) {
             console.error('Error al registrar abono:', error);
         }
@@ -126,11 +111,14 @@ const Loan: React.FC = () => {
                             <div className='flex justify-center gap-2 p-2'>
                                 <Button
                                     design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'
-                                    onClick={() => handleViewLoan(item)}>
+                                    onClick={() => {
+                                        setSelectedLoan(item);
+                                        setIsViewLoanModalOpen(true);
+                                    }}>
                                     <span className='relative pt-1'>
-                                        <TbPigMoney size={17} />
+                                        <CgDetailsMore size={17} />
                                     </span>
-                                    Ver Abonos
+                                    Detalles
                                 </Button>
                             </div>
                         </>
@@ -145,13 +133,19 @@ const Loan: React.FC = () => {
                 onSubmit={handleSubmitLoan}
                 empleados={empleados}
             />
-
-            <CreateSubscriptionModal
+            {/* Modal para agregar un abono */}
+            <Payloan
                 isOpen={isSubscriptionModalOpen}
-                onClose={() => setIsSubscriptionModalOpen(false)}
+                onClose={closeCreateLoanModal}
                 onSubmit={handleSubscriptionSubmit}
-                id_prestamo={selectedLoan?.id_prestamo ?? 0}
-                employee={empleadoSeleccionado}
+                selectLoan={selectedLoan}
+            />
+            {/* ViewLoan ahora se abre correctamente */}
+            <ViewLoan
+                isOpen={isViewLoanModalOpen}
+                onClose={() => setIsViewLoanModalOpen(false)}
+                loan={selectedLoan}
+                openLoanPay={openLoanPay}
             />
         </div>
     );

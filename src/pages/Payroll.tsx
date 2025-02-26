@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import { createPayroll, getPayrolls } from '../services/payroll.service';
-import { Employee, PayrollType } from '../types';
+import PayrollServices from '../services/payroll.service';
+import { EmployeeInterface, PayrollInterface } from '../types';
 import Button from '../components/Button';
 import Empleado from '../services/employees.service';
 import { HiDocumentPlus } from 'react-icons/hi2';
@@ -13,8 +13,8 @@ import Loader from '../components/Loader';
 import LoadingButton from '../components/LoadingButton';
 
 const Payroll: React.FC = () => {
-    const [nominas, setNominas] = useState<PayrollType[]>([]);
-    const [empleados, setEmpleados] = useState<Employee[]>([]);
+    const [nominas, setNominas] = useState<PayrollInterface[]>([]);
+    const [empleados, setEmpleados] = useState<EmployeeInterface[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -22,7 +22,7 @@ const Payroll: React.FC = () => {
         // Ejecuta ambas peticiones en paralelo
         Promise.all([
             Empleado.getEmployees(1).then(response => setEmpleados(response?.empleados || [])),
-            getPayrolls(1).then(response => setNominas(response?.nominas || [])),
+            PayrollServices.getPayrolls(1).then(response => setNominas(response?.nominas || [])),
         ])
             .catch(() => {
                 setEmpleados([]);
@@ -31,8 +31,8 @@ const Payroll: React.FC = () => {
             .finally(() => setLoading(false));
     }, []);
 
-    const handleSubmit = (newNomina: Omit<PayrollType, 'folio'>) => {
-        createPayroll(newNomina)
+    const handleSubmit = (newNomina: Omit<PayrollInterface, 'folio'>) => {
+        PayrollServices.createPayroll(newNomina)
             .then(response => {
                 if (response?.nomina) {
                     setNominas([...nominas, response.nomina]);

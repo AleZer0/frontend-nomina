@@ -1,84 +1,91 @@
 import { useEffect, useState } from 'react';
-import Header from '../components/Header';
 import { Link } from 'react-router-dom';
-import Empleado from '../services/employees.service';
-import Button from '../components/Button';
-import { createPayroll } from '../services/payroll.service';
-import CreateEmployeeModal from '../components/modals/CreateNewEmployee';
-import EditEmployeeModal from '../components/modals/EditEmployee';
+
 import { IoIosPersonAdd } from 'react-icons/io';
-import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
-import TableData from '../components/TableData';
-import Loader from '../components/Loader';
-import ViewEmployeeModal from '../components/modals/ViewEmployee';
-import { Employee, PayrollType } from '../types';
 import { CgDetailsMore } from 'react-icons/cg';
 
+import Header from '../components/Header';
+import Button from '../components/Button';
+import TableData from '../components/TableData';
+import Loader from '../components/Loader';
+
+import EmployeeServices from '../services/employees.service';
+import PayrollServices from '../services/payroll.service';
+
+import CreateEmployeeModal from '../components/modals/CreateNewEmployee';
+import EditEmployeeModal from '../components/modals/EditEmployee';
+import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
+import ViewEmployeeModal from '../components/modals/ViewEmployee';
+
+import { EmployeeInterface, PayrollInterface } from '../types';
+
 const Employees: React.FC = () => {
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee | null>(null);
-    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
+    const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInterface | null>(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalPayrollOpen, setIsModalPayrollOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+    const [editingEmployee, setEditingEmployee] = useState<EmployeeInterface | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const data = await Empleado.getEmployees(1);
-                setEmployees(data.empleados || []);
+                const data = await EmployeeServices.getEmployees(1);
+                setEmployees(data || []);
             } catch (error) {
                 console.error('Error al obtener empleados:', error);
             } finally {
                 setLoading(false);
             }
         };
+
         fetchEmployees();
     }, []);
 
-    const handleAddEmployee = (newEmployee: Employee) => {
-        Empleado.createEmployee(newEmployee).then(() => {
-            Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
+    const handleAddEmployee = (newEmployee: EmployeeInterface) => {
+        EmployeeServices.createEmployee(newEmployee).then(() => {
+            EmployeeServices.getEmployees(1).then(data => setEmployees(data.empleados || []));
         });
         setIsModalOpen(false);
     };
 
-    const handleSaveEdit = (updatedEmployee: Employee) => {
-        Empleado.updateEmployee(updatedEmployee.id_empleado, updatedEmployee).then(() =>
-            Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []))
+    const handleSaveEdit = (updatedEmployee: EmployeeInterface) => {
+        EmployeeServices.updateEmployee(updatedEmployee.id_empleado, updatedEmployee).then(() =>
+            EmployeeServices.getEmployees(1).then(data => setEmployees(data.empleados || []))
         );
         setIsEditModalOpen(false);
     };
 
     // Abre el modal de vista (Detalles)
-    const handleViewEmployee = (employee: Employee) => {
-        setEmpleadoSeleccionado(employee);
+    const handleViewEmployee = (employee: EmployeeInterface) => {
+        setSelectedEmployee(employee);
         setIsViewModalOpen(true);
     };
 
     // Al hacer clic en generar PDF
-    const handleCreatePayroll = (employee: Employee) => {
-        setEmpleadoSeleccionado(employee);
+    const handleCreatePayroll = (employee: EmployeeInterface) => {
+        setSelectedEmployee(employee);
         setIsModalPayrollOpen(true);
     };
 
     // Al hacer clic en "Editar" desde el modal
-    const handleEdit = (employee: Employee) => {
+    const handleEdit = (employee: EmployeeInterface) => {
         setEditingEmployee(employee);
         setIsEditModalOpen(true);
     };
 
     // Al hacer clic en "Eliminar" desde el modal
     const handleDelete = (id_empleado: number) => {
-        Empleado.deleteEmployee(id_empleado).then(() => {
-            Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
+        EmployeeServices.deleteEmployee(id_empleado).then(() => {
+            EmployeeServices.getEmployees(1).then(data => setEmployees(data.empleados || []));
         });
     };
 
-    const handleSubmitPayroll = (newNomina: Omit<PayrollType, 'folio'>) => {
-        createPayroll(newNomina)
+    const handleSubmitPayroll = (newNomina: Omit<PayrollInterface, 'folio'>) => {
+        PayrollServices.createPayroll(newNomina)
             .then(response => {
                 if (!response && !response.nomina) {
                     alert('Error al crear la nómina.');
@@ -141,7 +148,7 @@ const Employees: React.FC = () => {
                 <ViewEmployeeModal
                     isOpen={isViewModalOpen}
                     onClose={() => setIsViewModalOpen(false)}
-                    employee={empleadoSeleccionado}
+                    employee={selectedEmployee}
                     onCreatePayroll={handleCreatePayroll}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
@@ -158,7 +165,7 @@ const Employees: React.FC = () => {
                     isOpen={isModalPayrollOpen}
                     onClose={() => setIsModalPayrollOpen(false)}
                     onSubmit={handleSubmitPayroll}
-                    empleadoSeleccionado={empleadoSeleccionado}
+                    empleadoSeleccionado={selectedEmployee}
                 />
 
                 <EditEmployeeModal

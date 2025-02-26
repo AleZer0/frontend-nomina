@@ -1,31 +1,94 @@
 import axiosInstance from '.';
-import { Employee } from '../pages/Employees';
+import { EmployeeInterface } from '../types';
 
-export class Empleado {
+class EmployeeServices {
+    // ✅ Obtener utodos los empleados por estado
     static getEmployees = async (estado: number) => {
-        const response = await axiosInstance.get(`/empleado/estado/${estado}`);
-        return response.data;
+        if (typeof estado !== 'number' || isNaN(estado)) {
+            throw new Error('El estado debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.get(`/empleado/estado/${estado}`);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al obtener empleados:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al obtener empleados.');
+        }
     };
 
-    static getEmployeeDetails = async (id: number) => {
-        const response = await axiosInstance.get(`/empleado/${id}`);
-        return response.data;
+    // ✅ Obtener un empleado por ID
+    static getEmployee = async (id: number) => {
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new Error('El ID debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.get(`/empleado/${id}`);
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al obtener un empleado:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al obtener un empleado.');
+        }
     };
 
-    static createEmployee = async (data: Employee) => {
-        const response = await axiosInstance.post('/empleado', data);
-        return response.data;
+    // ✅ Crear un nuevo empleado
+    static createEmployee = async (data: Omit<EmployeeInterface, 'id_empleado'>) => {
+        try {
+            const response = await axiosInstance.post('/empleado', data);
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al crear un empleado:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al crear un empleado.');
+        }
     };
 
-    static updateEmployee = async (id: number, data: Employee) => {
-        const response = await axiosInstance.put(`/empleado/${id}`, data);
-        return response.data;
+    // ✅ Actualizar un empleado por ID
+    static updateEmployee = async (id: number, data: Partial<EmployeeInterface>) => {
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new Error('El ID debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.put(`/empleado/${id}`, data);
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al actualizar un empleado:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al actualizar un empleado.');
+        }
     };
 
+    // ✅ Eliminar (desactivar) un empleado por ID
     static deleteEmployee = async (id: number) => {
-        const response = await axiosInstance.put(`/empleado/estado/${id}`, { estado: 0 });
-        return response.data;
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new Error('El ID debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.put(`/empleado/estado/${id}`, { estado: 0 });
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al eliminar un empleado:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al eliminar un empleado.');
+        }
     };
 }
 
-export default Empleado;
+export default EmployeeServices;

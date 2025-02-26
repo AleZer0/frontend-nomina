@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import { routes } from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Sidebar from './components/Sidebar';
+import { GlobalProvider } from './context/DataContext';
 
 const App: React.FC = () => {
     return (
@@ -19,20 +20,22 @@ const App: React.FC = () => {
                         path='/*'
                         element={
                             <ProtectedRoute>
-                                <Routes>
-                                    {routes.map((route, index) => (
-                                        <Route
-                                            key={index}
-                                            path={route.path}
-                                            element={
-                                                <>
-                                                    <Sidebar />
-                                                    {route.element}
-                                                </>
-                                            }
-                                        />
-                                    ))}
-                                </Routes>
+                                <GlobalProvider>
+                                    <Routes>
+                                        {routes.map((route, index) => (
+                                            <Route
+                                                key={index}
+                                                path={route.path}
+                                                element={
+                                                    <>
+                                                        <Sidebar />
+                                                        {route.element}
+                                                    </>
+                                                }
+                                            />
+                                        ))}
+                                    </Routes>
+                                </GlobalProvider>
                             </ProtectedRoute>
                         }
                     />

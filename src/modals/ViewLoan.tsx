@@ -1,9 +1,9 @@
-import { LoanType } from '../../types';
-import Modal from '../Modal';
-import Button from '../Button';
+import { LoanType } from '../types';
+import Modal from '../components/Modal';
+import Button from '../components/Button';
 import { TbPigMoney } from 'react-icons/tb';
-import TableData from '../TableData';
-import Utils from '../../utils';
+import TableData from '../components/TableData';
+import Utils from '../utils';
 
 interface ViewLoanProps {
     isOpen: boolean;
@@ -28,7 +28,7 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, loan, openLoanPay 
         <>
             <Modal isOpen={isOpen} onClose={onClose} title='Detalles de préstamo' className='max-w-4xl'>
                 <div className='grid max-h-96 grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2'>
-                    {fields.map(({ label, key, type }) => {
+                    {fields.map(({ label, key, type }, index) => {
                         let value = loan ? loan[key as keyof typeof loan] : '';
 
                         // Si el campo es de tipo "date", lo convierte a "YYYY-MM-DD"
@@ -38,7 +38,7 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, loan, openLoanPay 
                         }
 
                         return (
-                            <div key={key} className='mb-4'>
+                            <div key={index} className='mb-4'>
                                 <label className='mb-2 block text-gray-700'>{label}:</label>
                                 <input
                                     type={type === 'date' ? 'date' : 'text'}

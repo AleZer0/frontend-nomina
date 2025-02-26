@@ -15,7 +15,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer 
 
     return (
         <div className='bg-opacity-40 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm'>
-            <div className='relative max-h-[85vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white p-8 shadow-lg sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2'>
+            <div className='relative max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white p-8 shadow-lg sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2'>
                 <div className='mb-4 flex items-center justify-between'>
                     <h1 className='text-xl font-bold'>{title}</h1>
                     <AiOutlineClose className='cursor-pointer text-2xl' onClick={onClose} />

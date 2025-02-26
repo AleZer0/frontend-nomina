@@ -13,11 +13,13 @@ export interface GlobalContextInterface {
     removeEmployee: (id: number) => Promise<void>;
     addPayroll: (newPayroll: Omit<PayrollInterface, 'id_nomina'>) => Promise<void>;
     updatePayroll: (id: number, updatedData: Partial<PayrollInterface>) => Promise<void>;
+    removePayroll: (id: number) => Promise<void>;
 }
 
 export interface AuthContextType {
     isAuthenticated: boolean;
     loading: boolean;
+    error: string | null;
     usuario: UsuarioType | null;
     login: (credentials: { nombre_usuario: string; contrasena: string }) => Promise<void>;
     logout: () => void;
@@ -27,6 +29,12 @@ export interface AuthResponse {
     success: boolean;
     mensaje: string;
     usuario: UsuarioType;
+}
+
+export interface EmployeeParamsInterface {
+    estado: number;
+    page: number;
+    limit: number;
 }
 
 export interface EmployeeInterface {
@@ -40,7 +48,7 @@ export interface EmployeeInterface {
     created_at?: string;
     updated_at?: string;
     estado?: number;
-    nomina: PayrollInterface[];
+    nomina?: PayrollInterface[];
     ultima_nomina?: number;
     prestamos?: LoanInterface[];
 }
@@ -59,6 +67,7 @@ export interface PayrollInterface {
     updated_at?: string;
     estado?: number;
     empleado?: EmployeeInterface;
+    nominaAbonos: PaymentPayrollInterface;
     prestamos?: number;
     ids_prestamos?: PrestamoAbono[];
 }
@@ -76,7 +85,19 @@ export interface LoanInterface {
     ultimo_abono?: number;
 }
 
-export interface PaymentInterface {}
+export interface PaymentInterface {
+    id_abono: number;
+    id_prestamo: number;
+    fecha: string;
+    created_at?: string;
+}
+
+export interface PaymentPayrollInterface {
+    id_nomina: number;
+    id_abono: number;
+    monto: number;
+    abono: PaymentInterface;
+}
 
 export interface PrestamoAbono {
     id_prestamo: number;

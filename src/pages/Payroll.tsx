@@ -5,7 +5,7 @@ import { EmployeeInterface, PayrollInterface } from '../types';
 import Button from '../components/Button';
 import Empleado from '../services/employees.service';
 import { HiDocumentPlus } from 'react-icons/hi2';
-import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
+import CreatePayrollModal from '../modals/CreateNewPayrroll';
 import TableData from '../components/TableData';
 import { previewPayrollPDF } from '../services/pdf.service';
 import { FaFilePdf } from 'react-icons/fa';

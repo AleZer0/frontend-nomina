@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Button from '../Button';
-import Modal from '../Modal';
+import Button from '../components/Button';
+import Modal from '../components/Modal';
 import { FaRegSave } from 'react-icons/fa';
-import { Employee, PayrollType, LoanType } from '../../types';
+import { Employee, PayrollType, LoanType } from '../types';
 
 interface PrestamoAbono {
     id_prestamo: number;

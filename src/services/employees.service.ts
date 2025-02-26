@@ -1,15 +1,15 @@
 import axiosInstance from '.';
-import { EmployeeInterface } from '../types';
+import { EmployeeInterface, EmployeeParamsInterface } from '../types';
 
 class EmployeeServices {
     // ✅ Obtener utodos los empleados por estado
-    static getEmployees = async (estado: number) => {
-        if (typeof estado !== 'number' || isNaN(estado)) {
-            throw new Error('El estado debe ser un número válido.');
+    static getEmployees = async (params: EmployeeParamsInterface) => {
+        if (!params) {
+            throw new Error('Debe de haber un parametro por lo menos.');
         }
 
         try {
-            const response = await axiosInstance.get(`/empleado/estado/${estado}`);
+            const response = await axiosInstance.get(`/empleado`, { params });
 
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
@@ -29,7 +29,7 @@ class EmployeeServices {
         }
 
         try {
-            const response = await axiosInstance.get(`/empleado/${id}`);
+            const response = await axiosInstance.get(`/empleado/one?id_empleado=${id}`);
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }

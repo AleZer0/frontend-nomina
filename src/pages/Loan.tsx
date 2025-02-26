@@ -6,11 +6,11 @@ import { MdAttachMoney } from 'react-icons/md';
 import TableData from '../components/TableData';
 import { Employee, LoanType } from '../types';
 import { Prestamos } from '../services/prestamos.service';
-import CreateLoanModal from '../components/modals/CreateNewLoan';
+import CreateLoanModal from '../modals/CreateNewLoan';
 import Empleado from '../services/employees.service';
-import ViewLoan from '../components/modals/ViewLoan';
+import ViewLoan from '../modals/ViewLoan';
 import { CgDetailsMore } from 'react-icons/cg';
-import Payloan from '../components/modals/Payloan';
+import Payloan from '../modals/Payloan';
 
 const Loan: React.FC = () => {
     const [prestamos, setPrestamos] = useState<LoanType[]>([]);

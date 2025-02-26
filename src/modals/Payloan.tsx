@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Button from '../Button';
-import Modal from '../Modal';
+import Button from '../components/Button';
+import Modal from '../components/Modal';
 import { BsCash } from 'react-icons/bs';
-import { LoanType } from '../../types';
+import { LoanType } from '../types';
 
 interface PayloanProps {
     isOpen: boolean;

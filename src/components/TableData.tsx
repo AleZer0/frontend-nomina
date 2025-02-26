@@ -34,7 +34,7 @@ function TableData<T>({ fields, data, renderRow }: TableDataProps<T>) {
     // };
 
     return (
-        <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
+        <div className='mt-4 overflow-hidden rounded-lg bg-white shadow-lg'>
             {/* Encabezados */}
             <div className={`grid auto-cols-fr grid-flow-col bg-gray-200 p-3 text-center font-semibold text-gray-700`}>
                 {fields.map((field, index) => (

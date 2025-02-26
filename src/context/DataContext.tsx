@@ -3,6 +3,8 @@ import { GlobalContextInterface, EmployeeInterface, PayrollInterface } from '../
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
 
+const defaultParams = { estado: 1, page: 9, limit: 10 };
+
 const GlobalContext = createContext<GlobalContextInterface | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
@@ -15,7 +17,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const empleadosData = await EmployeeServices.getEmployees(1);
+                const empleadosData = await EmployeeServices.getEmployees(defaultParams);
                 const nominasData = await PayrollServices.getPayrolls(1);
                 setEmployees(empleadosData);
                 setPayrolls(nominasData);
@@ -74,6 +76,15 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const removePayroll = async (folio: number) => {
+        try {
+            await PayrollServices.deletePayroll(folio);
+            setPayrolls(prev => prev.filter(nomina => nomina.folio !== folio)); // ✅ Filtra la nómina eliminada
+        } catch (error: any) {
+            setError(error.message);
+        }
+    };
+
     return (
         <GlobalContext.Provider
             value={{
@@ -86,13 +97,14 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 removeEmployee,
                 addPayroll,
                 updatePayroll,
+                removePayroll,
             }}>
             {children}
         </GlobalContext.Provider>
     );
 };
 
-export const useEmployees = (): GlobalContextInterface => {
+export const useGlobalContext = (): GlobalContextInterface => {
     const context = useContext(GlobalContext);
     if (!context) {
         throw new Error('useEmployees debe ser utilizado dentro de un EmployeeProvider');

@@ -11,7 +11,7 @@ export interface GlobalContextInterface {
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
     updateEmployee: (id: number, updatedData: Partial<EmployeeInterface>) => Promise<void>;
     removeEmployee: (id: number) => Promise<void>;
-    addPayroll: (newPayroll: Omit<PayrollInterface, 'id_nomina'>) => Promise<void>;
+    addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
     updatePayroll: (id: number, updatedData: Partial<PayrollInterface>) => Promise<void>;
     removePayroll: (id: number) => Promise<void>;
 }
@@ -31,7 +31,7 @@ export interface AuthResponse {
     usuario: UsuarioType;
 }
 
-export interface EmployeeParamsInterface {
+export interface ParamsInterface {
     estado: number;
     page: number;
     limit: number;

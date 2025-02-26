@@ -1,15 +1,16 @@
 import axiosInstance from '.';
-import { PayrollInterface } from '../types';
+import { ParamsInterface, PayrollInterface } from '../types';
 
 class PayrollServices {
     // ✅ Obtener todas las nóminas por estado
-    static getPayrolls = async (estado: number) => {
-        if (typeof estado !== 'number' || isNaN(estado)) {
-            throw new Error('El estado debe ser un número válido.');
+    static getPayrolls = async (params: ParamsInterface) => {
+        if (!params) {
+            throw new Error('Debe de haber un parametro por lo menos.');
         }
 
         try {
-            const response = await axiosInstance.get(`/nomina/estado/${estado}`);
+            const response = await axiosInstance.get(`/nomina`, { params });
+
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }

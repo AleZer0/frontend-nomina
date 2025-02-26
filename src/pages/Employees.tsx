@@ -16,7 +16,7 @@ import EditEmployee from '../modals/EditEmployee';
 import { EmployeeInterface } from '../types';
 import { Column } from '../types/extras';
 
-import { useGlobalContext } from '../context/DataContext';
+import { useGlobalContext } from '../context/GlobalContext';
 
 const Employees: React.FC = () => {
     const { employees, addEmployee, updateEmployee, loading } = useGlobalContext();
@@ -52,7 +52,7 @@ const Employees: React.FC = () => {
                 ),
             },
             {
-                key: 'acciones',
+                key: 'accion',
                 header: 'Accion',
                 render: (_, row) => (
                     <Button
@@ -71,7 +71,7 @@ const Employees: React.FC = () => {
         []
     );
 
-    const handleCreateEmployee = (newEmployee: EmployeeInterface) => {
+    const handleCreateEmployee = (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         addEmployee(newEmployee);
         setIsOpenCreateEmployee(false);
     };

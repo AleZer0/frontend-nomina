@@ -1,9 +1,9 @@
 import axiosInstance from '.';
-import { EmployeeInterface, EmployeeParamsInterface } from '../types';
+import { EmployeeInterface, ParamsInterface } from '../types';
 
 class EmployeeServices {
     // ✅ Obtener utodos los empleados por estado
-    static getEmployees = async (params: EmployeeParamsInterface) => {
+    static getEmployees = async (params: ParamsInterface) => {
         if (!params) {
             throw new Error('Debe de haber un parametro por lo menos.');
         }

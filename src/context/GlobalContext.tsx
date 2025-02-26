@@ -3,7 +3,7 @@ import { GlobalContextInterface, EmployeeInterface, PayrollInterface } from '../
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
 
-const defaultParams = { estado: 1, page: 9, limit: 10 };
+const defaultParams = { estado: 1, page: 1, limit: 10 };
 
 const GlobalContext = createContext<GlobalContextInterface | undefined>(undefined);
 
@@ -18,7 +18,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         const fetchData = async () => {
             try {
                 const empleadosData = await EmployeeServices.getEmployees(defaultParams);
-                const nominasData = await PayrollServices.getPayrolls(1);
+                const nominasData = await PayrollServices.getPayrolls(defaultParams);
                 setEmployees(empleadosData);
                 setPayrolls(nominasData);
             } catch (error: any) {
@@ -58,7 +58,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const addPayroll = async (newPayroll: Omit<PayrollInterface, 'id_nomina'>) => {
+    const addPayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         try {
             const createdPayroll = await PayrollServices.createPayroll(newPayroll);
             setPayrolls([...payrolls, createdPayroll]);

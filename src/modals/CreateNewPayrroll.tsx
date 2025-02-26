@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
-import Button from '../components/Button';
-import Modal from '../components/Modal';
+import { useEffect, useMemo, useState } from 'react';
+
 import { FaRegSave } from 'react-icons/fa';
-import { Employee, PayrollType, LoanType } from '../types';
+
+import Modal from '../components/Modal';
+import Form from '../components/Form';
+
+import { FormField } from '../types/extras';
+
+import { EmployeeInterface, PayrollInterface, LoanInterface } from '../types';
 
 interface PrestamoAbono {
     id_prestamo: number;
@@ -12,36 +17,25 @@ interface PrestamoAbono {
 interface CreatePayrollModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newNomina: Omit<PayrollType, 'folio'>) => void;
-    empleados: Employee[];
-    empleadoSeleccionado?: Employee | null;
+    onSubmit: (newNomina: Omit<PayrollInterface, 'folio'>) => void;
+    empleados: EmployeeInterface[];
+    empleadoSeleccionado?: EmployeeInterface | null;
 }
 
-// Función para obtener la fecha actual en YYYY-MM-DD
-const getCurrentDate = () => new Date().toISOString().split('T')[0];
+const NewNomina: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
+    const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
+        fecha: getCurrentDate(),
+        dias_trabajados: 0,
+        infonavit: 0,
+        sueldo: 0,
+        finiquito: 0,
+        vacaciones: 0,
+        aguinaldo: 0,
+        id_empleado: 0,
+        ids_prestamos: [] as PrestamoAbono[],
+    };
 
-// Estructura inicial de la nómina
-const emptyPayroll = {
-    fecha: getCurrentDate(),
-    dias_trabajados: 0,
-    infonavit: 0,
-    sueldo: 0,
-    finiquito: 0,
-    vacaciones: 0,
-    aguinaldo: 0,
-    id_empleado: 0,
-    // Aquí guardaremos los préstamos seleccionados y el abono
-    prestamos: [] as PrestamoAbono[],
-};
-
-const CreatePayrollModal: React.FC<CreatePayrollModalProps> = ({
-    isOpen,
-    onClose,
-    onSubmit,
-    empleados,
-    empleadoSeleccionado,
-}) => {
-    const [newNomina, setNewNomina] = useState<typeof emptyPayroll>(emptyPayroll);
+    const fields: FormField[] = useMemo(() => []);
 
     useEffect(() => {
         if (empleadoSeleccionado) {

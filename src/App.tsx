@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import { routes } from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Sidebar from './components/Sidebar';
-import { GlobalProvider } from './context/DataContext';
+import { GlobalProvider } from './context/GlobalContext';
 
 const App: React.FC = () => {
     return (

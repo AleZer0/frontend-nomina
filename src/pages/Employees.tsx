@@ -77,8 +77,12 @@ const Employees: React.FC = () => {
     };
 
     const handleUpdateEmployee = (updatedEmployee: Partial<EmployeeInterface>) => {
-        updateEmployee(selectedEmployee?.id_empleado ?? 0, updatedEmployee);
-        setSelectedEmployee({ ...selectedEmployee, ...updateEmployee });
+        if (!selectedEmployee) return;
+
+        const updatedEmployeeData = { ...selectedEmployee, ...updatedEmployee };
+
+        updateEmployee(selectedEmployee.id_empleado ?? 0, updatedEmployee);
+        setSelectedEmployee(updatedEmployeeData);
         setIsOpenEditEmployee(false);
     };
 

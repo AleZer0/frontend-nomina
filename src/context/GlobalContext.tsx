@@ -33,8 +33,13 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         fetchData();
     }, []);
 
-    const selectEmployee = (updatedEmployee: EmployeeInterface | null) => {
-        setSelectedEmployee(updatedEmployee);
+    const selectEmployee = (id?: number, updatedEmployee?: EmployeeInterface | null) => {
+        if (id) {
+            const employee = employees.find(emp => emp.id_empleado === id) || null;
+            setSelectedEmployee(employee);
+        } else {
+            setSelectedEmployee(updatedEmployee ?? null);
+        }
     };
 
     const addEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
@@ -118,7 +123,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 export const useGlobalContext = (): GlobalContextInterface => {
     const context = useContext(GlobalContext);
     if (!context) {
-        throw new Error('useEmployees debe ser utilizado dentro de un EmployeeProvider');
+        throw new Error('useGlobalContext debe ser utilizado dentro de un EmployeeProvider');
     }
     return context;
 };

@@ -7,7 +7,9 @@ export interface Column<T> {
 export interface FormField {
     name: string;
     label: string;
-    type: 'text' | 'email' | 'password' | 'number' | 'date';
+    type: 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'multi_select';
+    data?: { id: number; label: string }[] | [];
+    default_value?: number;
     placeholder?: string;
     required?: boolean;
     variant?: 'default' | 'outline' | 'filled';

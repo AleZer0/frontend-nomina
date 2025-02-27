@@ -111,23 +111,21 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, handleClic
     if (!isOpen) return null;
 
     return (
-        <>
-            <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado'>
-                <div className='flex flex-col space-y-8'>
-                    <Form fields={fields} data={selectedEmployee ?? {}} disabled={true} variant='edit' columns={2} />
+        <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado'>
+            <div className='flex flex-col space-y-8'>
+                <Form fields={fields} data={selectedEmployee ?? {}} disabled={true} variant='edit' columns={2} />
 
-                    <Table columns={columns} data={selectedEmployee?.nomina ?? []} />
+                <Table columns={columns} data={selectedEmployee?.nomina ?? []} />
 
-                    <div className='mt-4 flex justify-end gap-2'>
-                        {buttons.map(({ variant, children, icon, onClick }) => (
-                            <Button key={variant} variant={variant} size='md' icon={icon} onClick={onClick}>
-                                {children}
-                            </Button>
-                        ))}
-                    </div>
+                <div className='mt-4 flex justify-end gap-2'>
+                    {buttons.map(({ variant, children, icon, onClick }) => (
+                        <Button key={variant} variant={variant} size='md' icon={icon} onClick={onClick}>
+                            {children}
+                        </Button>
+                    ))}
                 </div>
-            </Modal>
-        </>
+            </div>
+        </Modal>
     );
 };
 

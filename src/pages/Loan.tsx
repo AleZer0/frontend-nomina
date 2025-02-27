@@ -73,7 +73,7 @@ const Loan: React.FC = () => {
 
     return (
         <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Listado de préstamos'>
+            {/* <Header tittle='Listado de préstamos'>
                 <Button
                     onClick={() => setIsLoanModalOpen(true)}
                     design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded-2xl cursor-pointer text-black'>
@@ -82,7 +82,7 @@ const Loan: React.FC = () => {
                     </span>
                     Nuevo Préstamo
                 </Button>
-            </Header>
+            </Header> */}
             <main className='p-6'>
                 {loading && <Loader />}
                 <TableData

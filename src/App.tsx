@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-
-import Login from './pages/Login';
 
 import { routes } from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
-import Sidebar from './components/Sidebar';
+
+import Login from './pages/Login';
+
+import Layout from './layouts/LayoutGeneral';
+
 import { GlobalProvider } from './context/GlobalContext';
+import { AuthProvider } from './context/AuthContext';
 
 const App: React.FC = () => {
     return (
@@ -26,12 +28,7 @@ const App: React.FC = () => {
                                             <Route
                                                 key={index}
                                                 path={route.path}
-                                                element={
-                                                    <>
-                                                        <Sidebar />
-                                                        {route.element}
-                                                    </>
-                                                }
+                                                element={<Layout>{route.element}</Layout>}
                                             />
                                         ))}
                                     </Routes>

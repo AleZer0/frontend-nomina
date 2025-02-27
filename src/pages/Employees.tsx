@@ -58,7 +58,7 @@ const Employees: React.FC = () => {
                         size='md'
                         icon={<CgDetailsMore size={15} />}
                         onClick={() => {
-                            selectEmployee(row);
+                            selectEmployee(undefined, row);
                             setIsOpenViewEmployee(true);
                         }}>
                         Detalles
@@ -81,7 +81,7 @@ const Employees: React.FC = () => {
     };
 
     return (
-        <div className='relative ml-[var(--sidebar-width)] min-h-screen flex-1 bg-gray-100 pt-[var(--header-height)] transition-all duration-300'>
+        <section className='mb-20 ml-64 flex-auto p-8'>
             <Header title='Listado de Empleados'>
                 <Button
                     variant='add'
@@ -92,16 +92,14 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
 
-            <main className='p-6'>
-                {loading && <Loader />}
-                <Table columns={columns} data={employees} />
-            </main>
+            {loading && <Loader />}
+            <Table columns={columns} data={employees} />
 
             <ViewEmployee
                 isOpen={isOpenViewEmployee}
                 onClose={() => {
                     setIsOpenViewEmployee(false);
-                    selectEmployee(null);
+                    selectEmployee();
                 }}
                 handleClickEdit={() => setIsOpenEditEmployee(true)}
             />
@@ -117,7 +115,7 @@ const Employees: React.FC = () => {
                 onClose={() => setIsOpenEditEmployee(false)}
                 onSubmit={handleUpdateEmployee}
             />
-        </div>
+        </section>
     );
 };
 

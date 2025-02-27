@@ -24,7 +24,7 @@ const WeeklyReport: React.FC = () => {
 
     return (
         <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Reportes Semanales' />
+            {/* <Header tittle='Reportes Semanales' /> */}
             <main className='p-6'>
                 {loading && <Loader />}
                 <div className='overflow-hidden rounded-lg bg-white shadow-lg'>

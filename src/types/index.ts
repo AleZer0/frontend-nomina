@@ -9,7 +9,7 @@ export interface GlobalContextInterface {
     loading: boolean;
     error: string | null;
     selectedEmployee: EmployeeInterface | null;
-    selectEmployee: (updatedEmployee: EmployeeInterface | null) => void;
+    selectEmployee: (id?: number, updatedEmployee?: EmployeeInterface | null) => void;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
     updateEmployee: (id: number, updatedData: Partial<EmployeeInterface>) => Promise<void>;
     removeEmployee: (id: number) => Promise<void>;
@@ -59,17 +59,17 @@ export interface PayrollInterface {
     folio: number;
     fecha: string;
     dias_trabajados: number;
-    infonavit: number;
-    vacaciones: number;
-    aguinaldo: number;
-    finiquito: number;
+    infonavit?: number;
+    vacaciones?: number;
+    aguinaldo?: number;
+    finiquito?: number;
     sueldo: number;
     id_empleado: number;
     created_at?: string;
     updated_at?: string;
     estado?: number;
     empleado?: EmployeeInterface;
-    nominaAbonos: PaymentPayrollInterface;
+    nominaAbonos?: PaymentPayrollInterface;
     prestamos?: number;
     ids_prestamos?: PrestamoAbono[];
 }

@@ -12,8 +12,6 @@ import { routes } from '../routes';
 
 import { useAuth } from '../context/AuthContext';
 
-import xrom_logo_1 from '../assets/xrom_logo_1.png';
-
 const Sidebar: React.FC = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -24,17 +22,13 @@ const Sidebar: React.FC = () => {
     };
 
     return (
-        <nav className='fixed flex h-screen w-64 flex-col bg-slate-600 bg-gradient-to-r to-slate-500 text-white'>
-            <div className='flex h-20 items-center justify-center border-b border-slate-400'>
-                <img src={xrom_logo_1} alt='Logo' className='h-10' />
-            </div>
-
+        <nav className='fixed z-40 flex h-screen w-64 flex-auto flex-col bg-slate-900 bg-gradient-to-r to-slate-800 pt-20 text-white'>
             <ul className='flex flex-col'>
                 {routes.map((route, index) => (
                     <li
                         key={index}
                         onClick={() => navigate(route.path)}
-                        className='flex cursor-pointer items-center gap-3 border-b border-slate-400 px-4 py-2 transition-all duration-200 hover:bg-slate-600'>
+                        className='flex cursor-pointer items-center gap-3 border-b border-slate-400 bg-gradient-to-r px-4 py-2 transition-all duration-200 hover:to-slate-500'>
                         {route.name === 'Empleados' ? (
                             <PiUsersThreeFill size={17} />
                         ) : route.name === 'Nominas' ? (
@@ -57,7 +51,7 @@ const Sidebar: React.FC = () => {
                     size='md'
                     icon={<GiEntryDoor size={17} />}
                     onClick={handleLogout}
-                    className='w-full rounded-none px-4 py-2 transition-all duration-200 hover:bg-slate-600'>
+                    className='w-full rounded-none bg-gradient-to-r px-4 py-2 transition-all duration-200 hover:to-slate-500'>
                     Cerrar sesión
                 </Button>
             </div>

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-
 import clsx from 'clsx';
 
 import Input from './Input';
 import Button from './Button';
+import Select from './Select'; // Importamos el nuevo Select
 
 import { FormProps } from '../types/componentes';
 
@@ -19,6 +19,8 @@ const Form: React.FC<FormProps> = ({
     columns = 1,
     children,
 }) => {
+    // const { selectedEmployee, selectEmployee } = useGlobalContext();
+
     const [formData, setFormData] = useState<Record<string, any>>({ ...data });
     const [isFormValid, setIsFormValid] = useState<boolean>(false);
     const isFirstRender = useRef(true);
@@ -32,7 +34,10 @@ const Form: React.FC<FormProps> = ({
         }
     }, [data]);
 
-    const handleChange = (name: string, type: string, value: string) => {
+    const handleChange = (name: string, type: string, value: any) => {
+        // if (name === 'id_empleado') {
+        //     selectEmployee(parseInt(value));
+        // }
         setFormData(prev => ({
             ...prev,
             [name]: type === 'number' ? Number(value) : value,
@@ -40,13 +45,20 @@ const Form: React.FC<FormProps> = ({
     };
 
     useEffect(() => {
-        const allRequiredFilled = fields.every(
-            field =>
-                !field.required ||
-                (formData[field.name] !== undefined &&
-                    formData[field.name] !== null &&
-                    formData[field.name].toString().trim() !== '')
-        );
+        const allRequiredFilled = fields.every(field => {
+            const value = formData[field.name];
+
+            if (!field.required) return true;
+
+            // ✅ Validación mejorada para fechas: debe tener un valor válido
+            if (field.type === 'date') {
+                return value && !isNaN(new Date(value).getTime());
+            }
+
+            // ✅ Verifica que los campos requeridos no sean `undefined`, `null` o una cadena vacía
+            return value !== undefined && value !== null && value.toString().trim() !== '';
+        });
+
         setIsFormValid(allRequiredFilled);
     }, [formData, fields]);
 
@@ -60,53 +72,58 @@ const Form: React.FC<FormProps> = ({
     return (
         <form onSubmit={handleSubmit} className='flex flex-col space-y-4 text-blue-950'>
             <div className={clsx('grid gap-4', { 'grid-cols-1': columns === 1, 'grid-cols-2': columns === 2 })}>
-                {fields.map(
-                    ({
-                        name,
-                        label,
-                        type,
-                        placeholder,
-                        required,
-                        variant,
-                        inputSize,
-                        isPassword,
-                        leftIcon,
-                        rightIcon,
-                    }) => {
-                        let value = formData[name] ?? '';
-
-                        if (type === 'date' && value) {
-                            const dateValue = new Date(value);
-                            value = !isNaN(dateValue.getTime()) ? dateValue.toISOString().split('T')[0] : '';
-                        }
-
-                        if (typeof value === 'number') {
-                            value = value.toString();
-                        }
-
-                        return (
-                            <div key={name} className='flex flex-col'>
-                                <label htmlFor={name} className='mb-1'>
-                                    {label} {required && <span className='text-red-500'>*</span>}
-                                </label>
-                                <Input
-                                    variant={variant}
-                                    inputSize={inputSize}
-                                    leftIcon={leftIcon}
-                                    rightIcon={rightIcon}
-                                    isPassword={isPassword}
-                                    disabled={disabled}
-                                    type={type}
-                                    id={name}
-                                    name={name}
-                                    placeholder={placeholder}
-                                    value={value}
-                                    onChange={e => handleChange(name, type, e.target.value)}
-                                />
-                            </div>
-                        );
-                    }
-                )}
+                {fields.map(field => (
+                    <div key={field.name} className='flex flex-col'>
+                        <label htmlFor={field.name} className='mb-1'>
+                            {field.label} {field.required && <span className='text-red-500'>*</span>}
+                        </label>
+                        {field.type === 'select' ? (
+                            <Select
+                                options={
+                                    field.data?.map(option => ({
+                                        value: option.id,
+                                        label: option.label,
+                                    })) || []
+                                }
+                                value={formData[field.name]}
+                                onChange={value => handleChange(field.name, field.type, value)}
+                                placeholder='Selecciona una opción...'
+                            />
+                        ) : field.type === 'multi_select' ? (
+                            <Select
+                                options={
+                                    field.data?.map(option => ({
+                                        value: option.id,
+                                        label: option.label,
+                                    })) || []
+                                }
+                                value={formData[field.name] || []}
+                                onChange={value => handleChange(field.name, field.type, value)}
+                                multiple
+                                placeholder='Selecciona múltiples opciones...'
+                            />
+                        ) : (
+                            <Input
+                                variant={field.variant}
+                                inputSize={field.inputSize}
+                                leftIcon={field.leftIcon}
+                                rightIcon={field.rightIcon}
+                                isPassword={field.isPassword}
+                                disabled={disabled}
+                                type={field.type}
+                                id={field.name}
+                                name={field.name}
+                                placeholder={field.placeholder}
+                                value={
+                                    // field.name === 'sueldo'
+                                    //     ? selectedEmployee?.sueldo
+                                    field.type === 'number' ? '' : (formData[field.name] ?? '')
+                                }
+                                onChange={e => handleChange(field.name, field.type, e.target.value)}
+                            />
+                        )}
+                    </div>
+                ))}
             </div>
             {children}
             {!disabled && (

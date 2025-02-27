@@ -1,7 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { GlobalContextInterface, EmployeeInterface, PayrollInterface } from '../types';
+import { GlobalContextInterface, EmployeeInterface, PayrollInterface, LoanInterface, WeeklyReportData } from '../types';
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
+import { Prestamos } from '../services/prestamos.service';
+import { ReportesSemanales } from '../services/weeklyReport.service';
 
 const defaultParams = { estado: 1, page: 1, limit: 100 };
 
@@ -12,6 +14,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInterface | null>(null);
 
     const [payrolls, setPayrolls] = useState<PayrollInterface[]>([]);
+    const [loans, setLoans] = useState<LoanInterface[]>([]);
+    const [weeklyReport, setWeeklyReport] = useState<WeeklyReportData[]>([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -21,8 +25,12 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const empleadosData = await EmployeeServices.getEmployees(defaultParams);
                 const nominasData = await PayrollServices.getPayrolls(defaultParams);
+                const loanData = await Prestamos.getLoans(defaultParams);
+                const weeklyReportData = await ReportesSemanales.getReportsList(defaultParams);
                 setEmployees(empleadosData);
                 setPayrolls(nominasData);
+                setLoans(loanData);
+                setWeeklyReport(weeklyReportData);
             } catch (error: any) {
                 setError(error.message);
             } finally {
@@ -99,11 +107,22 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const addLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
+        try {
+            const createdLoan = await Prestamos.createLoan(newLoan);
+            setLoans([...loans, createdLoan]);
+        } catch (error: any) {
+            setError(error.message);
+        }
+    };
+
     return (
         <GlobalContext.Provider
             value={{
                 employees,
                 payrolls,
+                loans,
+                weeklyReport,
                 loading,
                 error,
                 selectedEmployee,
@@ -114,6 +133,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 addPayroll,
                 updatePayroll,
                 removePayroll,
+                addLoan,
             }}>
             {children}
         </GlobalContext.Provider>

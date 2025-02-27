@@ -1,10 +1,10 @@
 import axiosInstance from '.';
-import { LoanInterface } from '../types';
+import { LoanInterface, ParamsInterface } from '../types';
 
 export class Prestamos {
-    static getLoans = async (estado: number) => {
+    static getLoans = async (params: ParamsInterface) => {
         try {
-            const response = await axiosInstance.get(`/prestamos/estado/${estado}`);
+            const response = await axiosInstance.get(`/prestamos`, { params });
             return response.data;
         } catch (error) {
             throw new Error('Error al obtener los prestamos.');
@@ -28,4 +28,5 @@ export class Prestamos {
             throw new Error('Error al aobonar.');
         }
     };
+    static services: any;
 }

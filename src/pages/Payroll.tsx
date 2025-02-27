@@ -24,8 +24,8 @@ const Payroll: React.FC = () => {
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
 
-    const totaPagar = (total: number) => {
-        return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+    const totalPagar = (total: number) => {
+        return <span className={`$ {total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
     };
 
     const columns: Column<PayrollInterface>[] = useMemo(
@@ -56,7 +56,7 @@ const Payroll: React.FC = () => {
                 key: 'total_pagar',
                 header: 'Total a Pagar',
                 render: (_, row) =>
-                    totaPagar(
+                    totalPagar(
                         row.sueldo -
                             (row.prestamos ?? 0) -
                             (row.infonavit ?? 0) +
@@ -67,7 +67,7 @@ const Payroll: React.FC = () => {
             },
             {
                 key: 'accion',
-                header: 'Accion',
+                header: 'Acción',
                 render: (_, row) => (
                     <Button
                         variant='details'

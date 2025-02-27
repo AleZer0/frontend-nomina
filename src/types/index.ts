@@ -6,6 +6,8 @@ export interface UsuarioType {
 export interface GlobalContextInterface {
     employees: EmployeeInterface[];
     payrolls: PayrollInterface[];
+    loans: LoanInterface[];
+    weeklyReport: WeeklyReportData[];
     loading: boolean;
     error: string | null;
     selectedEmployee: EmployeeInterface | null;
@@ -16,6 +18,7 @@ export interface GlobalContextInterface {
     addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
     updatePayroll: (id: number, updatedData: Partial<PayrollInterface>) => Promise<void>;
     removePayroll: (id: number) => Promise<void>;
+    addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
 }
 
 export interface AuthContextType {
@@ -82,7 +85,7 @@ export interface LoanInterface {
     estado?: number;
     created_at?: string;
     updated_at?: string;
-    empleado?: string;
+    empleado?: EmployeeInterface;
     abonos?: Array<any>;
     ultimo_abono?: number;
 }

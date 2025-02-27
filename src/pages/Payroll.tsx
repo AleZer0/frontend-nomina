@@ -73,9 +73,7 @@ const Payroll: React.FC = () => {
                         variant='details'
                         size='md'
                         icon={<FaFilePdf size={15} />}
-                        onClick={() => {
-                            () => previewPayrollPDF(row.folio);
-                        }}>
+                        onClick={() => previewPayrollPDF(row.folio)}>
                         Descargar
                     </Button>
                 ),

@@ -32,5 +32,6 @@ export interface FormProps {
     direction?: 'start' | 'center' | 'end';
     disabled?: boolean;
     columns?: 1 | 2;
+    extra?: (id: number) => void;
     children?: ReactNode;
 }

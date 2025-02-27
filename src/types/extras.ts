@@ -9,7 +9,7 @@ export interface FormField {
     label: string;
     type: 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'multi_select';
     data?: { id: number; label: string }[] | [];
-    default_value?: number;
+    default_value?: string;
     placeholder?: string;
     required?: boolean;
     variant?: 'default' | 'outline' | 'filled';

@@ -13,17 +13,28 @@ import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
 import EditEmployee from '../modals/EditEmployee';
 
-import { EmployeeInterface } from '../types';
+import { EmployeeInterface, PayrollInterface } from '../types';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
+import NewPayroll from '../modals/NewPayroll';
 
 const Employees: React.FC = () => {
-    const { employees, selectedEmployee, selectEmployee, addEmployee, updateEmployee, loading } = useGlobalContext();
+    const {
+        employees,
+        selectedEmployee,
+        selectEmployee,
+        addEmployee,
+        updateEmployee,
+        removeEmployee,
+        addPayroll,
+        loading,
+    } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
+    const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
 
     const columns: Column<EmployeeInterface>[] = useMemo(
         () => [
@@ -34,11 +45,7 @@ const Employees: React.FC = () => {
             {
                 key: 'sueldo',
                 header: 'Sueldo',
-                render: (_, row) => (
-                    <span className='text-green-600'>
-                        {row.sueldo ? `$${row.sueldo.toFixed(2)}` : 'Sin sueldo definido'}
-                    </span>
-                ),
+                render: (_, row) => (row.sueldo ? `$${row.sueldo.toFixed(2)}` : 'Sin sueldo definido'),
             },
             {
                 key: 'ultima_nomina',
@@ -80,6 +87,16 @@ const Employees: React.FC = () => {
         setIsOpenEditEmployee(false);
     };
 
+    const handleDeleteEmploye = (id_empleado: number) => {
+        removeEmployee(id_empleado);
+        setIsOpenViewEmployee(false);
+    };
+
+    const handleCreatePayroll = (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        addPayroll(newPayroll);
+        setIsOpenCreatePayroll(false);
+    };
+
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
             <Header title='Listado de Empleados'>
@@ -101,7 +118,9 @@ const Employees: React.FC = () => {
                     setIsOpenViewEmployee(false);
                     selectEmployee();
                 }}
+                handleClickCreatePayroll={() => setIsOpenCreatePayroll(true)}
                 handleClickEdit={() => setIsOpenEditEmployee(true)}
+                handleClickDelate={handleDeleteEmploye}
             />
 
             <NewEmployee
@@ -114,6 +133,12 @@ const Employees: React.FC = () => {
                 isOpen={isOpenEditEmployee}
                 onClose={() => setIsOpenEditEmployee(false)}
                 onSubmit={handleUpdateEmployee}
+            />
+
+            <NewPayroll
+                isOpen={isOpenCreatePayroll}
+                onClose={() => setIsOpenCreatePayroll(false)}
+                onSubmit={handleCreatePayroll}
             />
         </section>
     );

@@ -20,7 +20,7 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee } = useGlobalContext();
+    const { employees, selectedEmployee, selectEmployee } = useGlobalContext();
 
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
@@ -44,7 +44,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                     id: id_empleado,
                     label: `${nombre} ${apellido}`,
                 })),
-                default_value: selectedEmployee?.id_empleado,
+                default_value: selectedEmployee?.id_empleado.toString(),
                 placeholder: 'Seleccione un empleado',
                 required: true,
             },
@@ -123,13 +123,13 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             {
                 key: 'monto_abonado',
                 header: 'Monto a abonar',
-                render: (_, __) => (
+                render: (_, row) => (
                     <Input
                         variant='default'
                         inputSize='md'
                         leftIcon={<LiaPiggyBankSolid size={17} />}
                         type='number'
-                        placeholder='Ingrese el monto a abonar.'
+                        placeholder={`$${row.saldo_pendiente.toFixed(2)}`}
                     />
                 ),
             },
@@ -167,7 +167,8 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 submitLabel='Guardar nómina'
                 variant='add'
                 direction='end'
-                columns={2}>
+                columns={2}
+                extra={(id: number) => selectEmployee(id)}>
                 <Table columns={columns} data={selectedEmployee?.prestamos ?? []} />
             </Form>
         </Modal>

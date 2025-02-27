@@ -17,6 +17,7 @@ const Form: React.FC<FormProps> = ({
     variant = 'generate',
     direction = 'start',
     columns = 1,
+    extra,
     children,
 }) => {
     // const { selectedEmployee, selectEmployee } = useGlobalContext();
@@ -35,9 +36,9 @@ const Form: React.FC<FormProps> = ({
     }, [data]);
 
     const handleChange = (name: string, type: string, value: any) => {
-        // if (name === 'id_empleado') {
-        //     selectEmployee(parseInt(value));
-        // }
+        if (name === 'id_empleado' && extra) {
+            extra(parseInt(value));
+        }
         setFormData(prev => ({
             ...prev,
             [name]: type === 'number' ? Number(value) : value,

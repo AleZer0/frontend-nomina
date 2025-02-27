@@ -19,10 +19,18 @@ import { useGlobalContext } from '../context/GlobalContext';
 interface ViewEmployeeProps {
     isOpen: boolean;
     onClose: () => void;
+    handleClickCreatePayroll: () => void;
     handleClickEdit: () => void;
+    handleClickDelate: (id_empleado: number) => void;
 }
 
-const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, handleClickEdit }) => {
+const ViewEmployee: React.FC<ViewEmployeeProps> = ({
+    isOpen,
+    onClose,
+    handleClickCreatePayroll,
+    handleClickEdit,
+    handleClickDelate,
+}) => {
     const { selectedEmployee } = useGlobalContext();
 
     const fields: FormField[] = useMemo(
@@ -96,14 +104,24 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, handleClic
 
     const buttons: ButtonProps[] = useMemo(
         () => [
-            { variant: 'add', children: 'Generar Nómina', icon: <HiDocumentPlus size={17} /> },
+            {
+                variant: 'add',
+                children: 'Generar Nómina',
+                icon: <HiDocumentPlus size={17} />,
+                onClick: () => handleClickCreatePayroll(),
+            },
             {
                 variant: 'edit',
                 children: 'Editar',
                 icon: <FaUserEdit size={17} />,
                 onClick: () => handleClickEdit(),
             },
-            { variant: 'delete', children: 'Eliminar', icon: <MdDelete size={17} /> },
+            {
+                variant: 'delete',
+                children: 'Eliminar',
+                icon: <MdDelete size={17} />,
+                onClick: () => handleClickDelate(selectedEmployee?.id_empleado ?? 0),
+            },
         ],
         []
     );

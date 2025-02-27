@@ -9,20 +9,22 @@ import Form from '../components/Form';
 import Table from '../components/Table';
 import Button from '../components/Button';
 
-import { EmployeeInterface, PayrollInterface } from '../types';
+import { PayrollInterface } from '../types';
 import { Column, FormField } from '../types/extras';
 import { ButtonProps } from '../types/componentes';
 
 import Utils from '../utils';
+import { useGlobalContext } from '../context/GlobalContext';
 
 interface ViewEmployeeProps {
     isOpen: boolean;
-    employee: Partial<EmployeeInterface> | null;
     onClose: () => void;
-    hancleClickEdit: () => void;
+    handleClickEdit: () => void;
 }
 
-const EmployeeDetails: React.FC<ViewEmployeeProps> = ({ isOpen, employee, onClose, hancleClickEdit }) => {
+const ViewEmployee: React.FC<ViewEmployeeProps> = ({ isOpen, onClose, handleClickEdit }) => {
+    const { selectedEmployee } = useGlobalContext();
+
     const fields: FormField[] = useMemo(
         () => [
             { name: 'id_empleado', label: 'No. Empleado', type: 'text', variant: 'filled', inputSize: 'md' },
@@ -78,7 +80,7 @@ const EmployeeDetails: React.FC<ViewEmployeeProps> = ({ isOpen, employee, onClos
                 inputSize: 'md',
             },
         ],
-        [employee]
+        []
     );
 
     const columns: Column<PayrollInterface>[] = useMemo(
@@ -99,7 +101,7 @@ const EmployeeDetails: React.FC<ViewEmployeeProps> = ({ isOpen, employee, onClos
                 variant: 'edit',
                 children: 'Editar',
                 icon: <FaUserEdit size={17} />,
-                onClick: () => hancleClickEdit(),
+                onClick: () => handleClickEdit(),
             },
             { variant: 'delete', children: 'Eliminar', icon: <MdDelete size={17} /> },
         ],
@@ -110,11 +112,11 @@ const EmployeeDetails: React.FC<ViewEmployeeProps> = ({ isOpen, employee, onClos
 
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado' className='max-w-4xl'>
+            <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado'>
                 <div className='flex flex-col space-y-8'>
-                    <Form fields={fields} data={employee ?? {}} disabled={true} variant='edit' columns={2} />
+                    <Form fields={fields} data={selectedEmployee ?? {}} disabled={true} variant='edit' columns={2} />
 
-                    <Table columns={columns} data={employee?.nomina ?? []} />
+                    <Table columns={columns} data={selectedEmployee?.nomina ?? []} />
 
                     <div className='mt-4 flex justify-end gap-2'>
                         {buttons.map(({ variant, children, icon, onClick }) => (
@@ -129,4 +131,4 @@ const EmployeeDetails: React.FC<ViewEmployeeProps> = ({ isOpen, employee, onClos
     );
 };
 
-export default EmployeeDetails;
+export default ViewEmployee;

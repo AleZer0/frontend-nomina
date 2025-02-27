@@ -11,7 +11,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             <Comp
                 ref={ref as any}
                 className={clsx(
-                    'inline-flex items-center gap-2 rounded-2xl font-bold transition-all duration-300',
+                    'inline-flex items-center gap-2 rounded-2xl font-semibold transition-all duration-300',
                     {
                         'cursor-pointer bg-green-400 text-black hover:bg-green-500 hover:shadow-2xl hover:shadow-green-500':
                             variant === 'add',
@@ -23,8 +23,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                             variant === 'details',
                         'cursor-pointer bg-yellow-500 text-black hover:bg-yellow-600 hover:shadow-2xl hover:shadow-yellow-600':
                             variant === 'generate',
-                        'cursor-pointer text-blue-950 hover:bg-white': variant === 'ghost',
                         'cursor-not-allowed bg-gray-300 text-black': variant === 'disabled',
+                        'cursor-pointer font-medium': variant === 'ghost',
                     },
                     {
                         'px-3 py-1 text-sm': size === 'sm',

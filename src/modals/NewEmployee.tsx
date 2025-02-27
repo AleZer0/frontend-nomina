@@ -97,7 +97,7 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Añadir un nuevo empleado'>
+        <Modal isOpen={isOpen} onClose={onClose} title='Añadir un nuevo empleado' containerClassName='max-w-3xl'>
             <Form
                 fields={fields}
                 data={emptyEmployee}

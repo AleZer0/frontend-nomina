@@ -10,7 +10,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'add' | 'edit' | 'delete' | 'details' | 'generate' | 'disabled';
+    variant?: 'add' | 'edit' | 'delete' | 'details' | 'generate' | 'ghost' | 'disabled';
     size?: 'sm' | 'md' | 'lg';
     icon?: ReactNode;
     asChild?: boolean;

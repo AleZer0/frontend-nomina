@@ -9,7 +9,7 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
 
-import EmployeeDetails from '../modals/ViewEmployee';
+import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
 import EditEmployee from '../modals/EditEmployee';
 
@@ -19,13 +19,11 @@ import { Column } from '../types/extras';
 import { useGlobalContext } from '../context/GlobalContext';
 
 const Employees: React.FC = () => {
-    const { employees, addEmployee, updateEmployee, loading } = useGlobalContext();
+    const { employees, selectedEmployee, selectEmployee, addEmployee, updateEmployee, loading } = useGlobalContext();
 
-    const [selectedEmployee, setSelectedEmployee] = useState<Partial<EmployeeInterface> | null>(null);
-
-    const [isOpenViewEmployee, setIsOpenViewEmployee] = useState<boolean>(false);
-    const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState<boolean>(false);
-    const [isOpenEditEmployee, setIsOpenEditEmployee] = useState<boolean>(false);
+    const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
+    const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
+    const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
 
     const columns: Column<EmployeeInterface>[] = useMemo(
         () => [
@@ -47,20 +45,20 @@ const Employees: React.FC = () => {
                 header: 'Última Nómina',
                 render: (_, row) => (
                     <Link to='/payroll' className='text-blue-600 underline'>
-                        {row.ultima_nomina ? `NOM${row.ultima_nomina}` : 'No tiene nominas'}
+                        {row.ultima_nomina ? `NOM${row.ultima_nomina}` : 'No tiene nóminas'}
                     </Link>
                 ),
             },
             {
                 key: 'accion',
-                header: 'Accion',
+                header: 'Acción',
                 render: (_, row) => (
                     <Button
                         variant='details'
-                        size='sm'
+                        size='md'
                         icon={<CgDetailsMore size={15} />}
                         onClick={() => {
-                            setSelectedEmployee(row);
+                            selectEmployee(row);
                             setIsOpenViewEmployee(true);
                         }}>
                         Detalles
@@ -78,17 +76,13 @@ const Employees: React.FC = () => {
 
     const handleUpdateEmployee = (updatedEmployee: Partial<EmployeeInterface>) => {
         if (!selectedEmployee) return;
-
-        const updatedEmployeeData = { ...selectedEmployee, ...updatedEmployee };
-
         updateEmployee(selectedEmployee.id_empleado ?? 0, updatedEmployee);
-        setSelectedEmployee(updatedEmployeeData);
         setIsOpenEditEmployee(false);
     };
 
     return (
-        <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Listado de Empleados'>
+        <div className='relative ml-[var(--sidebar-width)] min-h-screen flex-1 bg-gray-100 pt-[var(--header-height)] transition-all duration-300'>
+            <Header title='Listado de Empleados'>
                 <Button
                     variant='add'
                     size='md'
@@ -100,17 +94,16 @@ const Employees: React.FC = () => {
 
             <main className='p-6'>
                 {loading && <Loader />}
-                <Table columns={columns} data={employees}></Table>
+                <Table columns={columns} data={employees} />
             </main>
 
-            <EmployeeDetails
+            <ViewEmployee
                 isOpen={isOpenViewEmployee}
                 onClose={() => {
                     setIsOpenViewEmployee(false);
-                    setSelectedEmployee(null);
+                    selectEmployee(null);
                 }}
-                employee={selectedEmployee}
-                hancleClickEdit={() => setIsOpenEditEmployee(true)}
+                handleClickEdit={() => setIsOpenEditEmployee(true)}
             />
 
             <NewEmployee
@@ -121,7 +114,6 @@ const Employees: React.FC = () => {
 
             <EditEmployee
                 isOpen={isOpenEditEmployee}
-                employee={selectedEmployee ?? {}}
                 onClose={() => setIsOpenEditEmployee(false)}
                 onSubmit={handleUpdateEmployee}
             />

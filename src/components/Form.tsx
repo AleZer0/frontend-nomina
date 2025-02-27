@@ -27,6 +27,8 @@ const Form: React.FC<FormProps> = ({
         if (isFirstRender.current) {
             setFormData({ ...data });
             isFirstRender.current = false;
+        } else if (disabled) {
+            setFormData({ ...data });
         }
     }, [data]);
 

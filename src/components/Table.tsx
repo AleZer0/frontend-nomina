@@ -3,7 +3,7 @@ import { TableProps } from '../types/componentes';
 const Table = <T extends object>({ columns, data, onRowClick }: TableProps<T>) => {
     return (
         <div className='relative overflow-x-auto shadow-md sm:rounded-2xl'>
-            <table className='w-full text-sm text-blue-950'>
+            <table className='text-md w-full text-blue-950'>
                 <thead className='bg-gray-200 text-center uppercase'>
                     <tr className='flex flex-row items-center justify-between'>
                         {columns.map(col => (

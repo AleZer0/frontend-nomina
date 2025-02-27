@@ -6,15 +6,17 @@ import Form from '../components/Form';
 
 import { EmployeeInterface } from '../types';
 import { FormField } from '../types/extras';
+import { useGlobalContext } from '../context/GlobalContext';
 
 interface EditEmployeeModalProps {
     isOpen: boolean;
-    employee: Partial<EmployeeInterface> | null;
     onClose: () => void;
     onSubmit: (updatedEmployee: Partial<EmployeeInterface>) => void;
 }
 
-const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, employee, onClose, onSubmit }) => {
+const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
+    const { selectedEmployee } = useGlobalContext();
+
     const fields: FormField[] = useMemo(
         () => [
             { name: 'nombre', label: 'Nombre', type: 'text', placeholder: 'Ingrese el nombre', required: true },
@@ -29,26 +31,26 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, employee, onCl
             { name: 'puesto', label: 'Puesto', type: 'text', placeholder: 'Ingrese el puesto', required: true },
             { name: 'sueldo', label: 'Sueldo', type: 'number', placeholder: 'Ingrese el sueldo' },
         ],
-        [employee]
+        [selectedEmployee]
     );
 
     const handleSubmit = (values: Partial<EmployeeInterface>) => {
-        if (!values.nombre && !employee?.nombre) {
+        if (!values.nombre && !selectedEmployee?.nombre) {
             alert('El campo Nombre es obligatorio.');
             return;
         }
-        if (!values.apellido && !employee?.apellido) {
+        if (!values.apellido && !selectedEmployee?.apellido) {
             alert('El campo Apellido es obligatorio.');
             return;
         }
-        if (!values.puesto && !employee?.puesto) {
+        if (!values.puesto && !selectedEmployee?.puesto) {
             alert('El campo Puesto es obligatorio.');
             return;
         }
 
         const updatedEmployee: Partial<EmployeeInterface> = {
-            id_empleado: employee?.id_empleado ?? 0,
-            ...employee,
+            id_empleado: selectedEmployee?.id_empleado ?? 0,
+            ...selectedEmployee,
             ...values,
         };
 
@@ -59,11 +61,17 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, employee, onCl
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={true} onClose={onClose} title='Editar Empleado'>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title='Editar Empleado'
+            closeOnOverlayClick={true}
+            containerClassName='max-w-3xl'
+            zIndex={60}>
             <Form
                 fields={fields}
                 data={
-                    employee ?? {
+                    selectedEmployee ?? {
                         nombre: '',
                         apellido: '',
                         fecha_incorporacion: '',

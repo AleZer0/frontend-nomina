@@ -3,12 +3,14 @@ import { GlobalContextInterface, EmployeeInterface, PayrollInterface } from '../
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
 
-const defaultParams = { estado: 1, page: 1, limit: 10 };
+const defaultParams = { estado: 1, page: 1, limit: 100 };
 
 const GlobalContext = createContext<GlobalContextInterface | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
+    const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInterface | null>(null);
+
     const [payrolls, setPayrolls] = useState<PayrollInterface[]>([]);
 
     const [loading, setLoading] = useState(true);
@@ -31,6 +33,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         fetchData();
     }, []);
 
+    const selectEmployee = (updatedEmployee: EmployeeInterface | null) => {
+        setSelectedEmployee(updatedEmployee);
+    };
+
     const addEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         try {
             const createdEmployee = await EmployeeServices.createEmployee(newEmployee);
@@ -43,7 +49,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const updateEmployee = async (id: number, updatedData: Partial<EmployeeInterface>) => {
         try {
             await EmployeeServices.updateEmployee(id, updatedData);
+
             setEmployees(prev => prev.map(emp => (emp.id_empleado === id ? { ...emp, ...updatedData } : emp)));
+
+            setSelectedEmployee(prev => (prev?.id_empleado === id ? { ...prev, ...updatedData } : prev));
         } catch (error: any) {
             setError(error.message);
         }
@@ -92,6 +101,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 payrolls,
                 loading,
                 error,
+                selectedEmployee,
+                selectEmployee,
                 addEmployee,
                 updateEmployee,
                 removeEmployee,

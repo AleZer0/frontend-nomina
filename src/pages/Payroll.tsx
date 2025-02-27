@@ -73,7 +73,7 @@ const Payroll: React.FC = () => {
                 render: (_, row) => (
                     <Button
                         variant='details'
-                        size='sm'
+                        size='md'
                         icon={<FaFilePdf size={15} />}
                         onClick={() => {
                             () => previewPayrollPDF(row.folio);
@@ -93,7 +93,7 @@ const Payroll: React.FC = () => {
 
     return (
         <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Listado de Empleados'>
+            <Header title='Listado de Empleados'>
                 <Button
                     variant='add'
                     size='md'

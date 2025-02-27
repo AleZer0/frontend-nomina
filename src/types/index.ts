@@ -8,6 +8,8 @@ export interface GlobalContextInterface {
     payrolls: PayrollInterface[];
     loading: boolean;
     error: string | null;
+    selectedEmployee: EmployeeInterface | null;
+    selectEmployee: (updatedEmployee: EmployeeInterface | null) => void;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
     updateEmployee: (id: number, updatedData: Partial<EmployeeInterface>) => Promise<void>;
     removeEmployee: (id: number) => Promise<void>;

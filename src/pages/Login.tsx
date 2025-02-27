@@ -14,11 +14,25 @@ const Login: React.FC = () => {
     const { isAuthenticated, login, loading, error } = useAuth();
     const navigate = useNavigate();
 
+<<<<<<< HEAD
     const handleLogin = async (values: Record<string, string>) => {
         await login({
             nombre_usuario: values.nombre_usuario,
             contrasena: values.contrasena,
         });
+=======
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleLogin = async () => {
+        try {
+            await login({ nombre_usuario, contrasena });
+        } catch (error) {
+            setError('Error al iniciar sesión.');
+            throw new Error(`Error al iniciar sesión: ${error}`);
+        }
+>>>>>>> 86a2d4dcd77617ba3ff6184c88cd9c8b29c94aaa
     };
 
     useEffect(() => {

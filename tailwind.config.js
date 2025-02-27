@@ -7,7 +7,7 @@ export default {
         'grid-cols-6',
         'grid-cols-8',
         // etc.
-      ],
+    ],
     theme: {
         extend: {},
     },

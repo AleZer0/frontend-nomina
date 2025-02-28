@@ -24,6 +24,17 @@ const Payroll: React.FC = () => {
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
 
+    const [disabledButtons, setDisabledButtons] = useState<{ [key: number]: boolean }>({});
+
+    const handleDownload = (folio: number) => {
+        setDisabledButtons(prev => ({ ...prev, [folio]: true }));
+        previewPayrollPDF(folio);
+
+        setTimeout(() => {
+            setDisabledButtons(prev => ({ ...prev, [folio]: false }));
+        }, 3000);
+    };
+
     const totalPagar = (total: number) => {
         return <span className={`$ {total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
     };
@@ -73,7 +84,8 @@ const Payroll: React.FC = () => {
                         variant='details'
                         size='md'
                         icon={<FaFilePdf size={15} />}
-                        onClick={() => previewPayrollPDF(row.folio)}>
+                        onClick={() => handleDownload(row.folio)}
+                        disabled={disabledButtons[row.folio]}>
                         Descargar
                     </Button>
                 ),

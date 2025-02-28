@@ -14,10 +14,12 @@ import { LoanInterface } from '../types';
 
 import { Column } from '../types/extras';
 import Utils from '../utils';
+import { CgDetailsMore } from 'react-icons/cg';
 
 const Loan: React.FC = () => {
-    const { loans, addLoan, loading } = useGlobalContext();
+    const { loans, addLoan, loading, selectLoan } = useGlobalContext();
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState<boolean>(false);
+    const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
 
     const columns: Column<LoanInterface>[] = useMemo(
         () => [
@@ -25,7 +27,7 @@ const Loan: React.FC = () => {
             {
                 key: 'empleado',
                 header: 'Empleado',
-                render: (_, row) => (row.empleado ? `${row.empleado.nombre} ${row.empleado.apellido}` : ''),
+                render: (_, row) => row.empleado ?? '',
             },
             {
                 key: 'created_at',
@@ -43,7 +45,22 @@ const Loan: React.FC = () => {
                 header: 'Último Abono',
                 render: (_, row) => `$${(row.ultimo_abono ?? 0).toFixed(2)}`,
             },
-            { key: 'accion', header: 'Acción' },
+            {
+                key: 'accion',
+                header: 'Acción',
+                render: (_, row) => (
+                    <Button
+                        variant='details'
+                        size='md'
+                        icon={<CgDetailsMore size={15} />}
+                        onClick={() => {
+                            selectLoan(undefined, row);
+                            setIsOpenViewLoan(true);
+                        }}>
+                        Detalles
+                    </Button>
+                ),
+            },
         ],
         []
     );
@@ -51,6 +68,13 @@ const Loan: React.FC = () => {
     const handleCreateLoan = (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         addLoan(newLoan);
         setIsOpenCreateLoan(false);
+    };
+    const handleViewLoan = (id_empleado: number) => {
+        setIsOpenViewLoan(false);
+    };
+    const handleCreatePayroll = (newPayroll: Omit<PrestamoAbono, 'folio'>) => {
+        addPayroll(newPayroll);
+        setIsOpenCreatePayroll(false);
     };
 
     return (
@@ -69,6 +93,12 @@ const Loan: React.FC = () => {
             <Table columns={columns} data={loans}></Table>
 
             <NewLoan isOpen={isOpenCreateLoan} onClose={() => setIsOpenCreateLoan(false)} onSubmit={handleCreateLoan} />
+            <NewLoan
+                isOpen={IsOpenViewLoan}
+                onClose={() => setIsOpenViewLoan(false)}
+                onSubmit={handleViewLoan}
+                handleClick
+            />
         </section>
 
         // {/* Modal para agregar un abono */}

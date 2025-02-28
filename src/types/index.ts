@@ -40,6 +40,7 @@ export interface ParamsInterface {
     estado: number;
     page: number;
     limit: number;
+    year?: number;
 }
 
 export interface EmployeeInterface {
@@ -85,7 +86,7 @@ export interface LoanInterface {
     estado?: number;
     created_at?: string;
     updated_at?: string;
-    empleado?: EmployeeInterface;
+    empleado?: string;
     abonos?: Array<any>;
     ultimo_abono?: number;
 }
@@ -111,9 +112,16 @@ export interface PrestamoAbono {
 
 export interface WeeklyReportData {
     semana: number;
-    empleados_pagados: Array<number>;
+    empleados_pagados: number;
     total_sueldos: number;
     total_prestamos: number;
     total_infonavit: number;
     total_neto: number;
+}
+
+export interface MetaInterface {
+    totalRecords: number;
+    totalPages: number;
+    currentPage: number;
+    recordsPerPage: number;
 }

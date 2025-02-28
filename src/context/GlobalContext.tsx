@@ -2,8 +2,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { GlobalContextInterface, EmployeeInterface, PayrollInterface, LoanInterface, WeeklyReportData } from '../types';
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
-import { Prestamos } from '../services/prestamos.service';
-import { ReportesSemanales } from '../services/weeklyReport.service';
+import { Loans } from '../services/prestamos.service';
+import { WeeklyReports } from '../services/weeklyReport.service';
 
 const defaultParams = { estado: 1, page: 1, limit: 100 };
 
@@ -44,8 +44,18 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchLoans = async () => {
         try {
-            const loanData = await Prestamos.getLoans(defaultParams);
+            const loanData = await Loans.getLoans(defaultParams);
             setLoans(loanData);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const fetchWeeklyReports = async () => {
+        try {
+            const WeeklyReportsData = await WeeklyReports.getReportsList({ page: 1, limit: 100, year: 2025 });
+            setWeeklyReport(WeeklyReportsData);
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -57,6 +67,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         fetchEmployees();
         fetchPayrolls();
         fetchLoans();
+        fetchWeeklyReports();
     }, []);
 
     const selectEmployee = (id?: number, updatedEmployee?: EmployeeInterface | null) => {
@@ -127,7 +138,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
     const addLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         try {
-            const createdLoan = await Prestamos.createLoan(newLoan);
+            const createdLoan = await Loans.createLoan(newLoan);
             setLoans([...loans, createdLoan]);
         } catch (error: any) {
             setError(error.message);

@@ -19,7 +19,7 @@ const WeeklyReport: React.FC = () => {
     const { weeklyReport, loading } = useGlobalContext();
     const columns: Column<WeeklyReportData>[] = useMemo(
         () => [
-            { key: 'folio', header: 'Semana' },
+            { key: 'semana', header: 'Semana' },
             {
                 key: 'empleados_pagados',
                 header: 'Empleados',

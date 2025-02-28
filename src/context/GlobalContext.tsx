@@ -20,25 +20,43 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const empleadosData = await EmployeeServices.getEmployees(defaultParams);
-                const nominasData = await PayrollServices.getPayrolls(defaultParams);
-                const loanData = await Prestamos.getLoans(defaultParams);
-                const weeklyReportData = await ReportesSemanales.getReportsList(defaultParams);
-                setEmployees(empleadosData);
-                setPayrolls(nominasData);
-                setLoans(loanData);
-                setWeeklyReport(weeklyReportData);
-            } catch (error: any) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchEmployees = async () => {
+        try {
+            const employeesData = await EmployeeServices.getEmployees(defaultParams);
+            setEmployees(employeesData);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchData();
+    const fetchPayrolls = async () => {
+        try {
+            const payrollsData = await PayrollServices.getPayrolls(defaultParams);
+            setPayrolls(payrollsData);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchLoans = async () => {
+        try {
+            const loanData = await Prestamos.getLoans(defaultParams);
+            setLoans(loanData);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchEmployees();
+        fetchPayrolls();
+        fetchLoans();
     }, []);
 
     const selectEmployee = (id?: number, updatedEmployee?: EmployeeInterface | null) => {

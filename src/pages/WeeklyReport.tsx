@@ -17,6 +17,11 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 const WeeklyReport: React.FC = () => {
     const { weeklyReport, loading } = useGlobalContext();
+
+    const totalNeto = (total: number) => {
+        return <span className={`$ {total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+    };
+
     const columns: Column<WeeklyReportData>[] = useMemo(
         () => [
             { key: 'semana', header: 'Semana' },
@@ -42,7 +47,7 @@ const WeeklyReport: React.FC = () => {
             {
                 key: 'total_neto',
                 header: 'Total Neto',
-                render: (_, row) => `$${(row.total_neto ?? 0).toFixed(2)}`,
+                render: (_, row) => totalNeto(row.total_neto ?? 0),
             },
             {
                 key: 'accion',

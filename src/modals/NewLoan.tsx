@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
-
 import { BsCash } from 'react-icons/bs';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
 
 import { useGlobalContext } from '../context/GlobalContext';
-
 import { LoanInterface } from '../types';
 import { FormField } from '../types/extras';
 
@@ -20,7 +18,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
     const { employees, selectedEmployee, selectEmployee } = useGlobalContext();
 
     const emptyLoan: Omit<LoanInterface, 'id_prestamo'> = {
-        id_empleado: 0,
+        id_empleado: selectedEmployee?.id_empleado || 0,
         monto_total: 0,
         saldo_pendiente: 0,
     };
@@ -58,7 +56,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
                 inputSize: 'md',
             },
         ],
-        [selectEmployee]
+        [employees, selectedEmployee]
     );
 
     const handleSubmit = (values: Partial<LoanInterface>) => {
@@ -66,24 +64,27 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
             alert('Por favor, completa todos los campos.');
             return;
         }
+
         const newLoan: LoanInterface = { id_prestamo: 0, ...emptyLoan, ...values };
         onSubmit(newLoan);
         onClose();
     };
 
     if (!isOpen) return null;
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title='Crear una nueva nómina' containerClassName='max-w-3xl'>
+        <Modal isOpen={isOpen} onClose={onClose} title='Crear un nuevo préstamo' containerClassName='max-w-3xl'>
             <Form
                 fields={fields}
-                data={emptyLoan}
+                data={emptyLoan} // 🔹 `emptyLoan` como estado inicial
                 onSubmit={handleSubmit}
                 submitIcon={<BsCash size={17} />}
-                submitLabel='Guardar nómina'
+                submitLabel='Guardar préstamo'
                 variant='add'
                 direction='end'
-                columns={2}
-                extra={(id: number) => selectEmployee(id)}></Form>
+                columns={1}
+                extra={(id: number) => selectEmployee(id)}
+            />
         </Modal>
     );
 };

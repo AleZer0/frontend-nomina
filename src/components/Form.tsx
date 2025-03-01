@@ -115,11 +115,7 @@ const Form: React.FC<FormProps> = ({
                                 id={field.name}
                                 name={field.name}
                                 placeholder={field.placeholder}
-                                value={
-                                    // field.name === 'sueldo'
-                                    //     ? selectedEmployee?.sueldo
-                                    field.type === 'number' ? '' : (formData[field.name] ?? '')
-                                }
+                                value={formData[field.name] ?? ''}
                                 onChange={e => handleChange(field.name, field.type, e.target.value)}
                             />
                         )}

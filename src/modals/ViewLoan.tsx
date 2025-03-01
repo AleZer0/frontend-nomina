@@ -1,96 +1,99 @@
-import { LoanType } from '../types';
+import { useMemo, useState } from 'react';
+
+import { HiDocumentPlus } from 'react-icons/hi2';
+// import { LiaPiggyBankSolid } from 'react-icons/lia';
+
 import Modal from '../components/Modal';
+import Table from '../components/Table';
 import Button from '../components/Button';
-import { TbPigMoney } from 'react-icons/tb';
-import TableData from '../components/TableData';
-import Utils from '../utils';
+import Form from '../components/Form';
+import { Column, FormField } from '../types/extras';
+import { LoanInterface } from '../types';
+import { useGlobalContext } from '../context/GlobalContext';
+// import Utils from '../utils';
 
 interface ViewLoanProps {
     isOpen: boolean;
     onClose: () => void;
-    loan: LoanType | null;
-    openLoanPay: () => void;
+    loan: LoanInterface | null;
 }
 
-const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, loan, openLoanPay }) => {
-    if (!isOpen) return null;
+const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, loan }) => {
+    const { loans, selectedEmployee, selectEmployee } = useGlobalContext();
+    const [montoAbonado, setMontoAbonado] = useState<number>(0);
 
-    const fields = [
-        { label: 'No. Empleado', key: 'id_empleado' },
-        { label: 'Empleado', key: 'empleado' },
-        { label: 'Fecha del préstamo', key: 'created_at', type: 'date' },
-        { label: 'Monto total', key: 'monto_total' },
-        { label: 'Saldo Pendiente', key: 'saldo_pendiente' },
-        { label: 'Último Abono', key: 'ultimo_abono' },
-    ];
+    if (!isOpen || !loan) return null;
+
+    const fields: FormField[] = useMemo(
+        () => [
+            {
+                name: 'id_prestamo',
+                label: 'No. Préstamo',
+                type: 'select',
+                data: loans.map(({ id_prestamo }) => ({
+                    id: id_prestamo,
+                    label: `${id_prestamo}`,
+                })),
+                default_value: selectedEmployee?.id_empleado.toString(),
+                placeholder: 'Seleccione un empleado',
+                required: true,
+                onChange: (e: React.ChangeEvent<HTMLSelectElement>) => selectEmployee(Number(e.target.value)),
+            },
+            {
+                name: 'monto_abonado',
+                label: 'Monto a Abonar',
+                type: 'number',
+                placeholder: 'Ingrese el monto a abonar',
+                required: true,
+                variant: 'default',
+                inputSize: 'md',
+                value: montoAbonado.toString(),
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setMontoAbonado(parseFloat(e.target.value) || 0),
+            },
+        ],
+        [loans, selectedEmployee, montoAbonado]
+    );
+
+    const columns: Column<LoanInterface>[] = useMemo(
+        () => [
+            { key: 'id_prestamo', header: 'No. Préstamo' },
+            {
+                key: 'monto_total',
+                header: 'Monto Total',
+                render: (_, row) => `$${row.monto_total.toFixed(2)}`,
+            },
+            {
+                key: 'saldo_pendiente',
+                header: 'Saldo Pendiente',
+                render: (_, row) => `$${row.saldo_pendiente.toFixed(2)}`,
+            },
+            {
+                key: 'ultimo_abono',
+                header: 'Último Abono',
+                render: (_, row) => `$${(row.ultimo_abono ?? 0).toFixed(2)}`,
+            },
+        ],
+        []
+    );
 
     return (
-        <>
-            <Modal isOpen={isOpen} onClose={onClose} title='Detalles de préstamo' className='max-w-4xl'>
-                <div className='grid max-h-96 grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2'>
-                    {fields.map(({ label, key, type }, index) => {
-                        let value = loan ? loan[key as keyof typeof loan] : '';
+        <Modal isOpen={isOpen} onClose={onClose} title='Detalles de Abonos' containerClassName='max-w-3xl'>
+            {/* 📌 Sección superior con los campos */}
+            <Form
+                fields={fields}
+                data={{ id_prestamo: loan.id_prestamo, monto_abonado: montoAbonado }}
+                onSubmit={() => {}}
+            />
 
-                        // Si el campo es de tipo "date", lo convierte a "YYYY-MM-DD"
-                        if (type === 'date' && value) {
-                            const dateValue = new Date(value as string);
-                            value = !isNaN(dateValue.getTime()) ? dateValue.toISOString().split('T')[0] : '';
-                        }
+            {/* 📌 Tabla con los préstamos */}
+            <Table columns={columns} data={[loan]} />
 
-                        return (
-                            <div key={index} className='mb-4'>
-                                <label className='mb-2 block text-gray-700'>{label}:</label>
-                                <input
-                                    type={type === 'date' ? 'date' : 'text'}
-                                    value={value}
-                                    readOnly
-                                    className='w-full rounded-lg border bg-gray-100 p-2'
-                                />
-                            </div>
-                        );
-                    })}
-                </div>
-
-                <TableData
-                    fields={['Monto Abonado', 'Fecha']}
-                    data={loan?.abonos || []}
-                    renderRow={abono => {
-                        let fechaFormateada = 'Fecha no válida';
-
-                        // Intenta convertir la fecha
-                        if (abono.fecha) {
-                            const parsedDate = new Date(abono.fecha);
-
-                            // Si la conversión es válida, formateamos a YYYY-MM-DD
-                            if (!isNaN(parsedDate.getTime())) {
-                                fechaFormateada = parsedDate.toISOString().split('T')[0];
-                            }
-                        }
-
-                        return (
-                            <>
-                                <div className='p-2'>{`$${abono.monto_abonado.toFixed(2)}`}</div>
-                                <div className='p-2'>{Utils.formatDateDDMMYYYY(fechaFormateada)}</div>
-                            </>
-                        );
-                    }}
-                />
-                {/* Botón para abrir el modal de abonos */}
-                <div className='mt-4 flex justify-end'>
-                    <Button
-                        onClick={() => {
-                            onClose();
-                            openLoanPay();
-                        }}
-                        design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'>
-                        <span className='relative pt-1'>
-                            <TbPigMoney size={17} />
-                        </span>
-                        Abonar
-                    </Button>
-                </div>
-            </Modal>
-        </>
+            <div className='mt-4 flex justify-end'>
+                <Button variant='add' size='md' icon={<HiDocumentPlus size={17} />} onClick={onClose}>
+                    Cerrar
+                </Button>
+            </div>
+        </Modal>
     );
 };
 

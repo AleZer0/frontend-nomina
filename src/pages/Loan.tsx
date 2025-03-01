@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-
 import { MdAttachMoney } from 'react-icons/md';
+import { CgDetailsMore } from 'react-icons/cg';
 
 import Table from '../components/Table';
 import Header from '../components/Header';
@@ -8,18 +8,18 @@ import Button from '../components/Button';
 import Loader from '../components/Loader';
 
 import NewLoan from '../modals/NewLoan';
+import ViewLoan from '../modals/ViewLoan';
 
 import { useGlobalContext } from '../context/GlobalContext';
 import { LoanInterface } from '../types';
-
 import { Column } from '../types/extras';
 import Utils from '../utils';
-import { CgDetailsMore } from 'react-icons/cg';
 
 const Loan: React.FC = () => {
-    const { loans, addLoan, loading, selectLoan } = useGlobalContext();
-    const [isOpenCreateLoan, setIsOpenCreateLoan] = useState<boolean>(false);
-    const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
+    const { loans, addLoan, loading } = useGlobalContext();
+    const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
+    const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
+    const [selectedLoan, setSelectedLoan] = useState<LoanInterface | null>(null);
 
     const columns: Column<LoanInterface>[] = useMemo(
         () => [
@@ -34,7 +34,11 @@ const Loan: React.FC = () => {
                 header: 'Fecha',
                 render: (_, row) => (row.created_at ? Utils.formatDateDDMMYYYY(row.created_at) : 'Sin fecha'),
             },
-            { key: 'monto_total', header: 'Monto Total', render: (_, row) => `$${(row.monto_total ?? 0).toFixed(2)}` },
+            {
+                key: 'monto_total',
+                header: 'Monto Total',
+                render: (_, row) => `$${(row.monto_total ?? 0).toFixed(2)}`,
+            },
             {
                 key: 'saldo_pendiente',
                 header: 'Saldo Pendiente',
@@ -54,7 +58,7 @@ const Loan: React.FC = () => {
                         size='md'
                         icon={<CgDetailsMore size={15} />}
                         onClick={() => {
-                            selectLoan(undefined, row);
+                            setSelectedLoan(row);
                             setIsOpenViewLoan(true);
                         }}>
                         Detalles
@@ -69,52 +73,28 @@ const Loan: React.FC = () => {
         addLoan(newLoan);
         setIsOpenCreateLoan(false);
     };
-    const handleViewLoan = (id_empleado: number) => {
-        setIsOpenViewLoan(false);
-    };
-    const handleCreatePayroll = (newPayroll: Omit<PrestamoAbono, 'folio'>) => {
-        addPayroll(newPayroll);
-        setIsOpenCreatePayroll(false);
-    };
 
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
-            <Header title='Listado de prestamos'>
+            <Header title='Listado de préstamos'>
                 <Button
                     variant='add'
                     size='md'
                     icon={<MdAttachMoney size={17} />}
                     onClick={() => setIsOpenCreateLoan(true)}>
-                    Nuevo Prestamo
+                    Nuevo Préstamo
                 </Button>
             </Header>
 
             {loading && <Loader />}
-            <Table columns={columns} data={loans}></Table>
+            <Table columns={columns} data={loans} />
 
+            {/* Modal para crear un nuevo préstamo */}
             <NewLoan isOpen={isOpenCreateLoan} onClose={() => setIsOpenCreateLoan(false)} onSubmit={handleCreateLoan} />
-            <NewLoan
-                isOpen={IsOpenViewLoan}
-                onClose={() => setIsOpenViewLoan(false)}
-                onSubmit={handleViewLoan}
-                handleClick
-            />
-        </section>
 
-        // {/* Modal para agregar un abono */}
-        // <Payloan
-        //     isOpen={isSubscriptionModalOpen}
-        //     onClose={closeCreateLoanModal}
-        //     onSubmit={handleSubscriptionSubmit}
-        //     selectLoan={selectedLoan}
-        // />
-        // {/* ViewLoan ahora se abre correctamente */}
-        // <ViewLoan
-        //     isOpen={isViewLoanModalOpen}
-        //     onClose={() => setIsViewLoanModalOpen(false)}
-        //     loan={selectedLoan}
-        //     openLoanPay={openLoanPay}
-        // />
+            {/* Modal para ver detalles del préstamo */}
+            <ViewLoan isOpen={isOpenViewLoan} onClose={() => setIsOpenViewLoan(false)} loan={selectedLoan} />
+        </section>
     );
 };
 

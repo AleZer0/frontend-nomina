@@ -86,7 +86,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
         <Modal isOpen={isOpen} onClose={onClose} title='Crear un nuevo préstamo' containerClassName='max-w-3xl'>
             <Form
                 fields={fields}
-                data={emptyLoan} // 🔹 `emptyLoan` como estado inicial
+                data={emptyLoan}
                 onSubmit={handleSubmit}
                 submitIcon={<BsCash size={17} />}
                 submitLabel='Guardar préstamo'

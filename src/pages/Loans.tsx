@@ -104,7 +104,7 @@ const Loans: React.FC = () => {
                 </div>
             )}
 
-            <Table columns={columns} data={loans} />
+            <Table columns={columns} data={loans.filter(prev => prev.saldo_pendiente !== 0)} />
 
             <ViewLoan
                 isOpen={isOpenViewLoan}

@@ -104,29 +104,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             setError(error.message);
         }
     };
-    const updateLoan = async (id_prestamo: number, monto_abonado: number) => {
-        try {
-            await LoanServices.payLoan(id_prestamo, { monto_abonado });
-            setLoans(prev =>
-                prev.map(loan =>
-                    loan.id_prestamo === id_prestamo
-                        ? {
-                              ...loan,
-                              saldo_pendiente: loan.saldo_pendiente - monto_abonado,
-                              ultimo_abono: monto_abonado,
-                          }
-                        : loan
-                )
-            );
-            setSelectedLoan(prev =>
-                prev?.id_prestamo === id_prestamo
-                    ? { ...prev, saldo_pendiente: prev.saldo_pendiente - monto_abonado, ultimo_abono: monto_abonado }
-                    : prev
-            );
-        } catch (error: any) {
-            setError(error.message);
-        }
-    };
 
     const removeEmployee = async (id: number) => {
         try {
@@ -177,6 +154,30 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         try {
             const createdLoan = await LoanServices.createLoan(newLoan);
             setLoans([...loans, createdLoan]);
+        } catch (error: any) {
+            setError(error.message);
+        }
+    };
+
+    const updateLoan = async (id_prestamo: number, monto_abonado: number) => {
+        try {
+            await LoanServices.payLoan(id_prestamo, { monto_abonado });
+            setLoans(prev =>
+                prev.map(loan =>
+                    loan.id_prestamo === id_prestamo
+                        ? {
+                              ...loan,
+                              saldo_pendiente: loan.saldo_pendiente - monto_abonado,
+                              ultimo_abono: monto_abonado,
+                          }
+                        : loan
+                )
+            );
+            setSelectedLoan(prev =>
+                prev?.id_prestamo === id_prestamo
+                    ? { ...prev, saldo_pendiente: prev.saldo_pendiente - monto_abonado, ultimo_abono: monto_abonado }
+                    : prev
+            );
         } catch (error: any) {
             setError(error.message);
         }

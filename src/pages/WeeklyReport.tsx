@@ -47,7 +47,7 @@ const WeeklyReport: React.FC = () => {
             {
                 key: 'total_vacaciones',
                 header: 'Vacaciones',
-                render: (_, row) => `$${(row.total_vacaciones ?? 0).toFixed(2)}`,
+                render: (_, row) => `$${(row.total_vacaciones ? row.total_vacaciones : 0).toFixed(2)}`,
             },
             {
                 key: 'total_aguinaldo',

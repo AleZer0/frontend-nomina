@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+
 import { FaRegSave } from 'react-icons/fa';
 import { LiaPiggyBankSolid } from 'react-icons/lia';
 
@@ -9,7 +10,6 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 
 import { useGlobalContext } from '../context/GlobalContext';
-import { Loans } from '../services/prestamos.service';
 
 import { Column, FormField } from '../types/extras';
 import { LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
@@ -21,7 +21,7 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee, selectEmployee } = useGlobalContext();
+    const { employees, selectedEmployee, selectEmployee, updateLoan } = useGlobalContext();
 
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
@@ -37,32 +37,54 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
 
     const [montosAbonar, setMontosAbonar] = useState<{ [idPrestamo: number]: number }>({});
 
-    // Maneja el cambio de input para cada préstamo
     const handleChangeAbono = (idPrestamo: number, monto: number) => {
         setMontosAbonar(prev => ({
             ...prev,
-            [idPrestamo]: monto || 0, // Asegura que el valor sea al menos 0
+            [idPrestamo]: monto || 0,
         }));
     };
 
     const handleAbonar = async (idPrestamo: number) => {
-        const montoAbonar = montosAbonar[idPrestamo];
-        if (!montoAbonar || montoAbonar <= 0) {
+        const monto_abonado = montosAbonar[idPrestamo];
+        if (!monto_abonado || monto_abonado <= 0) {
             alert('Ingrese un monto válido para abonar');
             return;
         }
 
         try {
-            await Loans.payLoan(idPrestamo, { monto_abonado: montoAbonar });
+            updateLoan(idPrestamo, monto_abonado);
 
-            // ✅ Mantener el estado del monto abonado en el formulario
             setMontosAbonar(prev => ({
                 ...prev,
-                [idPrestamo]: montoAbonar,
+                [idPrestamo]: monto_abonado,
             }));
         } catch (error: any) {
             alert('Ocurrió un error al abonar: ' + error.message);
         }
+    };
+
+    const handleSubmit = (values: Partial<PayrollInterface>) => {
+        if (!values.fecha || !values.dias_trabajados || !values.sueldo || !values.id_empleado) {
+            alert('Por favor, completa todos los campos obligatorios.');
+            return;
+        }
+
+        const ids_prestamos = Object.entries(montosAbonar)
+            .filter(([_, monto]) => monto > 0)
+            .map(([idPrestamo, monto]) => ({
+                id_prestamo: Number(idPrestamo),
+                monto_abonado: monto,
+            }));
+
+        const newPayroll: PayrollInterface = {
+            folio: 0,
+            ...emptyPayroll,
+            ...values,
+            ids_prestamos,
+        };
+
+        onSubmit(newPayroll);
+        onClose();
     };
 
     const fields: FormField[] = useMemo(
@@ -186,30 +208,6 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         ],
         [montosAbonar]
     );
-
-    const handleSubmit = (values: Partial<PayrollInterface>) => {
-        if (!values.fecha || !values.dias_trabajados || !values.sueldo || !values.id_empleado) {
-            alert('Por favor, completa todos los campos obligatorios.');
-            return;
-        }
-
-        const ids_prestamos = Object.entries(montosAbonar)
-            .filter(([_, monto]) => monto > 0)
-            .map(([idPrestamo, monto]) => ({
-                id_prestamo: Number(idPrestamo),
-                monto_abonado: monto,
-            }));
-
-        const newPayroll: PayrollInterface = {
-            folio: 0,
-            ...emptyPayroll,
-            ...values,
-            ids_prestamos,
-        };
-
-        onSubmit(newPayroll);
-        onClose();
-    };
 
     if (!isOpen) return null;
 

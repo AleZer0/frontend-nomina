@@ -1,3 +1,11 @@
+import { ReactNode } from 'react';
+
+export interface Route {
+    path: string;
+    element: ReactNode;
+    name?: string;
+}
+
 export interface Column<T> {
     key: keyof T | string;
     header: string;

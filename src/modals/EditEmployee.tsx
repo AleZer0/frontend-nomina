@@ -17,23 +17,6 @@ interface EditEmployeeModalProps {
 const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const { selectedEmployee } = useGlobalContext();
 
-    const fields: FormField[] = useMemo(
-        () => [
-            { name: 'nombre', label: 'Nombre', type: 'text', placeholder: 'Ingrese el nombre', required: true },
-            { name: 'apellido', label: 'Apellido', type: 'text', placeholder: 'Ingrese el apellido', required: true },
-            {
-                name: 'fecha_incorporacion',
-                label: 'Fecha Incorporación',
-                type: 'date',
-                placeholder: 'Seleccione una fecha',
-            },
-            { name: 'departamento', label: 'Departamento', type: 'text', placeholder: 'Ingrese el departamento' },
-            { name: 'puesto', label: 'Puesto', type: 'text', placeholder: 'Ingrese el puesto', required: true },
-            { name: 'sueldo', label: 'Sueldo', type: 'number', placeholder: 'Ingrese el sueldo' },
-        ],
-        [selectedEmployee]
-    );
-
     const handleSubmit = (values: Partial<EmployeeInterface>) => {
         if (!values.nombre && !selectedEmployee?.nombre) {
             alert('El campo Nombre es obligatorio.');
@@ -57,6 +40,23 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
         onSubmit(updatedEmployee);
         onClose();
     };
+
+    const fields: FormField[] = useMemo(
+        () => [
+            { name: 'nombre', label: 'Nombre', type: 'text', placeholder: 'Ingrese el nombre', required: true },
+            { name: 'apellido', label: 'Apellido', type: 'text', placeholder: 'Ingrese el apellido', required: true },
+            {
+                name: 'fecha_incorporacion',
+                label: 'Fecha Incorporación',
+                type: 'date',
+                placeholder: 'Seleccione una fecha',
+            },
+            { name: 'departamento', label: 'Departamento', type: 'text', placeholder: 'Ingrese el departamento' },
+            { name: 'puesto', label: 'Puesto', type: 'text', placeholder: 'Ingrese el puesto', required: true },
+            { name: 'sueldo', label: 'Sueldo', type: 'number', placeholder: 'Ingrese el sueldo' },
+        ],
+        [selectedEmployee]
+    );
 
     if (!isOpen) return null;
 

@@ -1,7 +1,7 @@
 import axiosInstance from '.';
 import { LoanInterface, ParamsInterface } from '../types';
 
-export class Loans {
+export class LoanServices {
     static getLoans = async (params: ParamsInterface) => {
         if (!params) {
             throw new Error('Debe de haber un parametro por lo menos.');
@@ -46,3 +46,5 @@ export class Loans {
     };
     static services: any;
 }
+
+export default LoanServices;

@@ -25,13 +25,16 @@ const Payroll: React.FC = () => {
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [disabledButtons, setDisabledButtons] = useState<{ [key: number]: boolean }>({});
+    const [load, setLoad] = useState(false);
 
     const handleDownload = (folio: number) => {
+        setLoad(true);
         setDisabledButtons(prev => ({ ...prev, [folio]: true }));
-        previewPayrollPDF(folio);
 
         setTimeout(() => {
+            previewPayrollPDF(folio);
             setDisabledButtons(prev => ({ ...prev, [folio]: false }));
+            setLoad(false);
         }, 3000);
     };
 
@@ -84,7 +87,7 @@ const Payroll: React.FC = () => {
                         variant='details'
                         size='md'
                         icon={
-                            loading ? (
+                            load ? (
                                 <Oval
                                     height='20'
                                     width='20'
@@ -114,7 +117,6 @@ const Payroll: React.FC = () => {
 
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
-            {/* 📌 Header con botón para crear nueva nómina */}
             <Header title='Listado de Nóminas'>
                 <Button
                     variant='add'
@@ -125,25 +127,14 @@ const Payroll: React.FC = () => {
                 </Button>
             </Header>
 
-            {/* 📌 Loader debajo del Header */}
             {loading && (
                 <div className='my-4 flex justify-center'>
                     <Loader />
                 </div>
             )}
 
-            {/* 📌 Contenedor de la tabla con encabezado fijo */}
-            <div className='overflow-hidden rounded-lg shadow-md'>
-                {/* 🔹 La tabla siempre se muestra con el encabezado, incluso si está vacía */}
-                <Table columns={columns} data={payrolls} />
+            <Table columns={columns} data={payrolls} />
 
-                {/* 📌 Mensaje de "No hay registros" cuando la lista está vacía */}
-                {!loading && payrolls.length === 0 && (
-                    <div className='py-4 text-center text-gray-500'>No hay registros disponibles.</div>
-                )}
-            </div>
-
-            {/* 📌 Modal para Crear Nómina */}
             <NewPayroll
                 isOpen={isOpenCreatePayroll}
                 onClose={() => setIsOpenCreatePayroll(false)}

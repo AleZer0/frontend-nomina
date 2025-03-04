@@ -131,7 +131,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado'>
             <div className='flex flex-col space-y-8'>
-                <Form fields={fields} data={selectedEmployee ?? {}} disabled={true} variant='edit' columns={2} />
+                <Form fields={fields} data={selectedEmployee ?? {}} disabled={true} columns={2} />
 
                 <Table columns={columns} data={selectedEmployee?.nomina ?? []} />
 

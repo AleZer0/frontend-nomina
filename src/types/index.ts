@@ -7,6 +7,7 @@ export interface GlobalContextInterface {
     employees: EmployeeInterface[];
     payrolls: PayrollInterface[];
     loans: LoanInterface[];
+    selectedLoan: LoanInterface | null;
     weeklyReport: WeeklyReportData[];
     loading: boolean;
     error: string | null;
@@ -18,6 +19,7 @@ export interface GlobalContextInterface {
     addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
     updatePayroll: (id: number, updatedData: Partial<PayrollInterface>) => Promise<void>;
     removePayroll: (id: number) => Promise<void>;
+    selectLoan: (id?: number, newSelectedLoan?: LoanInterface | null) => void;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
     updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<void>;
 }
@@ -95,6 +97,7 @@ export interface LoanInterface {
 export interface PaymentInterface {
     id_abono: number;
     id_prestamo: number;
+    monto_abonado: number;
     fecha: string;
     created_at?: string;
 }
@@ -116,8 +119,8 @@ export interface WeeklyReportData {
     empleados_pagados: number;
     total_sueldos: number;
     total_vacaciones: number;
-    total_aguinaldo: number;
-    total_finiquito: number;
+    total_aguinaldos: number;
+    total_finiquitos: number;
     total_prestamos: number;
     total_infonavit: number;
     total_neto: number;

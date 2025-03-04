@@ -32,37 +32,37 @@ const WeeklyReport: React.FC = () => {
             },
             {
                 key: 'total_sueldos',
-                header: 'Total Sueldos',
+                header: 'Sueldos',
                 render: (_, row) => `$${(row.total_sueldos ?? 0).toFixed(2)}`,
             },
             {
                 key: 'total_vacaciones',
-                header: 'Total Vacaciones',
+                header: 'Vacaciones',
                 render: (_, row) => `$${(row.total_vacaciones ?? 0).toFixed(2)}`,
             },
             {
                 key: 'total_aguinaldo',
-                header: 'Total Aguinaldo',
-                render: (_, row) => `$${(row.total_aguinaldo ?? 0).toFixed(2)}`,
+                header: 'Aguinaldo',
+                render: (_, row) => `$${(row.total_aguinaldos ?? 0).toFixed(2)}`,
             },
             {
                 key: 'total_finiquito',
-                header: 'Total Finiquito',
-                render: (_, row) => `$${(row.total_finiquito ?? 0).toFixed(2)}`,
+                header: 'Finiquito',
+                render: (_, row) => `$${(row.total_finiquitos ?? 0).toFixed(2)}`,
             },
             {
                 key: 'total_prestamos',
-                header: 'Total Prestamos',
+                header: 'Prestamos',
                 render: (_, row) => `$${(row.total_prestamos ?? 0).toFixed(2)}`,
             },
             {
                 key: 'total_infonavit',
-                header: 'Total Infonavit',
+                header: 'Infonavit',
                 render: (_, row) => `$${(row.total_infonavit ?? 0).toFixed(2)}`,
             },
             {
                 key: 'total_neto',
-                header: 'Total Neto',
+                header: 'Neto',
                 render: (_, row) => totalNeto(row.total_neto ?? 0),
             },
             {

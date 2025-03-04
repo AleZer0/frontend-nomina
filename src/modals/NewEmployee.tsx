@@ -25,6 +25,18 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
         nomina: [],
     };
 
+    const handleSubmit = (values: Partial<EmployeeInterface>) => {
+        if (!values.nombre || !values.apellido || !values.puesto) {
+            alert('Por favor, completa todos los campos.');
+            return;
+        }
+
+        const newEmployee: EmployeeInterface = { id_empleado: 0, ...emptyEmployee, ...values };
+
+        onSubmit(newEmployee);
+        onClose();
+    };
+
     const fields: FormField[] = useMemo(
         () => [
             {
@@ -81,18 +93,6 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
         ],
         []
     );
-
-    const handleSubmit = (values: Partial<EmployeeInterface>) => {
-        if (!values.nombre || !values.apellido || !values.puesto) {
-            alert('Por favor, completa todos los campos.');
-            return;
-        }
-
-        const newEmployee: EmployeeInterface = { id_empleado: 0, ...emptyEmployee, ...values };
-
-        onSubmit(newEmployee);
-        onClose();
-    };
 
     if (!isOpen) return null;
 

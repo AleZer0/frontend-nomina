@@ -1,130 +1,111 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
+
+import { LiaPiggyBankSolid } from 'react-icons/lia';
 
 import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Form from '../components/Form';
-import Input from '../components/Input';
 import Button from '../components/Button';
 
 import { Column, FormField } from '../types/extras';
-import { LoanInterface } from '../types';
+import { PaymentInterface } from '../types';
 import { useGlobalContext } from '../context/GlobalContext';
-import { FaRegSave } from 'react-icons/fa';
+import Utils from '../utils';
 
 interface ViewLoanProps {
     isOpen: boolean;
     onClose: () => void;
-    loan: LoanInterface | null;
+    handleClickPayLoan: () => void;
 }
 
-const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, loan }) => {
-    const { loans, selectedEmployee, updateLoan } = useGlobalContext();
-    const [montoAbonado, setMontoAbonado] = useState<number>(0);
+const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan }) => {
+    const { selectedLoan } = useGlobalContext();
 
-    console.log('Préstamo seleccionado:', loan);
-    console.log('Monto Abonado:', montoAbonado);
-
-    // Obtener los préstamos del empleado seleccionado
-    const employeeLoans = useMemo(
-        () => loans.filter(l => l.id_empleado === selectedEmployee?.id_empleado),
-        [loans, selectedEmployee]
-    );
-
-    // Configuración de columnas de la tabla
-    const columns: Column<LoanInterface>[] = useMemo(
+    const fields: FormField[] = useMemo(
         () => [
-            { key: 'id_prestamo', header: 'No. Préstamo' },
             {
-                key: 'monto_total',
-                header: 'Monto Total',
-                render: (_, row) => `$${row.monto_total.toFixed(2)}`,
+                name: 'empleado',
+                label: 'Empleado',
+                type: 'text',
+                placeholder: 'Ingrese el empleado',
+                required: true,
+                variant: 'filled',
+                inputSize: 'md',
             },
             {
-                key: 'saldo_pendiente',
-                header: 'Saldo Pendiente',
-                render: (_, row) => `$${row.saldo_pendiente.toFixed(2)}`,
+                name: 'created_at',
+                label: 'Fecha',
+                type: 'date',
+                placeholder: 'Seleccione la fecha',
+                required: true,
+                variant: 'filled',
+                inputSize: 'md',
             },
             {
-                key: 'ultimo_abono',
-                header: 'Último Abono',
-                render: (_, row) => `$${(row.ultimo_abono ?? 0).toFixed(2)}`,
+                name: 'monto_total',
+                label: 'Monto total',
+                type: 'number',
+                placeholder: 'Ingrese el monto total',
+                required: true,
+                variant: 'filled',
+                inputSize: 'md',
+            },
+            {
+                name: 'saldo_pendiente',
+                label: 'Saldo pendiendte',
+                type: 'number',
+                placeholder: 'Ingrese el saldo pendiente',
+                required: true,
+                variant: 'filled',
+                inputSize: 'md',
+            },
+            {
+                name: 'ultimo_abono',
+                label: 'Último abono',
+                type: 'number',
+                placeholder: 'Ingrese el último abono.',
+                required: true,
+                variant: 'filled',
+                inputSize: 'md',
             },
         ],
         []
     );
 
-    const fields: FormField[] = useMemo(
+    const columns: Column<PaymentInterface>[] = useMemo(
         () => [
             {
-                name: 'id_prestamo',
-                label: 'No. Préstamo',
-                type: 'text',
-                variant: 'filled',
-                inputSize: 'md',
-                disabled: true,
-                default_value: loan ? loan.id_prestamo.toString() : '',
+                key: 'id_abono',
+                header: 'No. Abono',
+            },
+            {
+                key: 'monto_abonado',
+                header: 'Monto Abonado',
+                render: (_, row) => `$${row.monto_abonado.toFixed(2)}`,
+            },
+            {
+                key: 'fecha',
+                header: 'Fecha',
+                render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha),
             },
         ],
-        [loan]
+        []
     );
-
-    // Manejador de la acción de enviar el abono
-    const handleSubmit = async () => {
-        if (!loan) {
-            alert('Debe seleccionar un préstamo.');
-            return;
-        }
-
-        if (montoAbonado <= 0 || isNaN(montoAbonado)) {
-            alert('Por favor, ingrese un monto válido.');
-            return;
-        }
-
-        try {
-            await updateLoan(loan.id_prestamo, montoAbonado);
-            alert(`Se abonaron $${montoAbonado} al préstamo No. ${loan.id_prestamo}`);
-
-            setMontoAbonado(0);
-        } catch (error) {
-            console.error('Error al actualizar préstamo:', error);
-            alert('Hubo un error al procesar el abono.');
-        }
-    };
 
     if (!isOpen) return null;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Detalles de Préstamos' containerClassName='max-w-3xl'>
-            {!loan ? (
-                <div className='p-4 text-center'>Seleccione un préstamo para ver detalles.</div>
-            ) : (
-                <div className='flex flex-col space-y-6'>
-                    <Form fields={fields} data={{ id_prestamo: loan.id_prestamo }} />
+            <div className='flex flex-col space-y-8'>
+                <Form fields={fields} data={selectedLoan ?? {}} disabled={true} columns={2} />
 
-                    <div>
-                        <label className='mb-2 block text-gray-700'>Monto a Abonar *</label>
-                        <Input
-                            type='number'
-                            placeholder='Ingrese el monto abonado'
-                            value={montoAbonado || ''}
-                            onChange={e => setMontoAbonado(Number(e.target.value))}
-                        />
-                    </div>
-
-                    <div className='flex justify-end'>
-                        <Button
-                            variant='add'
-                            size='md'
-                            className='bg-green-500 text-white hover:bg-green-600'
-                            icon={<FaRegSave size={17} />}
-                            onClick={handleSubmit}>
-                            Abonar
-                        </Button>
-                    </div>
-
-                    <Table columns={columns} data={employeeLoans} />
+                <Table columns={columns} data={selectedLoan?.abonos ?? []} />
+                <div className='mt-4 flex justify-end gap-2'>
+                    <Button variant='add' icon={<LiaPiggyBankSolid size={17} />} onClick={() => handleClickPayLoan()}>
+                        Abonar
+                    </Button>
                 </div>
-            )}
+            </div>
         </Modal>
     );
 };

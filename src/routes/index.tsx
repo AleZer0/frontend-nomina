@@ -1,19 +1,13 @@
-import { ReactNode } from 'react';
-
 import Employees from '../pages/Employees';
 import Payroll from '../pages/Payroll';
-import Loan from '../pages/Loan';
+import Loans from '../pages/Loans';
 import WeeklyReport from '../pages/WeeklyReport';
 
-interface Route {
-    path: string;
-    element: ReactNode;
-    name?: string;
-}
+import { Route } from '../types/extras';
 
 export const routes: Route[] = [
     { path: '/employees', element: <Employees />, name: 'Empleados' },
     { path: '/payroll', element: <Payroll />, name: 'Nominas' },
-    { path: '/loans', element: <Loan />, name: 'Préstamos' },
+    { path: '/loans', element: <Loans />, name: 'Préstamos' },
     { path: '/weekly_report', element: <WeeklyReport />, name: 'Reportes semanales' },
 ];

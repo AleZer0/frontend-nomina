@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PiUsersThreeFill } from 'react-icons/pi';
@@ -11,10 +12,19 @@ import Button from './Button';
 import { routes } from '../routes';
 
 import { useAuth } from '../context/AuthContext';
+import { Route } from '../types/extras';
 
 const Sidebar: React.FC = () => {
+    const [selectedPage, setSetselectedPage] = useState<Route>(routes[0]);
+
     const { logout } = useAuth();
     const navigate = useNavigate();
+
+    const handleCliclPage = (page: Route) => {
+        if (!page) return;
+        setSetselectedPage(page);
+        navigate(page.path);
+    };
 
     const handleLogout = async () => {
         await logout();
@@ -27,8 +37,8 @@ const Sidebar: React.FC = () => {
                 {routes.map((route, index) => (
                     <li
                         key={index}
-                        onClick={() => navigate(route.path)}
-                        className='flex cursor-pointer items-center gap-3 border-b border-slate-400 bg-gradient-to-r px-4 py-2 transition-all duration-200 hover:to-slate-500'>
+                        onClick={() => handleCliclPage(route)}
+                        className={`flex cursor-pointer items-center gap-3 border-b border-slate-400 bg-gradient-to-r px-4 py-2 transition-all duration-200 ${route.name === selectedPage?.name && 'to-slate-500'} hover:to-slate-500`}>
                         {route.name === 'Empleados' ? (
                             <PiUsersThreeFill size={17} />
                         ) : route.name === 'Nominas' ? (

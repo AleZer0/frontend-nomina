@@ -2,8 +2,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { GlobalContextInterface, EmployeeInterface, PayrollInterface, LoanInterface, WeeklyReportData } from '../types';
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
-import { Loans } from '../services/prestamos.service';
-import { WeeklyReports } from '../services/weeklyReport.service';
+import LoanServices from '../services/loan.service';
+import WeeklyReports from '../services/weeklyReport.service';
 
 const defaultParams = { estado: 1, page: 1, limit: 100 };
 
@@ -14,7 +14,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInterface | null>(null);
 
     const [payrolls, setPayrolls] = useState<PayrollInterface[]>([]);
+
     const [loans, setLoans] = useState<LoanInterface[]>([]);
+    const [selectedLoan, setSelectedLoan] = useState<LoanInterface | null>(null);
+
     const [weeklyReport, setWeeklyReport] = useState<WeeklyReportData[]>([]);
 
     const [loading, setLoading] = useState(true);
@@ -47,7 +50,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const fetchLoans = async () => {
         setLoading(true);
         try {
-            const loanData = await Loans.getLoans(defaultParams);
+            const loanData = await LoanServices.getLoans(defaultParams);
             setLoans(loanData);
         } catch (error: any) {
             setError(error.message);
@@ -95,10 +98,31 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const updateEmployee = async (id: number, updatedData: Partial<EmployeeInterface>) => {
         try {
             await EmployeeServices.updateEmployee(id, updatedData);
-
             setEmployees(prev => prev.map(emp => (emp.id_empleado === id ? { ...emp, ...updatedData } : emp)));
-
             setSelectedEmployee(prev => (prev?.id_empleado === id ? { ...prev, ...updatedData } : prev));
+        } catch (error: any) {
+            setError(error.message);
+        }
+    };
+    const updateLoan = async (id_prestamo: number, monto_abonado: number) => {
+        try {
+            await LoanServices.payLoan(id_prestamo, { monto_abonado });
+            setLoans(prev =>
+                prev.map(loan =>
+                    loan.id_prestamo === id_prestamo
+                        ? {
+                              ...loan,
+                              saldo_pendiente: loan.saldo_pendiente - monto_abonado,
+                              ultimo_abono: monto_abonado,
+                          }
+                        : loan
+                )
+            );
+            setSelectedLoan(prev =>
+                prev?.id_prestamo === id_prestamo
+                    ? { ...prev, saldo_pendiente: prev.saldo_pendiente - monto_abonado, ultimo_abono: monto_abonado }
+                    : prev
+            );
         } catch (error: any) {
             setError(error.message);
         }
@@ -134,40 +158,25 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const removePayroll = async (folio: number) => {
         try {
             await PayrollServices.deletePayroll(folio);
-            setPayrolls(prev => prev.filter(nomina => nomina.folio !== folio)); // ✅ Filtra la nómina eliminada
+            setPayrolls(prev => prev.filter(nomina => nomina.folio !== folio));
         } catch (error: any) {
             setError(error.message);
+        }
+    };
+
+    const selectLoan = async (id?: number, newSelectedLoan?: LoanInterface | null) => {
+        if (id) {
+            const loan = loans.find(emp => emp.id_prestamo === id) || null;
+            setSelectedLoan(loan);
+        } else {
+            setSelectedLoan(newSelectedLoan ?? null);
         }
     };
 
     const addLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         try {
-            const createdLoan = await Loans.createLoan(newLoan);
+            const createdLoan = await LoanServices.createLoan(newLoan);
             setLoans([...loans, createdLoan]);
-        } catch (error: any) {
-            setError(error.message);
-        }
-    };
-
-    const updateLoan = async (id_prestamo: number, monto_abonado: number) => {
-        try {
-            // Llamar al servicio para actualizar el préstamo en la API
-            const response = await Loans.payLoan(id_prestamo, { monto_abonado });
-
-            if (response.success) {
-                // Actualiza el estado global de los préstamos
-                setLoans(prevLoans =>
-                    prevLoans.map(loan =>
-                        loan.id_prestamo === id_prestamo
-                            ? {
-                                  ...loan,
-                                  saldo_pendiente: loan.saldo_pendiente - monto_abonado,
-                                  ultimo_abono: monto_abonado,
-                              }
-                            : loan
-                    )
-                );
-            }
         } catch (error: any) {
             setError(error.message);
         }
@@ -179,6 +188,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 employees,
                 payrolls,
                 loans,
+                selectedLoan,
                 weeklyReport,
                 loading,
                 error,
@@ -190,6 +200,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 addPayroll,
                 updatePayroll,
                 removePayroll,
+                selectLoan,
                 addLoan,
                 updateLoan,
             }}>

@@ -1,190 +1,147 @@
-import { useEffect, useState } from 'react';
-import Header from '../components/Header';
-import { Link } from 'react-router-dom';
-import Empleado from '../services/employees.service';
-import Button from '../components/Button';
-import { createPayroll } from '../services/payroll.service';
-import CreateEmployeeModal from '../components/modals/CreateNewEmployee';
-import EditEmployeeModal from '../components/modals/EditEmployee';
-import { IoIosPersonAdd } from 'react-icons/io';
-import CreatePayrollModal from '../components/modals/CreateNewPayrroll';
-import TableData from '../components/TableData';
-import Loader from '../components/Loader';
-import ViewEmployeeModal from '../components/modals/ViewEmployee';
+import { useMemo, useState } from 'react';
 
-export interface Employee {
-    id_empleado: number;
-    nombre: string;
-    apellido: string;
-    fecha_incorporacion?: string;
-    departamento?: string;
-    puesto: string;
-    sueldo?: number;
-    created_at?: string;
-    updated_at?: string;
-    estado?: number;
-    nomina: Array<any>;
-    ultima_nomina?: number;
-}
+import { IoIosPersonAdd } from 'react-icons/io';
+import { CgDetailsMore } from 'react-icons/cg';
+
+import Header from '../components/Header';
+import Table from '../components/Table';
+import Button from '../components/Button';
+import Loader from '../components/Loader';
+
+import ViewEmployee from '../modals/ViewEmployee';
+import NewEmployee from '../modals/NewEmployee';
+import EditEmployee from '../modals/EditEmployee';
+
+import { EmployeeInterface, PayrollInterface } from '../types';
+import { Column } from '../types/extras';
+
+import { useGlobalContext } from '../context/GlobalContext';
+import NewPayroll from '../modals/NewPayroll';
 
 const Employees: React.FC = () => {
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState<Employee | null>(null);
-    const [employees, setEmployees] = useState<Employee[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isModalPayrollOpen, setIsModalPayrollOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
-    const [loading, setLoading] = useState(true);
+    const {
+        employees,
+        selectedEmployee,
+        selectEmployee,
+        addEmployee,
+        updateEmployee,
+        removeEmployee,
+        addPayroll,
+        loading,
+    } = useGlobalContext();
 
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            try {
-                const data = await Empleado.getEmployees(1);
-                setEmployees(data.empleados || []);
-            } catch (error) {
-                console.error('Error al obtener empleados:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchEmployees();
-    }, []);
+    const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
+    const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
+    const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
+    const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
 
-    const handleAddEmployee = (newEmployee: Employee) => {
-        Empleado.createEmployee(newEmployee).then(() => {
-            Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
-        });
-        setIsModalOpen(false);
+    const handleCreateEmployee = (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
+        addEmployee(newEmployee);
+        setIsOpenCreateEmployee(false);
     };
 
-    const handleSaveEdit = (updatedEmployee: Employee) => {
-        Empleado.updateEmployee(updatedEmployee.id_empleado, updatedEmployee).then(() =>
-            Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []))
-        );
-        setIsEditModalOpen(false);
+    const handleUpdateEmployee = (updatedEmployee: Partial<EmployeeInterface>) => {
+        if (!selectedEmployee) return;
+        updateEmployee(selectedEmployee.id_empleado ?? 0, updatedEmployee);
+        setIsOpenEditEmployee(false);
     };
 
-    // Abre el modal de vista (Detalles)
-    const handleViewEmployee = (employee: Employee) => {
-        setEmpleadoSeleccionado(employee);
-        setIsViewModalOpen(true);
+    const handleDeleteEmployee = async (id: number) => {
+        if (!selectedEmployee) return;
+        removeEmployee(id);
+        setIsOpenViewEmployee(false);
     };
 
-    // Al hacer clic en generar PDF
-    const handleCreatePayroll = (employee: Employee) => {
-        setEmpleadoSeleccionado(employee);
-        setIsModalPayrollOpen(true);
+    const handleCreatePayroll = (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        addPayroll(newPayroll);
+        setIsOpenCreatePayroll(false);
     };
 
-    // Al hacer clic en "Editar" desde el modal
-    const handleEdit = (employee: Employee) => {
-        setEditingEmployee(employee);
-        setIsEditModalOpen(true);
-    };
-
-    // Al hacer clic en "Eliminar" desde el modal
-    const handleDelete = (id_empleado: number) => {
-        Empleado.deleteEmployee(id_empleado).then(() => {
-            Empleado.getEmployees(1).then(data => setEmployees(data.empleados || []));
-        });
-    };
-
-    const handleSubmitPayroll = (newNomina: {
-        fecha: string;
-        dias_trabajados: number;
-        prestamos: number;
-        infonavit: number;
-        sueldo: number;
-        id_empleado: number;
-    }) => {
-        createPayroll(newNomina)
-            .then(response => {
-                if (!response && !response.nomina) {
-                    alert('Error al crear la nómina.');
-                }
-                setIsModalPayrollOpen(false);
-            })
-            .catch(() => alert('Error al crear la nómina.'));
-    };
+    const columns: Column<EmployeeInterface>[] = useMemo(
+        () => [
+            { key: 'id_empleado', header: 'No. Empleado' },
+            { key: 'nombre', header: 'Nombre' },
+            { key: 'apellido', header: 'Apellido' },
+            { key: 'puesto', header: 'Puesto' },
+            {
+                key: 'sueldo',
+                header: 'Sueldo',
+                render: (_, row) => (row.sueldo ? `$${row.sueldo.toFixed(2)}` : 'Sin sueldo'),
+            },
+            {
+                key: 'ultima_nomina',
+                header: 'Última Nómina',
+                render: (_, row) => (row.ultima_nomina ? `NOM${row.ultima_nomina}` : 'Sin nóminas'),
+            },
+            {
+                key: 'accion',
+                header: 'Acción',
+                render: (_, row) => (
+                    <Button
+                        variant='details'
+                        size='md'
+                        icon={<CgDetailsMore size={15} />}
+                        onClick={() => {
+                            selectEmployee(undefined, row);
+                            setIsOpenViewEmployee(true);
+                        }}>
+                        Detalles
+                    </Button>
+                ),
+            },
+        ],
+        []
+    );
 
     return (
-        <div className='relative ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Listado de Empleados'>
+        <section className='mb-20 ml-64 flex-auto p-8'>
+            <Header title='Listado de Empleados'>
                 <Button
-                    onClick={() => setIsModalOpen(true)}
-                    disabled={false}
-                    design='hover:shadow-xl hover:bg-green-500 bg-green-400 rounded-2xl cursor-pointer text-black'
-                    icon={null}>
-                    <span className='relative pt-1'>
-                        <IoIosPersonAdd size={17} />
-                    </span>
+                    variant='add'
+                    size='md'
+                    icon={<IoIosPersonAdd size={17} />}
+                    onClick={() => setIsOpenCreateEmployee(true)}>
                     Nuevo empleado
                 </Button>
             </Header>
 
-            <main className='overflow-visible p-6'>
-                {loading && <Loader />}
-                <TableData
-                    fields={['Nombre', 'Apellidos', 'Puesto', 'Sueldo', 'Última Nómina', 'Acciones']}
-                    data={employees}
-                    renderRow={item => (
-                        <>
-                            <div>{item.nombre}</div>
-                            <div>{item.apellido}</div>
-                            <div>{item.puesto}</div>
-                            <div className='font-semibold text-green-600'>
-                                {item.sueldo ? `$${item.sueldo.toFixed(2)}` : 'No definido'}
-                            </div>
-                            <div>
-                                {'Folio: '}
-                                <Link to='/payroll' className='text-blue-600 underline'>
-                                    {item.ultima_nomina ? `NOM${item.ultima_nomina}` : 'No tiene nominas'}
-                                </Link>
-                            </div>
-                            <div className='flex justify-center gap-2'>
-                                <Button
-                                    design='cursor-pointer rounded-2xl bg-blue-500 border-blue-700 text-white hover:bg-blue-700'
-                                    onClick={() => handleViewEmployee(item)}>
-                                    Detalles
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                />
+            {loading && (
+                <div className='my-4 flex justify-center'>
+                    <Loader />
+                </div>
+            )}
 
-                {/* MODALES */}
-                <ViewEmployeeModal
-                    isOpen={isViewModalOpen}
-                    onClose={() => setIsViewModalOpen(false)}
-                    employee={empleadoSeleccionado}
-                    onCreatePayroll={handleCreatePayroll}
-                    onEdit={handleEdit} // Agregamos callbacks
-                    onDelete={handleDelete}
-                />
+            <Table columns={columns} data={employees} />
 
-                <CreateEmployeeModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleAddEmployee}
-                />
+            <ViewEmployee
+                isOpen={isOpenViewEmployee}
+                onClose={() => {
+                    setIsOpenViewEmployee(false);
+                    selectEmployee();
+                }}
+                handleClickCreatePayroll={() => setIsOpenCreatePayroll(true)}
+                handleClickEdit={() => setIsOpenEditEmployee(true)}
+                handleClickDelate={handleDeleteEmployee}
+            />
 
-                <CreatePayrollModal
-                    empleados={employees}
-                    isOpen={isModalPayrollOpen}
-                    onClose={() => setIsModalPayrollOpen(false)}
-                    onSubmit={handleSubmitPayroll}
-                    empleadoSeleccionado={empleadoSeleccionado}
-                />
+            <NewEmployee
+                isOpen={isOpenCreateEmployee}
+                onClose={() => setIsOpenCreateEmployee(false)}
+                onSubmit={handleCreateEmployee}
+            />
 
-                <EditEmployeeModal
-                    isOpen={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    employee={editingEmployee}
-                    onSave={handleSaveEdit}
-                />
-            </main>
-        </div>
+            <EditEmployee
+                isOpen={isOpenEditEmployee}
+                onClose={() => setIsOpenEditEmployee(false)}
+                onSubmit={handleUpdateEmployee}
+            />
+
+            <NewPayroll
+                isOpen={isOpenCreatePayroll}
+                onClose={() => setIsOpenCreatePayroll(false)}
+                onSubmit={handleCreatePayroll}
+            />
+        </section>
     );
 };
 

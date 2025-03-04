@@ -1,69 +1,106 @@
-import { useEffect, useState } from 'react';
-import Header from '../components/Header';
+import { useMemo } from 'react';
+
+import { Oval } from 'react-loader-spinner';
 import { FaFilePdf } from 'react-icons/fa6';
-import { previewWeeklyReportsPDF } from '../services/pdf.service';
-import { ReportesSemanales } from '../services/weeklyReport.service';
-import { WeeklyReportData } from '../types';
-import TableData from '../components/TableData';
+
 import Loader from '../components/Loader';
-import LoadingButton from '../components/LoadingButton';
+import Header from '../components/Header';
+import Button from '../components/Button';
+import Table from '../components/Table';
+
+import { WeeklyReportData } from '../types';
+
+import { previewWeeklyReportsPDF } from '../services/pdf.service';
+
+import { Column } from '../types/extras';
+
+import { useGlobalContext } from '../context/GlobalContext';
 
 const WeeklyReport: React.FC = () => {
-    const [reportes, setReportes] = useState<WeeklyReportData[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { weeklyReport, loading } = useGlobalContext();
 
-    useEffect(() => {
-        ReportesSemanales.getReportsList()
-            .then(response => {
-                if (response && Array.isArray(response.data)) setReportes(response.data);
-                else setReportes([]);
-            })
-            .catch(() => setReportes([]))
-            .finally(() => setLoading(false));
-    }, []);
+    const totalNeto = (total: number) => {
+        return <span className={`$ {total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+    };
+
+    const columns: Column<WeeklyReportData>[] = useMemo(
+        () => [
+            { key: 'semana', header: 'Semana' },
+            {
+                key: 'empleados_pagados',
+                header: 'Empleados',
+            },
+            {
+                key: 'total_sueldos',
+                header: 'Sueldos',
+                render: (_, row) => `$${(row.total_sueldos ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_vacaciones',
+                header: 'Vacaciones',
+                render: (_, row) => `$${(row.total_vacaciones ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_aguinaldo',
+                header: 'Aguinaldo',
+                render: (_, row) => `$${(row.total_aguinaldos ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_finiquito',
+                header: 'Finiquito',
+                render: (_, row) => `$${(row.total_finiquitos ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_prestamos',
+                header: 'Prestamos',
+                render: (_, row) => `$${(row.total_prestamos ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_infonavit',
+                header: 'Infonavit',
+                render: (_, row) => `$${(row.total_infonavit ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_neto',
+                header: 'Neto',
+                render: (_, row) => totalNeto(row.total_neto ?? 0),
+            },
+            {
+                key: 'accion',
+                header: 'Acción',
+                render: (_, row) => (
+                    <Button
+                        variant='details'
+                        size='md'
+                        icon={
+                            loading ? (
+                                <Oval
+                                    height='20'
+                                    width='20'
+                                    color='#1646db'
+                                    strokeWidth={4}
+                                    secondaryColor='#88a3f5'
+                                    ariaLabel='oval-loading'
+                                />
+                            ) : (
+                                <FaFilePdf size={15} />
+                            )
+                        }
+                        onClick={() => previewWeeklyReportsPDF(2025, row)}>
+                        Descargar
+                    </Button>
+                ),
+            },
+        ],
+        []
+    );
 
     return (
-        <div className='ml-64 min-h-screen flex-1 bg-gray-100'>
-            <Header tittle='Reportes Semanales' />
-            <main className='p-6'>
-                {loading && <Loader />}
-                <div className='overflow-hidden rounded-lg bg-white shadow-lg'>
-                    <TableData
-                        // Encabezados para la tabla
-                        fields={[
-                            'Semana',
-                            'Empleados',
-                            'Total Sueldos',
-                            'Préstamos',
-                            'Infonavit',
-                            'Total Neto',
-                            'Acciones',
-                        ]}
-                        // Datos de la tabla
-                        data={reportes}
-                        renderRow={item => (
-                            <>
-                                <div>{`Semana ${item.semana}, 2025`}</div>
-                                <div>{item.empleados_pagados.length}</div>
-                                <div>${item.total_sueldos.toFixed(2)}</div>
-                                <div>${item.total_prestamos.toFixed(2)}</div>
-                                <div>${item.total_infonavit.toFixed(2)}</div>
-                                <div className='font-semibold text-green-600'>${item.total_neto.toFixed(2)}</div>
-                                <div className='flex justify-center gap-2'>
-                                    <LoadingButton onClick={() => previewWeeklyReportsPDF(2025, item)}>
-                                        <span className='relative pt-0.5'>
-                                            <FaFilePdf size={17} />
-                                        </span>
-                                        Generar PDF
-                                    </LoadingButton>
-                                </div>
-                            </>
-                        )}
-                    />
-                </div>
-            </main>
-        </div>
+        <section className='mb-20 ml-64 flex-auto p-8'>
+            <Header title='Reportes semanales' />
+            {loading && <Loader />}
+            <Table columns={columns} data={weeklyReport}></Table>
+        </section>
     );
 };
-
 export default WeeklyReport;

@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-import { Oval } from 'react-loader-spinner';
 import { FaFilePdf } from 'react-icons/fa6';
 
 import Loader from '../components/Loader';
@@ -18,9 +17,19 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 const WeeklyReport: React.FC = () => {
     const { weeklyReport, loading } = useGlobalContext();
+    const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
 
     const totalNeto = (total: number) => {
-        return <span className={`$ {total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+        return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+    };
+
+    const handleDownload = (year: number, row: WeeklyReportData) => {
+        setLoadingButtons(prev => ({ ...prev, [row.semana]: true }));
+
+        setTimeout(() => {
+            previewWeeklyReportsPDF(year, row);
+            setLoadingButtons(prev => ({ ...prev, [row.semana]: false }));
+        }, 3000);
     };
 
     const columns: Column<WeeklyReportData>[] = useMemo(
@@ -71,28 +80,17 @@ const WeeklyReport: React.FC = () => {
                 render: (_, row) => (
                     <Button
                         variant='details'
-                        size='md'
-                        icon={
-                            loading ? (
-                                <Oval
-                                    height='20'
-                                    width='20'
-                                    color='#1646db'
-                                    strokeWidth={4}
-                                    secondaryColor='#88a3f5'
-                                    ariaLabel='oval-loading'
-                                />
-                            ) : (
-                                <FaFilePdf size={15} />
-                            )
-                        }
-                        onClick={() => previewWeeklyReportsPDF(2025, row)}>
-                        Descargar
+                        size='sm'
+                        icon={<FaFilePdf size={15} />}
+                        isLoading={loadingButtons[row.semana]}
+                        disabled={loadingButtons[row.semana]}
+                        onClick={() => handleDownload(2025, row)}>
+                        Descargar PDF
                     </Button>
                 ),
             },
         ],
-        []
+        [loadingButtons]
     );
 
     return (
@@ -103,4 +101,5 @@ const WeeklyReport: React.FC = () => {
         </section>
     );
 };
+
 export default WeeklyReport;

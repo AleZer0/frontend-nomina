@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
-import xrom_logo_1 from '../assets/xrom_logo_1.png';
+import logotransportes from '../assets/logotransportes.png';
 
 interface HeaderProps {
     title?: string;
@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ title = '', children, align = 'left', s
     return (
         <header className='fixed top-0 left-0 z-40 flex min-h-20 w-full items-center bg-slate-900 bg-gradient-to-r to-slate-500 text-white'>
             <div className='flex h-20 w-64 items-center justify-center border-b border-slate-400'>
-                <img src={xrom_logo_1} alt='Logo' className='h-12' />
+                <img src={logotransportes} alt='Logo' className='h-17 w-40' />
             </div>
 
             <div className='flex flex-1 justify-start'>

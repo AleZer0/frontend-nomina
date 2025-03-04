@@ -14,6 +14,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     size?: 'sm' | 'md' | 'lg';
     icon?: ReactNode;
     asChild?: boolean;
+    isLoading?: boolean;
+    disabled?: boolean;
 }
 
 export interface TableProps<T> {

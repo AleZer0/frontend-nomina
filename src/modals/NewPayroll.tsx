@@ -7,7 +7,6 @@ import Modal from '../components/Modal';
 import Form from '../components/Form';
 import Input from '../components/Input';
 import Table from '../components/Table';
-import Button from '../components/Button';
 
 import { useGlobalContext } from '../context/GlobalContext';
 
@@ -22,7 +21,6 @@ interface CreatePayrollModalProps {
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const { employees, selectedEmployee, selectEmployee, updateLoan } = useGlobalContext();
-
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
         dias_trabajados: 0,
@@ -35,32 +33,27 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         ids_prestamos: [] as PrestamoAbono[],
     };
 
-    const [montosAbonar, setMontosAbonar] = useState<{ [idPrestamo: number]: number }>({});
+    const [idsPrestamos, setIdsPrestamos] = useState<PrestamoAbono[]>([]);
+    const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
 
     const handleChangeAbono = (idPrestamo: number, monto: number) => {
-        setMontosAbonar(prev => ({
-            ...prev,
-            [idPrestamo]: monto || 0,
-        }));
+        setIdsPrestamos(prev => {
+            const existIndex = prev.findIndex(p => p.id_prestamo === idPrestamo);
+            if (existIndex !== -1) {
+                const updatedPrestamos = [...prev];
+                updatedPrestamos[existIndex].monto_abonado = monto;
+                return updatedPrestamos;
+            } else {
+                return [...prev, { id_prestamo: idPrestamo, monto_abonado: monto }];
+            }
+        });
+        setInputValues(prev => ({ ...prev, [idPrestamo]: monto.toString() }));
     };
 
-    const handleAbonar = async (idPrestamo: number) => {
-        const monto_abonado = montosAbonar[idPrestamo];
-        if (!monto_abonado || monto_abonado <= 0) {
-            alert('Ingrese un monto válido para abonar');
-            return;
-        }
-
-        try {
-            updateLoan(idPrestamo, monto_abonado);
-
-            setMontosAbonar(prev => ({
-                ...prev,
-                [idPrestamo]: monto_abonado,
-            }));
-        } catch (error: any) {
-            alert('Ocurrió un error al abonar: ' + error.message);
-        }
+    const handleSelectEmployee = (id: number) => {
+        selectEmployee(id);
+        setIdsPrestamos([]);
+        setInputValues({});
     };
 
     const handleSubmit = (values: Partial<PayrollInterface>) => {
@@ -69,21 +62,17 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             return;
         }
 
-        const ids_prestamos = Object.entries(montosAbonar)
-            .filter(([_, monto]) => monto > 0)
-            .map(([idPrestamo, monto]) => ({
-                id_prestamo: Number(idPrestamo),
-                monto_abonado: monto,
-            }));
-
         const newPayroll: PayrollInterface = {
             folio: 0,
             ...emptyPayroll,
             ...values,
-            ids_prestamos,
+            ids_prestamos: idsPrestamos,
         };
 
+        idsPrestamos.map(pres => updateLoan(pres.id_prestamo, pres.monto_abonado));
         onSubmit(newPayroll);
+        setIdsPrestamos([]);
+        setInputValues({});
         onClose();
     };
 
@@ -186,27 +175,14 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                         inputSize='md'
                         leftIcon={<LiaPiggyBankSolid size={17} />}
                         type='number'
-                        placeholder='0.00'
-                        value={montosAbonar[row.id_prestamo] || ''}
+                        placeholder={`$${row.saldo_pendiente.toFixed(2)}`}
+                        value={inputValues[row.id_prestamo] || ''}
                         onChange={e => handleChangeAbono(row.id_prestamo, Number(e.target.value))}
                     />
                 ),
             },
-            {
-                key: 'accion',
-                header: 'Abonar',
-                render: (_, row) => (
-                    <Button
-                        variant='add'
-                        size='md'
-                        icon={<LiaPiggyBankSolid size={17} />}
-                        onClick={() => handleAbonar(row.id_prestamo)}>
-                        Abonar
-                    </Button>
-                ),
-            },
         ],
-        [montosAbonar]
+        [inputValues]
     );
 
     if (!isOpen) return null;
@@ -222,8 +198,15 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 variant='add'
                 direction='end'
                 columns={2}
-                extra={(id: number) => selectEmployee(id)}>
-                <Table columns={columns} data={selectedEmployee?.prestamos ?? []} />
+                extra={handleSelectEmployee}>
+                <Table
+                    columns={columns}
+                    data={
+                        selectedEmployee?.prestamos
+                            ? selectedEmployee.prestamos.filter(pres => pres.saldo_pendiente !== 0)
+                            : []
+                    }
+                />
             </Form>
         </Modal>
     );

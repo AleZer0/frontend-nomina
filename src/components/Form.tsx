@@ -41,7 +41,7 @@ const Form: React.FC<FormProps> = ({
         }
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'number' ? Number(value) : value,
+            [name]: type === 'number' ? (value === '' ? undefined : Number(value)) : value,
         }));
     };
 
@@ -51,12 +51,10 @@ const Form: React.FC<FormProps> = ({
 
             if (!field.required) return true;
 
-            // ✅ Validación mejorada para fechas: debe tener un valor válido
             if (field.type === 'date') {
                 return value && !isNaN(new Date(value).getTime());
             }
 
-            // ✅ Verifica que los campos requeridos no sean `undefined`, `null` o una cadena vacía
             return value !== undefined && value !== null && value.toString().trim() !== '';
         });
 
@@ -115,7 +113,11 @@ const Form: React.FC<FormProps> = ({
                                 id={field.name}
                                 name={field.name}
                                 placeholder={field.placeholder}
-                                value={formData[field.name] ?? ''}
+                                value={
+                                    formData[field.name] !== undefined && formData[field.name] !== 0
+                                        ? formData[field.name]
+                                        : ''
+                                }
                                 onChange={e => handleChange(field.name, field.type, e.target.value)}
                             />
                         )}

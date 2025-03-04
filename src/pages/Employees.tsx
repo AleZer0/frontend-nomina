@@ -87,8 +87,9 @@ const Employees: React.FC = () => {
         setIsOpenEditEmployee(false);
     };
 
-    const handleDeleteEmploye = (id_empleado: number) => {
-        removeEmployee(id_empleado);
+    const handleDeleteEmployee = async (id: number) => {
+        if (!selectedEmployee) return;
+        removeEmployee(id);
         setIsOpenViewEmployee(false);
     };
 
@@ -99,6 +100,7 @@ const Employees: React.FC = () => {
 
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
+            {/* 📌 Header con botón para nuevo empleado */}
             <Header title='Listado de Empleados'>
                 <Button
                     variant='add'
@@ -109,9 +111,23 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
 
-            {loading && <Loader />}
-            <Table columns={columns} data={employees} />
+            {/* 📌 Loader debajo del Header */}
+            {loading && (
+                <div className='my-4 flex justify-center'>
+                    <Loader />
+                </div>
+            )}
 
+            {/* 📌 Tabla con validación para cuando no haya empleados */}
+            <div className='relative min-h-[200px]'>
+                {employees.length > 0 ? (
+                    <Table columns={columns} data={employees} />
+                ) : (
+                    !loading && <div className='mt-10 text-center text-gray-500'>No hay registros disponibles.</div>
+                )}
+            </div>
+
+            {/* 📌 Modales */}
             <ViewEmployee
                 isOpen={isOpenViewEmployee}
                 onClose={() => {
@@ -120,7 +136,7 @@ const Employees: React.FC = () => {
                 }}
                 handleClickCreatePayroll={() => setIsOpenCreatePayroll(true)}
                 handleClickEdit={() => setIsOpenEditEmployee(true)}
-                handleClickDelate={handleDeleteEmploye}
+                handleClickDelate={handleDeleteEmployee}
             />
 
             <NewEmployee

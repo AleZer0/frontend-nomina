@@ -5,7 +5,6 @@ const previewPayrollPDF = async (folio: number) => {
     try {
         const response = await axiosInstance.get(`/pdf/nomina/${folio}`, {
             responseType: 'blob',
-            withCredentials: true,
         });
         const blob = new Blob([response.data], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
@@ -61,9 +60,8 @@ const previewPayrollPDF = async (folio: number) => {
 
 const previewWeeklyReportsPDF = async (year: number, data: WeeklyReportData) => {
     try {
-        const response = await axiosInstance.post(`pdf/reporte-semanal/${year}`, data, {
+        const response = await axiosInstance.post(`pdf/reporte_semanal/${year}`, data, {
             responseType: 'blob',
-            withCredentials: true,
         });
         const blob = new Blob([response.data], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);

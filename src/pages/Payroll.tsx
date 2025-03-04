@@ -23,7 +23,6 @@ const Payroll: React.FC = () => {
     const { payrolls, addPayroll, loading } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
-
     const [disabledButtons, setDisabledButtons] = useState<{ [key: number]: boolean }>({});
 
     const handleDownload = (folio: number) => {
@@ -36,7 +35,7 @@ const Payroll: React.FC = () => {
     };
 
     const totalPagar = (total: number) => {
-        return <span className={`$ {total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+        return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
     };
 
     const columns: Column<PayrollInterface>[] = useMemo(
@@ -101,7 +100,8 @@ const Payroll: React.FC = () => {
 
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
-            <Header title='Listado de Nominas'>
+            {/* 📌 Header con botón para crear nueva nómina */}
+            <Header title='Listado de Nóminas'>
                 <Button
                     variant='add'
                     size='md'
@@ -111,9 +111,25 @@ const Payroll: React.FC = () => {
                 </Button>
             </Header>
 
-            {loading && <Loader />}
-            <Table columns={columns} data={payrolls}></Table>
+            {/* 📌 Loader debajo del Header */}
+            {loading && (
+                <div className='my-4 flex justify-center'>
+                    <Loader />
+                </div>
+            )}
 
+            {/* 📌 Contenedor de la tabla con encabezado fijo */}
+            <div className='overflow-hidden rounded-lg shadow-md'>
+                {/* 🔹 La tabla siempre se muestra con el encabezado, incluso si está vacía */}
+                <Table columns={columns} data={payrolls} />
+
+                {/* 📌 Mensaje de "No hay registros" cuando la lista está vacía */}
+                {!loading && payrolls.length === 0 && (
+                    <div className='py-4 text-center text-gray-500'>No hay registros disponibles.</div>
+                )}
+            </div>
+
+            {/* 📌 Modal para Crear Nómina */}
             <NewPayroll
                 isOpen={isOpenCreatePayroll}
                 onClose={() => setIsOpenCreatePayroll(false)}

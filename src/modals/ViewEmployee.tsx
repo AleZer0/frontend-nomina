@@ -21,7 +21,7 @@ interface ViewEmployeeProps {
     onClose: () => void;
     handleClickCreatePayroll: () => void;
     handleClickEdit: () => void;
-    handleClickDelate: (id_empleado: number) => void;
+    handleClickDelate: (id: number) => void;
 }
 
 const ViewEmployee: React.FC<ViewEmployeeProps> = ({

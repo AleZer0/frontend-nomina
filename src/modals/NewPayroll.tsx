@@ -41,7 +41,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
     const handleChangeAbono = (idPrestamo: number, monto: number) => {
         setMontosAbonar(prev => ({
             ...prev,
-            [idPrestamo]: monto,
+            [idPrestamo]: monto || 0, // Asegura que el valor sea al menos 0
         }));
     };
 
@@ -55,9 +55,10 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         try {
             await Loans.payLoan(idPrestamo, { monto_abonado: montoAbonar });
 
+            // ✅ Mantener el estado del monto abonado en el formulario
             setMontosAbonar(prev => ({
                 ...prev,
-                [idPrestamo]: 0,
+                [idPrestamo]: montoAbonar,
             }));
         } catch (error: any) {
             alert('Ocurrió un error al abonar: ' + error.message);

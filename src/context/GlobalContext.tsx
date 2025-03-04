@@ -105,7 +105,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             await EmployeeServices.deleteEmployee(id);
             setEmployees(prev => prev.filter(emp => emp.id_empleado !== id));
         } catch (error: any) {
-            setError(error.message);
+            console.error(`❌ Error al eliminar empleado:`, error.message);
         }
     };
 
@@ -145,6 +145,30 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updateLoan = async (id_prestamo: number, monto_abonado: number) => {
+        try {
+            // Llamar al servicio para actualizar el préstamo en la API
+            const response = await Loans.payLoan(id_prestamo, { monto_abonado });
+
+            if (response.success) {
+                // Actualiza el estado global de los préstamos
+                setLoans(prevLoans =>
+                    prevLoans.map(loan =>
+                        loan.id_prestamo === id_prestamo
+                            ? {
+                                  ...loan,
+                                  saldo_pendiente: loan.saldo_pendiente - monto_abonado,
+                                  ultimo_abono: monto_abonado,
+                              }
+                            : loan
+                    )
+                );
+            }
+        } catch (error: any) {
+            setError(error.message);
+        }
+    };
+
     return (
         <GlobalContext.Provider
             value={{
@@ -163,6 +187,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 updatePayroll,
                 removePayroll,
                 addLoan,
+                updateLoan,
             }}>
             {children}
         </GlobalContext.Provider>

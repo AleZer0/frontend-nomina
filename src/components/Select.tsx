@@ -30,7 +30,7 @@ const Select = <T,>({
     return (
         <div className={`relative ${className}`}>
             <select
-                className='w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-base text-gray-900 transition-all duration-300 hover:border-gray-400 hover:shadow focus:ring-1 focus:shadow-xl focus:ring-blue-400 focus:outline-none'
+                className='w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-base text-gray-900 transition-all duration-300 hover:border-gray-400 hover:shadow focus:shadow-xl focus:ring-1 focus:ring-blue-400 focus:outline-none'
                 multiple={multiple}
                 value={Array.isArray(selectedValue) ? selectedValue.map(String) : String(selectedValue)}
                 onChange={e => {

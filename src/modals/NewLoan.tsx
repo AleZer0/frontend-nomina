@@ -65,7 +65,18 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
             return;
         }
 
-        const newLoan: LoanInterface = { id_prestamo: 0, ...emptyLoan, ...values };
+        // 📌 Buscar el empleado por ID para incluir su nombre en la tabla
+        const empleadoSeleccionado = employees.find(emp => emp.id_empleado === values.id_empleado);
+
+        const newLoan: LoanInterface = {
+            id_prestamo: 0,
+            ...emptyLoan,
+            ...values,
+            empleado: empleadoSeleccionado
+                ? `${empleadoSeleccionado.nombre} ${empleadoSeleccionado.apellido}`
+                : 'Desconocido',
+        };
+
         onSubmit(newLoan);
         onClose();
     };

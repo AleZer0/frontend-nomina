@@ -35,6 +35,21 @@ const WeeklyReport: React.FC = () => {
                 render: (_, row) => `$${(row.total_sueldos ?? 0).toFixed(2)}`,
             },
             {
+                key: 'total_vacaciones',
+                header: 'Total Vacaciones',
+                render: (_, row) => `$${(row.total_vacaciones ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_aguinaldo',
+                header: 'Total Aguinaldo',
+                render: (_, row) => `$${(row.total_aguinaldo ?? 0).toFixed(2)}`,
+            },
+            {
+                key: 'total_finiquito',
+                header: 'Total Finiquito',
+                render: (_, row) => `$${(row.total_finiquito ?? 0).toFixed(2)}`,
+            },
+            {
                 key: 'total_prestamos',
                 header: 'Total Prestamos',
                 render: (_, row) => `$${(row.total_prestamos ?? 0).toFixed(2)}`,

@@ -19,6 +19,7 @@ export interface GlobalContextInterface {
     updatePayroll: (id: number, updatedData: Partial<PayrollInterface>) => Promise<void>;
     removePayroll: (id: number) => Promise<void>;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
+    updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<void>;
 }
 
 export interface AuthContextType {
@@ -114,6 +115,9 @@ export interface WeeklyReportData {
     semana: number;
     empleados_pagados: number;
     total_sueldos: number;
+    total_vacaciones: number;
+    total_aguinaldo: number;
+    total_finiquito: number;
     total_prestamos: number;
     total_infonavit: number;
     total_neto: number;

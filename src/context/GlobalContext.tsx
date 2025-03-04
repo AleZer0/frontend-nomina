@@ -21,6 +21,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
 
     const fetchEmployees = async () => {
+        setLoading(true);
         try {
             const employeesData = await EmployeeServices.getEmployees(defaultParams);
             setEmployees(employeesData);
@@ -32,6 +33,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const fetchPayrolls = async () => {
+        setLoading(true);
         try {
             const payrollsData = await PayrollServices.getPayrolls(defaultParams);
             setPayrolls(payrollsData);
@@ -43,6 +45,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const fetchLoans = async () => {
+        setLoading(true);
         try {
             const loanData = await Loans.getLoans(defaultParams);
             setLoans(loanData);
@@ -53,6 +56,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
     const fetchWeeklyReports = async () => {
+        setLoading(true);
         try {
             const WeeklyReportsData = await WeeklyReports.getReportsList({ page: 1, limit: 100, year: 2025 });
             setWeeklyReport(WeeklyReportsData);

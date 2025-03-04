@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import { Oval } from 'react-loader-spinner';
 import { HiDocumentPlus } from 'react-icons/hi2';
 import { FaFilePdf } from 'react-icons/fa';
 
@@ -82,7 +83,20 @@ const Payroll: React.FC = () => {
                     <Button
                         variant='details'
                         size='md'
-                        icon={<FaFilePdf size={15} />}
+                        icon={
+                            loading ? (
+                                <Oval
+                                    height='20'
+                                    width='20'
+                                    color='#1646db'
+                                    strokeWidth={4}
+                                    secondaryColor='#88a3f5'
+                                    ariaLabel='oval-loading'
+                                />
+                            ) : (
+                                <FaFilePdf size={15} />
+                            )
+                        }
                         onClick={() => handleDownload(row.folio)}
                         disabled={disabledButtons[row.folio]}>
                         Descargar

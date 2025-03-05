@@ -122,11 +122,7 @@ const Form: React.FC<FormProps> = ({
                                 id={field.name}
                                 name={field.name}
                                 placeholder={field.placeholder}
-                                value={
-                                    formData[field.name] !== undefined && formData[field.name] !== 0
-                                        ? formData[field.name]
-                                        : ''
-                                }
+                                value={formData[field.name] ?? ''}
                                 onChange={e => handleChange(field.name, field.type, e.target.value)}
                             />
                         )}

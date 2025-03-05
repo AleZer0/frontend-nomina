@@ -6,6 +6,7 @@ export class WeeklyReports {
         if (!params) {
             throw new Error('Debe de haber un parametro por lo menos.');
         }
+
         try {
             const response = await axiosInstance.get(`/reporte_semanal`, { params });
             if (!response.data.success) {

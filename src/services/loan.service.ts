@@ -1,14 +1,14 @@
 import axiosInstance from '.';
-import { LoanInterface, ParamsInterface } from '../types';
+import { LoanInterface, ParamsInterface, PrestamoAbono } from '../types';
 
 export class LoanServices {
     static getLoans = async (params: ParamsInterface) => {
         if (!params) {
             throw new Error('Debe de haber un parametro por lo menos.');
         }
+
         try {
             const response = await axiosInstance.get(`/prestamos`, { params });
-
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
@@ -19,9 +19,9 @@ export class LoanServices {
         }
     };
 
-    static createLoan = async (data: Omit<LoanInterface, 'id_prestamo'>) => {
+    static createLoan = async (body: Omit<LoanInterface, 'id_prestamo'>) => {
         try {
-            const response = await axiosInstance.post('/prestamos', data);
+            const response = await axiosInstance.post('/prestamos', body);
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
@@ -32,9 +32,9 @@ export class LoanServices {
         }
     };
 
-    static payLoan = async (id_prestamo: number, data: { monto_abonado: number }) => {
+    static updateLoan = async (id_prestamo: number, body: Omit<PrestamoAbono, 'id_prestamo'>) => {
         try {
-            const response = await axiosInstance.put(`prestamos/${id_prestamo}`, data);
+            const response = await axiosInstance.put(`prestamos/${id_prestamo}`, body);
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }

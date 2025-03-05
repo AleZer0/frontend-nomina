@@ -2,7 +2,6 @@ import axiosInstance from '.';
 import { ParamsInterface, PayrollInterface } from '../types';
 
 class PayrollServices {
-    // ✅ Obtener todas las nóminas por estado
     static getPayrolls = async (params: ParamsInterface) => {
         if (!params) {
             throw new Error('Debe de haber un parametro por lo menos.');
@@ -10,7 +9,6 @@ class PayrollServices {
 
         try {
             const response = await axiosInstance.get(`/nomina`, { params });
-
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
@@ -21,28 +19,9 @@ class PayrollServices {
         }
     };
 
-    // ✅ Obtener una nómina específica por ID
-    static getPayroll = async (id: number) => {
-        if (typeof id !== 'number' || isNaN(id)) {
-            throw new Error('El ID debe ser un número válido.');
-        }
-
+    static createPayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         try {
-            const response = await axiosInstance.get(`/nomina/${id}`);
-            if (!response.data.success) {
-                throw new Error(response.data.message || 'Error desconocido.');
-            }
-            return response.data.data;
-        } catch (error: any) {
-            console.error('Error al obtener la nómina:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'Error al obtener la nómina.');
-        }
-    };
-
-    // ✅ Crear una nueva nómina
-    static createPayroll = async (data: Omit<PayrollInterface, 'folio'>) => {
-        try {
-            const response = await axiosInstance.post('/nomina', data);
+            const response = await axiosInstance.post('/nomina', newPayroll);
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
@@ -50,42 +29,6 @@ class PayrollServices {
         } catch (error: any) {
             console.error('Error al crear la nómina:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'Error al crear una nómina.');
-        }
-    };
-
-    // ✅ Actualizar una nómina por ID
-    static updatePayroll = async (id: number, data: Partial<PayrollInterface>) => {
-        if (typeof id !== 'number' || isNaN(id)) {
-            throw new Error('El ID debe ser un número válido.');
-        }
-
-        try {
-            const response = await axiosInstance.put(`/nomina/${id}`, data);
-            if (!response.data.success) {
-                throw new Error(response.data.message || 'Error desconocido.');
-            }
-            return response.data.data;
-        } catch (error: any) {
-            console.error('Error al actualizar la nómina:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'Error al actualizar la nómina.');
-        }
-    };
-
-    // ✅ Eliminar (desactivar) una nómina por ID
-    static deletePayroll = async (id: number) => {
-        if (typeof id !== 'number' || isNaN(id)) {
-            throw new Error('El ID debe ser un número válido.');
-        }
-
-        try {
-            const response = await axiosInstance.put(`/nomina/estado/${id}`, { estado: 0 });
-            if (!response.data.success) {
-                throw new Error(response.data.message || 'Error desconocido.');
-            }
-            return response.data.data;
-        } catch (error: any) {
-            console.error('Error al eliminar la nómina:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'Error al eliminar la nómina.');
         }
     };
 }

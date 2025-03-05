@@ -58,7 +58,11 @@ const Modal: React.FC<ModalProps> = ({
                 style={{ zIndex: zIndex + 1 }}>
                 <div className='mb-4 flex items-center justify-between'>
                     <h2 className='text-xl font-bold'>{title}</h2>
-                    <AiOutlineClose className='cursor-pointer text-2xl' onClick={onClose} />
+                    <AiOutlineClose
+                        className='cursor-pointer rounded-2xl bg-gray-100 p-0.5 text-2xl hover:bg-gray-200'
+                        onClick={onClose}
+                        size={25}
+                    />
                 </div>
                 <div>{children}</div>
                 {footer && <div className='mt-4'>{footer}</div>}

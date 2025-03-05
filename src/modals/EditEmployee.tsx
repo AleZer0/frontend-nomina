@@ -11,7 +11,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 interface EditEmployeeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (updatedEmployee: Partial<EmployeeInterface>) => void;
+    onSubmit: (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => void;
 }
 
 const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -32,41 +32,74 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
         }
 
         const updatedEmployee: Partial<EmployeeInterface> = {
-            id_empleado: selectedEmployee?.id_empleado ?? 0,
             ...selectedEmployee,
             ...values,
         };
 
-        onSubmit(updatedEmployee);
+        onSubmit(selectedEmployee?.id_empleado ?? 0, updatedEmployee);
     };
 
     const fields: FormField[] = useMemo(
         () => [
-            { name: 'nombre', label: 'Nombre', type: 'text', placeholder: 'Ingrese el nombre', required: true },
-            { name: 'apellido', label: 'Apellido', type: 'text', placeholder: 'Ingrese el apellido', required: true },
+            {
+                name: 'nombre',
+                label: 'Nombre',
+                type: 'text',
+                placeholder: 'Ingrese el nombre',
+                required: true,
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'apellido',
+                label: 'Apellido',
+                type: 'text',
+                placeholder: 'Ingrese el apellido',
+                required: true,
+                variant: 'default',
+                inputSize: 'md',
+            },
             {
                 name: 'fecha_incorporacion',
-                label: 'Fecha Incorporación',
+                label: 'Fecha Incorporacion',
                 type: 'date',
                 placeholder: 'Seleccione una fecha',
+                variant: 'default',
+                inputSize: 'md',
             },
-            { name: 'departamento', label: 'Departamento', type: 'text', placeholder: 'Ingrese el departamento' },
-            { name: 'puesto', label: 'Puesto', type: 'text', placeholder: 'Ingrese el puesto', required: true },
-            { name: 'sueldo', label: 'Sueldo', type: 'number', placeholder: 'Ingrese el sueldo' },
+            {
+                name: 'departamento',
+                label: 'Departamento',
+                type: 'text',
+                placeholder: 'Ingrese el departamento',
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'puesto',
+                label: 'Puesto',
+                type: 'text',
+                placeholder: 'Ingrese el puesto',
+                required: true,
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'sueldo',
+                label: 'Sueldo',
+                type: 'number',
+                placeholder: 'Ingrese el sueldo',
+                variant: 'default',
+                inputSize: 'md',
+            },
         ],
-        [selectedEmployee]
+        []
     );
 
     if (!isOpen) return null;
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title='Editar Empleado'
-            closeOnOverlayClick={true}
-            containerClassName='max-w-3xl'
-            zIndex={60}>
+        <Modal isOpen={isOpen} onClose={onClose} title='Editar Empleado' containerClassName='max-w-3xl' zIndex={60}>
             <Form
                 fields={fields}
                 data={
@@ -81,7 +114,7 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
                 }
                 onSubmit={handleSubmit}
                 submitIcon={<FaRegSave size={17} />}
-                submitLabel='Guardar empleado'
+                submitLabel='Guardar cambios'
                 variant='add'
                 direction='end'
                 columns={2}

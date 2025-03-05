@@ -19,16 +19,8 @@ import { Column } from '../types/extras';
 import { useGlobalContext } from '../context/GlobalContext';
 
 const Employees: React.FC = () => {
-    const {
-        employees,
-        selectedEmployee,
-        selectEmployee,
-        addEmployee,
-        updateEmployee,
-        removeEmployee,
-        addPayroll,
-        loading,
-    } = useGlobalContext();
+    const { employees, addEmployee, updateEmployee, statusEmployee, selectEmployee, addPayroll, loading } =
+        useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
@@ -37,17 +29,18 @@ const Employees: React.FC = () => {
 
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
-        setTimeout(() => setIsOpenCreateEmployee(false), 3000);
+        setIsOpenCreateEmployee(false);
     };
 
-    const handleUpdateEmployee = async (updatedEmployee: Partial<EmployeeInterface>) => {
-        if (!selectedEmployee) return;
-        await updateEmployee(selectedEmployee.id_empleado ?? 0, updatedEmployee);
+    const handleUpdateEmployee = async (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => {
+        const newSelectedEmployee = await updateEmployee(id_empleado, updatedEmployee);
+        selectEmployee(newSelectedEmployee);
         setIsOpenEditEmployee(false);
     };
 
-    const handleDeleteEmployee = async (id: number) => {
-        await removeEmployee(id);
+    const handleDeleteEmployee = async (id_empleado: number) => {
+        console.log('Si entra aquí 2');
+        await statusEmployee(id_empleado, 0);
         setIsOpenViewEmployee(false);
     };
 
@@ -82,7 +75,7 @@ const Employees: React.FC = () => {
                         size='md'
                         icon={<CgDetailsMore size={15} />}
                         onClick={() => {
-                            selectEmployee(undefined, row);
+                            selectEmployee(row);
                             setIsOpenViewEmployee(true);
                         }}>
                         Detalles
@@ -90,7 +83,7 @@ const Employees: React.FC = () => {
                 ),
             },
         ],
-        []
+        [employees]
     );
 
     return (
@@ -111,7 +104,7 @@ const Employees: React.FC = () => {
                 </div>
             )}
 
-            <Table columns={columns} data={employees} />
+            <Table columns={columns} data={employees.filter(employee => employee.estado !== 0)} />
 
             <ViewEmployee
                 isOpen={isOpenViewEmployee}

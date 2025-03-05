@@ -2,7 +2,6 @@ import axiosInstance from '.';
 import { EmployeeInterface, ParamsInterface } from '../types';
 
 class EmployeeServices {
-    // ✅ Obtener utodos los empleados por estado
     static getEmployees = async (params: ParamsInterface) => {
         if (!params) {
             throw new Error('Debe de haber un parametro por lo menos.');
@@ -10,11 +9,9 @@ class EmployeeServices {
 
         try {
             const response = await axiosInstance.get(`/empleado`, { params });
-
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
-
             return response.data.data;
         } catch (error: any) {
             console.error('Error al obtener empleados:', error.response?.data || error.message);
@@ -22,28 +19,9 @@ class EmployeeServices {
         }
     };
 
-    // ✅ Obtener un empleado por ID
-    static getEmployee = async (id: number) => {
-        if (!Number.isInteger(id) || id <= 0) {
-            throw new Error('El ID debe ser un número válido.');
-        }
-
+    static createEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         try {
-            const response = await axiosInstance.get(`/empleado/one?id_empleado=${id}`);
-            if (!response.data.success) {
-                throw new Error(response.data.message || 'Error desconocido.');
-            }
-            return response.data.data;
-        } catch (error: any) {
-            console.error('Error al obtener un empleado:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'Error al obtener un empleado.');
-        }
-    };
-
-    // ✅ Crear un nuevo empleado
-    static createEmployee = async (data: Omit<EmployeeInterface, 'id_empleado'>) => {
-        try {
-            const response = await axiosInstance.post('/empleado', data);
+            const response = await axiosInstance.post('/empleado', newEmployee);
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
@@ -54,14 +32,13 @@ class EmployeeServices {
         }
     };
 
-    // ✅ Actualizar un empleado por ID
-    static updateEmployee = async (id: number, data: Partial<EmployeeInterface>) => {
-        if (!Number.isInteger(id) || id <= 0) {
-            throw new Error('El ID debe ser un número válido.');
+    static updateEmployee = async (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => {
+        if (!Number.isInteger(id_empleado) || id_empleado <= 0) {
+            throw new Error('El ID de empleado debe ser un número válido.');
         }
 
         try {
-            const response = await axiosInstance.put(`/empleado/${id}`, data);
+            const response = await axiosInstance.put(`/empleado/${id_empleado}`, updatedEmployee);
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
@@ -72,14 +49,13 @@ class EmployeeServices {
         }
     };
 
-    // ✅ Eliminar (desactivar) un empleado por ID
-    static deleteEmployee = async (id: number) => {
-        if (!Number.isInteger(id) || id <= 0) {
+    static changeStatusEmployee = async (id_empleado: number, estado: 0 | 1) => {
+        if (!Number.isInteger(id_empleado) || id_empleado <= 0) {
             throw new Error('El ID debe ser un número válido.');
         }
 
         try {
-            const response = await axiosInstance.put(`/empleado/estado/${id}`, { estado: 0 });
+            const response = await axiosInstance.put(`/empleado/estado/${id_empleado}`, { estado });
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }

@@ -13,15 +13,15 @@ import { PayrollInterface } from '../types';
 import { Column, FormField } from '../types/extras';
 import { ButtonProps } from '../types/componentes';
 
-import Utils from '../utils';
 import { useGlobalContext } from '../context/GlobalContext';
+import Utils from '../utils';
 
 interface ViewEmployeeProps {
     isOpen: boolean;
     onClose: () => void;
     handleClickCreatePayroll: () => void;
     handleClickEdit: () => void;
-    handleClickDelate: (id: number) => void;
+    handleClickDelate: (id_empleado: number) => void;
 }
 
 const ViewEmployee: React.FC<ViewEmployeeProps> = ({
@@ -33,20 +33,18 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
 }) => {
     const { selectedEmployee } = useGlobalContext();
 
+    const handleClickDelateButton = () => {
+        if (!selectedEmployee) return;
+        console.log('Si entra aquí 1');
+        handleClickDelate(selectedEmployee.id_empleado);
+    };
+
     const fields: FormField[] = useMemo(
         () => [
-            {
-                name: 'id_empleado',
-                label: 'No. Empleado',
-                type: 'text',
-                variant: 'filled',
-                inputSize: 'md',
-            },
             {
                 name: 'nombre',
                 label: 'Nombre',
                 type: 'text',
-                placeholder: 'Ingrese el nombre',
                 required: true,
                 variant: 'filled',
                 inputSize: 'md',
@@ -55,7 +53,6 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 name: 'apellido',
                 label: 'Apellido',
                 type: 'text',
-                placeholder: 'Ingrese el apellido',
                 required: true,
                 variant: 'filled',
                 inputSize: 'md',
@@ -64,7 +61,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 name: 'fecha_incorporacion',
                 label: 'Fecha Incorporacion',
                 type: 'date',
-                placeholder: 'Seleccione una fecha',
+                placeholder: 'No cuenta con fecha de incorporación',
                 variant: 'filled',
                 inputSize: 'md',
             },
@@ -72,7 +69,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 name: 'departamento',
                 label: 'Departamento',
                 type: 'text',
-                placeholder: 'Ingrese el departamento',
+                placeholder: 'No cuenta con departamento',
                 variant: 'filled',
                 inputSize: 'md',
             },
@@ -80,7 +77,6 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 name: 'puesto',
                 label: 'Puesto',
                 type: 'text',
-                placeholder: 'Ingrese el puesto',
                 required: true,
                 variant: 'filled',
                 inputSize: 'md',
@@ -89,7 +85,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 name: 'sueldo',
                 label: 'Sueldo',
                 type: 'number',
-                placeholder: 'Ingrese el sueldo',
+                placeholder: 'No cuenta con sueldo definido',
                 variant: 'filled',
                 inputSize: 'md',
             },
@@ -101,7 +97,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
         () => [
             { key: 'folio', header: 'Folio', render: (_, row) => `NOM${row.folio.toString().padStart(4, '0')}` },
             { key: 'dias_trabajados', header: 'Días Laborados' },
-            { key: 'fecha', header: 'Fecha', render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha.split('T')[0]) },
+            { key: 'fecha', header: 'Fecha', render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha) },
             { key: 'prestamos', header: 'Prestamos', render: (_, row) => `$${(row.prestamos ?? 0).toFixed(2)}` },
             { key: 'sueldo', header: 'Sueldo', render: (_, row) => `$${row.sueldo.toFixed(2)}` },
         ],
@@ -112,7 +108,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
         () => [
             {
                 variant: 'add',
-                children: 'Generar Nómina',
+                children: 'Generar nómina',
                 icon: <HiDocumentPlus size={17} />,
                 onClick: () => handleClickCreatePayroll(),
             },
@@ -126,7 +122,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 variant: 'delete',
                 children: 'Eliminar',
                 icon: <MdDelete size={17} />,
-                onClick: () => handleClickDelate(selectedEmployee?.id_empleado ?? 0),
+                onClick: () => handleClickDelateButton(),
             },
         ],
         []

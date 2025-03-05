@@ -11,7 +11,7 @@ import { FormField } from '../types/extras';
 interface CreateEmployeeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newEmployee: EmployeeInterface) => void;
+    onSubmit: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => void;
 }
 
 const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -31,8 +31,7 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
             return;
         }
 
-        const newEmployee: EmployeeInterface = { id_empleado: 0, ...emptyEmployee, ...values };
-
+        const newEmployee: Omit<EmployeeInterface, 'id_empleado'> = { ...emptyEmployee, ...values };
         onSubmit(newEmployee);
     };
 

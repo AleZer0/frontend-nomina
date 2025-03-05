@@ -5,24 +5,21 @@ export interface UsuarioType {
 
 export interface GlobalContextInterface {
     employees: EmployeeInterface[];
+    selectedEmployee: EmployeeInterface | null;
     payrolls: PayrollInterface[];
     loans: LoanInterface[];
     selectedLoan: LoanInterface | null;
     weeklyReport: WeeklyReportData[];
     loading: boolean;
     error: string | null;
-    selectedEmployee: EmployeeInterface | null;
-    selectEmployee: (id?: number, updatedEmployee?: EmployeeInterface | null) => void;
-    updateEmployees: (id: number, updatedData: Partial<EmployeeInterface>) => void;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
-    updateEmployee: (id: number, updatedData: Partial<EmployeeInterface>) => Promise<void>;
-    removeEmployee: (id: number) => Promise<void>;
+    updateEmployee: (id_empleado: number, updatedData: Partial<EmployeeInterface>) => Promise<EmployeeInterface>;
+    statusEmployee: (id_empleado: number, status: 0 | 1) => Promise<void>;
+    selectEmployee: (employee?: EmployeeInterface) => void;
     addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
-    updatePayroll: (id: number, updatedData: Partial<PayrollInterface>) => Promise<void>;
-    removePayroll: (id: number) => Promise<void>;
-    selectLoan: (id?: number, newSelectedLoan?: LoanInterface | null) => void;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
     updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<void>;
+    selectLoan: (loan?: LoanInterface) => void;
 }
 
 export interface AuthContextType {
@@ -59,8 +56,29 @@ export interface EmployeeInterface {
     updated_at?: string;
     estado?: number;
     nomina?: PayrollInterface[];
-    ultima_nomina?: number;
     prestamos?: LoanInterface[];
+    ultima_nomina?: number;
+}
+
+export interface PaymentInterface {
+    id_abono: number;
+    id_prestamo: number;
+    monto_abonado: number;
+    fecha: string;
+    created_at?: string;
+}
+
+export interface LoanInterface {
+    id_prestamo: number;
+    id_empleado: number;
+    monto_total: number;
+    saldo_pendiente: number;
+    estado?: number;
+    created_at?: string;
+    updated_at?: string;
+    abonos?: PaymentInterface[];
+    empleado?: string;
+    ultimo_abono?: number;
 }
 
 export interface PayrollInterface {
@@ -80,27 +98,6 @@ export interface PayrollInterface {
     nominaAbonos?: PaymentPayrollInterface;
     prestamos?: number;
     ids_prestamos?: PrestamoAbono[];
-}
-
-export interface LoanInterface {
-    id_prestamo: number;
-    id_empleado: number;
-    monto_total: number;
-    saldo_pendiente: number;
-    estado?: number;
-    created_at?: string;
-    updated_at?: string;
-    empleado?: string;
-    abonos?: PaymentInterface[];
-    ultimo_abono?: number;
-}
-
-export interface PaymentInterface {
-    id_abono: number;
-    id_prestamo: number;
-    monto_abonado: number;
-    fecha: string;
-    created_at?: string;
 }
 
 export interface PaymentPayrollInterface {

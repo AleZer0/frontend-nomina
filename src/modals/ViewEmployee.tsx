@@ -35,7 +35,13 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
 
     const fields: FormField[] = useMemo(
         () => [
-            { name: 'id_empleado', label: 'No. Empleado', type: 'text', variant: 'filled', inputSize: 'md' },
+            {
+                name: 'id_empleado',
+                label: 'No. Empleado',
+                type: 'text',
+                variant: 'filled',
+                inputSize: 'md',
+            },
             {
                 name: 'nombre',
                 label: 'Nombre',

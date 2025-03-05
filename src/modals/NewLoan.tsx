@@ -77,6 +77,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
         };
 
         onSubmit(newLoan);
+        selectEmployee();
         onClose();
     };
 

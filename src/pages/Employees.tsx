@@ -11,12 +11,12 @@ import Loader from '../components/Loader';
 import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
 import EditEmployee from '../modals/EditEmployee';
+import NewPayroll from '../modals/NewPayroll';
 
 import { EmployeeInterface, PayrollInterface } from '../types';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
-import NewPayroll from '../modals/NewPayroll';
 
 const Employees: React.FC = () => {
     const {
@@ -35,25 +35,24 @@ const Employees: React.FC = () => {
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
 
-    const handleCreateEmployee = (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
-        addEmployee(newEmployee);
+    const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
+        await addEmployee(newEmployee);
         setIsOpenCreateEmployee(false);
     };
 
-    const handleUpdateEmployee = (updatedEmployee: Partial<EmployeeInterface>) => {
+    const handleUpdateEmployee = async (updatedEmployee: Partial<EmployeeInterface>) => {
         if (!selectedEmployee) return;
-        updateEmployee(selectedEmployee.id_empleado ?? 0, updatedEmployee);
+        await updateEmployee(selectedEmployee.id_empleado ?? 0, updatedEmployee);
         setIsOpenEditEmployee(false);
     };
 
     const handleDeleteEmployee = async (id: number) => {
-        if (!selectedEmployee) return;
-        removeEmployee(id);
+        await removeEmployee(id);
         setIsOpenViewEmployee(false);
     };
 
-    const handleCreatePayroll = (newPayroll: Omit<PayrollInterface, 'folio'>) => {
-        addPayroll(newPayroll);
+    const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
     };
 

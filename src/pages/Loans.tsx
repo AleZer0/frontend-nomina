@@ -26,14 +26,14 @@ const Loans: React.FC = () => {
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
     const [isOpenPayLoan, setIsOpenPayLoan] = useState(false);
 
-    const handleCreateLoan = (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
-        addLoan(newLoan);
+    const handleCreateLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
+        await addLoan(newLoan);
         setIsOpenCreateLoan(false);
     };
 
     const handlePayLoan = async (updatedLoan: Partial<PaymentInterface>) => {
         if (!selectedLoan) return;
-        updateLoan(selectedLoan.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
+        await updateLoan(selectedLoan.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
         setIsOpenPayLoan(false);
     };
 

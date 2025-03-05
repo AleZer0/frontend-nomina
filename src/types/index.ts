@@ -13,6 +13,7 @@ export interface GlobalContextInterface {
     error: string | null;
     selectedEmployee: EmployeeInterface | null;
     selectEmployee: (id?: number, updatedEmployee?: EmployeeInterface | null) => void;
+    updateEmployees: (id: number, updatedData: Partial<EmployeeInterface>) => void;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
     updateEmployee: (id: number, updatedData: Partial<EmployeeInterface>) => Promise<void>;
     removeEmployee: (id: number) => Promise<void>;

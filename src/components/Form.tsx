@@ -20,9 +20,18 @@ const Form: React.FC<FormProps> = ({
     extra,
     children,
 }) => {
-    // const { selectedEmployee, selectEmployee } = useGlobalContext();
+    const [formData, setFormData] = useState<Record<string, any>>(() => {
+        const initialData = { ...data };
 
-    const [formData, setFormData] = useState<Record<string, any>>({ ...data });
+        Object.keys(initialData).forEach(key => {
+            if (initialData[key] === undefined || initialData[key] === null) {
+                initialData[key] = '';
+            }
+        });
+
+        return initialData;
+    });
+
     const [isFormValid, setIsFormValid] = useState<boolean>(false);
     const isFirstRender = useRef(true);
 

@@ -25,6 +25,11 @@ const Payroll: React.FC = () => {
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
 
+    const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        await addPayroll(newPayroll);
+        setIsOpenCreatePayroll(false);
+    };
+
     const handleDownload = (folio: number) => {
         setLoadingButtons(prev => ({ ...prev, [folio]: true }));
 
@@ -93,11 +98,6 @@ const Payroll: React.FC = () => {
         ],
         [loadingButtons]
     );
-
-    const handleCreatePayroll = (newPayroll: Omit<PayrollInterface, 'folio'>) => {
-        addPayroll(newPayroll);
-        setIsOpenCreatePayroll(false);
-    };
 
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>

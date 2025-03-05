@@ -11,7 +11,7 @@ import Table from '../components/Table';
 import { useGlobalContext } from '../context/GlobalContext';
 
 import { Column, FormField } from '../types/extras';
-import { LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
+import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
 
 interface CreatePayrollModalProps {
     isOpen: boolean;
@@ -20,16 +20,16 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee, selectEmployee, updateLoan } = useGlobalContext();
+    const { employees, selectedEmployee, loans, updateEmployees, selectEmployee, updateLoan } = useGlobalContext();
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
         dias_trabajados: 0,
         infonavit: 0,
-        sueldo: 0,
+        sueldo: selectedEmployee?.sueldo ?? 0,
         finiquito: 0,
         vacaciones: 0,
         aguinaldo: 0,
-        id_empleado: 0,
+        id_empleado: selectedEmployee?.id_empleado ?? 0,
         ids_prestamos: [] as PrestamoAbono[],
     };
 
@@ -69,8 +69,20 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             ids_prestamos: idsPrestamos,
         };
 
-        idsPrestamos.map(pres => updateLoan(pres.id_prestamo, pres.monto_abonado));
+        idsPrestamos.forEach(async pres => await updateLoan(pres.id_prestamo, pres.monto_abonado));
+
+        const updatedLoans = [...loans];
+        if (selectedEmployee) {
+            const newUpdatedEmployee: EmployeeInterface = {
+                ...selectedEmployee,
+                prestamos: updatedLoans.filter(pres => pres.id_empleado === selectedEmployee.id_empleado),
+            };
+
+            updateEmployees(selectedEmployee.id_empleado, newUpdatedEmployee);
+        }
+
         onSubmit(newPayroll);
+        selectEmployee();
         setIdsPrestamos([]);
         setInputValues({});
         onClose();
@@ -86,7 +98,6 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                     id: id_empleado,
                     label: `${nombre} ${apellido}`,
                 })),
-                default_value: selectedEmployee?.id_empleado.toString(),
                 placeholder: 'Seleccione un empleado',
                 required: true,
             },

@@ -15,6 +15,25 @@ class Utils {
         // Retorna en formato DD/MM/YYYY
         return `${dayString}/${monthString}/${year}`;
     };
+
+    static formatDates = (data: any): any => {
+        if (Array.isArray(data)) {
+            return data.map(item => Utils.formatDates(item)); // Si es un array, recorrerlo y formatear cada objeto.
+        } else if (typeof data === 'object' && data !== null) {
+            return Object.keys(data).reduce((acc, key) => {
+                if (typeof data[key] === 'string' && data[key].includes('T')) {
+                    const dateValue = new Date(data[key]);
+                    acc[key] = isNaN(dateValue.getTime()) ? data[key] : dateValue.toISOString().split('T')[0];
+                } else if (Array.isArray(data[key]) || typeof data[key] === 'object') {
+                    acc[key] = Utils.formatDates(data[key]); // Recursión para formatear fechas en objetos anidados.
+                } else {
+                    acc[key] = data[key];
+                }
+                return acc;
+            }, {} as any);
+        }
+        return data;
+    };
 }
 
 export default Utils;

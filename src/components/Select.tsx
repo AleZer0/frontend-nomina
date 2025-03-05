@@ -17,7 +17,6 @@ const Select = <T,>({
     placeholder = 'Selecciona...',
     className = '',
 }: SelectProps<T>) => {
-    // ⬇ Corrección: Inicializamos correctamente `selectedValue` basado en `multiple`
     const [selectedValue, setSelectedValue] = useState<T | T[]>(
         value !== undefined ? value : multiple ? [] : (null as unknown as T)
     );

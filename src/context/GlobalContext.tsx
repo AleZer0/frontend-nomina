@@ -4,6 +4,7 @@ import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
 import LoanServices from '../services/loan.service';
 import WeeklyReports from '../services/weeklyReport.service';
+import Utils from '../utils';
 
 const defaultParams = { estado: 1, page: 1, limit: 100 };
 
@@ -27,7 +28,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         try {
             const employeesData = await EmployeeServices.getEmployees(defaultParams);
-            setEmployees(employeesData);
+            setEmployees(Utils.formatDates(employeesData));
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -39,7 +40,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         try {
             const payrollsData = await PayrollServices.getPayrolls(defaultParams);
-            setPayrolls(payrollsData);
+            setPayrolls(Utils.formatDates(payrollsData));
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -51,18 +52,19 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         try {
             const loanData = await LoanServices.getLoans(defaultParams);
-            setLoans(loanData);
+            setLoans(Utils.formatDates(loanData));
         } catch (error: any) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
     };
+
     const fetchWeeklyReports = async () => {
         setLoading(true);
         try {
             const WeeklyReportsData = await WeeklyReports.getReportsList({ page: 1, limit: 100, year: 2025 });
-            setWeeklyReport(WeeklyReportsData);
+            setWeeklyReport(Utils.formatDates(WeeklyReportsData));
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -78,11 +80,22 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const selectEmployee = (id?: number, updatedEmployee?: EmployeeInterface | null) => {
-        if (id) {
+        if (updatedEmployee) {
+            setSelectedEmployee(updatedEmployee);
+        } else if (id) {
             const employee = employees.find(emp => emp.id_empleado === id) || null;
             setSelectedEmployee(employee);
         } else {
-            setSelectedEmployee(updatedEmployee ?? null);
+            setSelectedEmployee(null);
+        }
+    };
+
+    const updateEmployees = (id: number, updatedData: Partial<EmployeeInterface>) => {
+        try {
+            setEmployees(prev => prev.map(emp => (emp.id_empleado === id ? { ...emp, ...updatedData } : emp)));
+            setSelectedEmployee(prev => (prev?.id_empleado === id ? { ...prev, ...updatedData } : prev));
+        } catch (error: any) {
+            setError(error.message);
         }
     };
 
@@ -110,7 +123,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             await EmployeeServices.deleteEmployee(id);
             setEmployees(prev => prev.filter(emp => emp.id_empleado !== id));
         } catch (error: any) {
-            console.error(`❌ Error al eliminar empleado:`, error.message);
+            setError(error.message);
         }
     };
 
@@ -195,6 +208,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 error,
                 selectedEmployee,
                 selectEmployee,
+                updateEmployees,
                 addEmployee,
                 updateEmployee,
                 removeEmployee,

@@ -37,7 +37,7 @@ const Employees: React.FC = () => {
 
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
-        setIsOpenCreateEmployee(false);
+        setTimeout(() => setIsOpenCreateEmployee(false), 3000);
     };
 
     const handleUpdateEmployee = async (updatedEmployee: Partial<EmployeeInterface>) => {
@@ -70,7 +70,8 @@ const Employees: React.FC = () => {
             {
                 key: 'ultima_nomina',
                 header: 'Última Nómina',
-                render: (_, row) => (row.ultima_nomina ? `NOM${row.ultima_nomina}` : 'Sin nóminas'),
+                render: (_, row) =>
+                    row.ultima_nomina ? `NOM${row.ultima_nomina.toString().padStart(4, '0')}` : 'Sin nóminas',
             },
             {
                 key: 'accion',

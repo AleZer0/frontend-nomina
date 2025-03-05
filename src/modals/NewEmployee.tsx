@@ -34,7 +34,6 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
         const newEmployee: EmployeeInterface = { id_empleado: 0, ...emptyEmployee, ...values };
 
         onSubmit(newEmployee);
-        onClose();
     };
 
     const fields: FormField[] = useMemo(

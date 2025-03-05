@@ -11,7 +11,7 @@ import Table from '../components/Table';
 import { useGlobalContext } from '../context/GlobalContext';
 
 import { Column, FormField } from '../types/extras';
-import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
+import { LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
 
 interface CreatePayrollModalProps {
     isOpen: boolean;
@@ -20,7 +20,8 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee, loans, updateEmployees, selectEmployee, updateLoan } = useGlobalContext();
+    const { employees, selectedEmployee, selectEmployee, updateLoan } = useGlobalContext();
+
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
         dias_trabajados: 0,
@@ -36,6 +37,19 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
     const [idsPrestamos, setIdsPrestamos] = useState<PrestamoAbono[]>([]);
     const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
 
+    const handleClickClose = () => {
+        selectEmployee();
+        setIdsPrestamos([]);
+        setInputValues({});
+        onClose();
+    };
+
+    const handleSelectEmployee = (id: number) => {
+        selectEmployee(id);
+        setIdsPrestamos([]);
+        setInputValues({});
+    };
+
     const handleChangeAbono = (idPrestamo: number, monto: number) => {
         setIdsPrestamos(prev => {
             const existIndex = prev.findIndex(p => p.id_prestamo === idPrestamo);
@@ -50,20 +64,13 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         setInputValues(prev => ({ ...prev, [idPrestamo]: monto.toString() }));
     };
 
-    const handleSelectEmployee = (id: number) => {
-        selectEmployee(id);
-        setIdsPrestamos([]);
-        setInputValues({});
-    };
-
     const handleSubmit = (values: Partial<PayrollInterface>) => {
         if (!values.fecha || !values.dias_trabajados || !values.sueldo || !values.id_empleado) {
             alert('Por favor, completa todos los campos obligatorios.');
             return;
         }
 
-        const newPayroll: PayrollInterface = {
-            folio: 0,
+        const newPayroll: Omit<PayrollInterface, 'folio'> = {
             ...emptyPayroll,
             ...values,
             ids_prestamos: idsPrestamos,
@@ -71,21 +78,9 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
 
         idsPrestamos.forEach(async pres => await updateLoan(pres.id_prestamo, pres.monto_abonado));
 
-        const updatedLoans = [...loans];
-        if (selectedEmployee) {
-            const newUpdatedEmployee: EmployeeInterface = {
-                ...selectedEmployee,
-                prestamos: updatedLoans.filter(pres => pres.id_empleado === selectedEmployee.id_empleado),
-            };
-
-            updateEmployees(selectedEmployee.id_empleado, newUpdatedEmployee);
-        }
-
         onSubmit(newPayroll);
-        selectEmployee();
         setIdsPrestamos([]);
         setInputValues({});
-        onClose();
     };
 
     const fields: FormField[] = useMemo(
@@ -199,7 +194,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title='Crear una nueva nómina' containerClassName='max-w-3xl'>
+        <Modal isOpen={isOpen} onClose={handleClickClose} title='Crear una nueva nómina' containerClassName='max-w-3xl'>
             <Form
                 fields={fields}
                 data={emptyPayroll}

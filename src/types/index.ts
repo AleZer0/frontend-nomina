@@ -91,7 +91,7 @@ export interface LoanInterface {
     created_at?: string;
     updated_at?: string;
     empleado?: string;
-    abonos?: Array<any>;
+    abonos?: PaymentInterface[];
     ultimo_abono?: number;
 }
 

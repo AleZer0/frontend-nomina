@@ -23,6 +23,32 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
         saldo_pendiente: 0,
     };
 
+    const handleClickClose = () => {
+        selectEmployee();
+        onClose();
+    };
+
+    const handleSubmit = (values: Partial<LoanInterface>) => {
+        if (!values.id_empleado || !values.monto_total || !values.saldo_pendiente) {
+            alert('Por favor, completa todos los campos.');
+            return;
+        }
+
+        const empleadoSeleccionado = employees.find(emp => emp.id_empleado === values.id_empleado);
+
+        const newLoan: LoanInterface = {
+            id_prestamo: 0,
+            ...emptyLoan,
+            ...values,
+            empleado: empleadoSeleccionado
+                ? `${empleadoSeleccionado.nombre} ${empleadoSeleccionado.apellido}`
+                : 'Desconocido',
+        };
+
+        onSubmit(newLoan);
+        selectEmployee();
+    };
+
     const fields: FormField[] = useMemo(
         () => [
             {
@@ -59,32 +85,14 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
         [employees, selectedEmployee]
     );
 
-    const handleSubmit = (values: Partial<LoanInterface>) => {
-        if (!values.id_empleado || !values.monto_total || !values.saldo_pendiente) {
-            alert('Por favor, completa todos los campos.');
-            return;
-        }
-
-        const empleadoSeleccionado = employees.find(emp => emp.id_empleado === values.id_empleado);
-
-        const newLoan: LoanInterface = {
-            id_prestamo: 0,
-            ...emptyLoan,
-            ...values,
-            empleado: empleadoSeleccionado
-                ? `${empleadoSeleccionado.nombre} ${empleadoSeleccionado.apellido}`
-                : 'Desconocido',
-        };
-
-        onSubmit(newLoan);
-        selectEmployee();
-        onClose();
-    };
-
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title='Crear un nuevo préstamo' containerClassName='max-w-3xl'>
+        <Modal
+            isOpen={isOpen}
+            onClose={handleClickClose}
+            title='Crear un nuevo préstamo'
+            containerClassName='max-w-3xl'>
             <Form
                 fields={fields}
                 data={emptyLoan}

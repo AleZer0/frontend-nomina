@@ -12,7 +12,7 @@ import NewPayroll from '../modals/NewPayroll';
 
 import { previewPayrollPDF } from '../services/pdf.service';
 
-import { PayrollInterface } from '../types';
+import { EmployeeInterface, PayrollInterface } from '../types';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
@@ -20,12 +20,21 @@ import { useGlobalContext } from '../context/GlobalContext';
 import Utils from '../utils';
 
 const Payroll: React.FC = () => {
-    const { payrolls, addPayroll, loading } = useGlobalContext();
+    const { selectedEmployee, updateEmployees, payrolls, addPayroll, loans, loading } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        const updatedLoans = [...loans];
+        if (selectedEmployee) {
+            const newUpdatedEmployee: EmployeeInterface = {
+                ...selectedEmployee,
+                prestamos: updatedLoans.filter(pres => pres.id_empleado === selectedEmployee.id_empleado),
+            };
+            updateEmployees(selectedEmployee.id_empleado, newUpdatedEmployee);
+        }
+
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
     };
@@ -45,7 +54,7 @@ const Payroll: React.FC = () => {
 
     const columns: Column<PayrollInterface>[] = useMemo(
         () => [
-            { key: 'folio', header: 'Folio' },
+            { key: 'folio', header: 'Folio', render: (_, row) => `NOM${row.folio.toString().padStart(4, '0')}` },
             {
                 key: 'empleado',
                 header: 'Empleado',

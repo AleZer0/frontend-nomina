@@ -14,13 +14,14 @@ import PayLoan from '../modals/Payloan';
 
 import { useGlobalContext } from '../context/GlobalContext';
 
-import { LoanInterface, PaymentInterface } from '../types';
+import { EmployeeInterface, LoanInterface, PaymentInterface } from '../types';
 import { Column } from '../types/extras';
 
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { loans, selectedLoan, addLoan, updateLoan, loading, selectEmployee, selectLoan } = useGlobalContext();
+    const { employees, updateEmployees, loans, selectedLoan, addLoan, updateLoan, loading, selectLoan } =
+        useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
@@ -28,13 +29,21 @@ const Loans: React.FC = () => {
 
     const handleCreateLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         await addLoan(newLoan);
-        setIsOpenCreateLoan(false);
+        setTimeout(() => setIsOpenCreateLoan(false), 3000);
     };
 
     const handlePayLoan = async (updatedLoan: Partial<PaymentInterface>) => {
+        const updatedLoans = [...loans];
+        if (selectedLoan) {
+            const newUpdatedEmployee: Partial<EmployeeInterface> = {
+                ...employees.find(emp => emp.id_empleado === selectedLoan.id_empleado),
+                prestamos: updatedLoans.filter(pres => pres.id_empleado === selectedLoan.id_empleado),
+            };
+            updateEmployees(selectedLoan.id_empleado, newUpdatedEmployee);
+        }
         if (!selectedLoan) return;
         await updateLoan(selectedLoan.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
-        setIsOpenPayLoan(false);
+        setTimeout(() => setIsOpenPayLoan(false), 2000);
     };
 
     const columns: Column<LoanInterface>[] = useMemo(
@@ -75,7 +84,6 @@ const Loans: React.FC = () => {
                         icon={<HiOutlineCash size={15} />}
                         onClick={() => {
                             selectLoan(undefined, row);
-                            selectEmployee(row.id_empleado);
                             setTimeout(() => setIsOpenViewLoan(true), 100);
                         }}>
                         Detalles
@@ -83,7 +91,7 @@ const Loans: React.FC = () => {
                 ),
             },
         ],
-        []
+        [loans]
     );
 
     return (

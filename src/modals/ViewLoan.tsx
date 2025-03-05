@@ -89,7 +89,7 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan
                 render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha),
             },
         ],
-        []
+        [selectedLoan]
     );
 
     if (!isOpen) return null;

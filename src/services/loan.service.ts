@@ -38,7 +38,7 @@ export class LoanServices {
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
-            return response.data;
+            return response.data.data;
         } catch (error: any) {
             console.error('Error al abonar:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'Error al abonar.');

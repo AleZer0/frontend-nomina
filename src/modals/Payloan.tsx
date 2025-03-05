@@ -33,7 +33,6 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
         };
 
         onSubmit(updatedLoan);
-        onClose();
     };
 
     const fields: FormField[] = useMemo(

@@ -93,7 +93,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const updateEmployees = (id: number, updatedData: Partial<EmployeeInterface>) => {
         try {
             setEmployees(prev => prev.map(emp => (emp.id_empleado === id ? { ...emp, ...updatedData } : emp)));
-            setSelectedEmployee(prev => (prev?.id_empleado === id ? { ...prev, ...updatedData } : prev));
         } catch (error: any) {
             setError(error.message);
         }
@@ -174,23 +173,9 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
     const updateLoan = async (id_prestamo: number, monto_abonado: number) => {
         try {
-            await LoanServices.payLoan(id_prestamo, { monto_abonado });
-            setLoans(prev =>
-                prev.map(loan =>
-                    loan.id_prestamo === id_prestamo
-                        ? {
-                              ...loan,
-                              saldo_pendiente: loan.saldo_pendiente - monto_abonado,
-                              ultimo_abono: monto_abonado,
-                          }
-                        : loan
-                )
-            );
-            setSelectedLoan(prev =>
-                prev?.id_prestamo === id_prestamo
-                    ? { ...prev, saldo_pendiente: prev.saldo_pendiente - monto_abonado, ultimo_abono: monto_abonado }
-                    : prev
-            );
+            const loanUpdated = await LoanServices.payLoan(id_prestamo, { monto_abonado });
+            setLoans(prev => prev.map(loan => (loan.id_prestamo === id_prestamo ? loanUpdated : loan)));
+            setSelectedLoan(prev => (prev?.id_prestamo === id_prestamo ? loanUpdated : prev));
         } catch (error: any) {
             setError(error.message);
         }

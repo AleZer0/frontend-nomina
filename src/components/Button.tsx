@@ -36,7 +36,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                             variant === 'details' && !isLoading && !disabled,
                         'cursor-pointer bg-yellow-500 text-black hover:bg-yellow-600 hover:shadow-2xl hover:shadow-yellow-600':
                             variant === 'generate' && !isLoading && !disabled,
-                        'cursor-not-allowed bg-gray-300 text-black': isLoading || disabled, // ✅ Ahora cambia el cursor
+                        'cursor-not-allowed bg-gray-300 text-black': isLoading || disabled,
                         'cursor-pointer font-medium': variant === 'ghost' && !isLoading && !disabled,
                     },
                     {

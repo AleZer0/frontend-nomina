@@ -1,6 +1,22 @@
 import { TableProps } from '../types/componentes';
+import { useGlobalContext } from '../context/GlobalContext';
+import Loader from '../components/Loader';
+import { useEffect, useState } from 'react';
 
 const Table = <T extends object>({ columns, data, onRowClick }: TableProps<T>) => {
+    const { loading } = useGlobalContext();
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    useEffect(() => {
+        if (!loading && data.length > 0) {
+            setIsDataLoaded(true);
+        } else if (!loading && data.length === 0) {
+            setTimeout(() => setIsDataLoaded(true), 300); // Pequeño retraso para evitar parpadeos
+        } else {
+            setIsDataLoaded(false);
+        }
+    }, [loading, data]);
+
     return (
         <div className='relative overflow-x-auto shadow-md sm:rounded-2xl'>
             <table className='text-md w-full text-blue-950'>
@@ -14,7 +30,15 @@ const Table = <T extends object>({ columns, data, onRowClick }: TableProps<T>) =
                     </tr>
                 </thead>
 
-                {data.length === 0 ? (
+                {loading ? (
+                    <tbody>
+                        <tr>
+                            <td colSpan={columns.length} className='bg-white p-6 text-center'>
+                                <Loader />
+                            </td>
+                        </tr>
+                    </tbody>
+                ) : !isDataLoaded ? null : data.length === 0 ? (
                     <tbody className='text-center'>
                         <tr>
                             <td colSpan={columns.length} className='bg-white p-4'>

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 
 import { FaFilePdf } from 'react-icons/fa6';
 
-import Loader from '../components/Loader';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import Table from '../components/Table';
@@ -16,7 +15,7 @@ import { Column } from '../types/extras';
 import { useGlobalContext } from '../context/GlobalContext';
 
 const WeeklyReport: React.FC = () => {
-    const { weeklyReport, loading, isSidebarOpen } = useGlobalContext();
+    const { weeklyReport, isSidebarOpen } = useGlobalContext();
     const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
 
     const totalNeto = (total: number) => {
@@ -99,7 +98,7 @@ const WeeklyReport: React.FC = () => {
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
             <Header title='Reportes semanales' />
-            {loading && <Loader />}
+
             <Table columns={columns} data={weeklyReport}></Table>
         </section>
     );

@@ -5,7 +5,6 @@ import { FaFilePdf } from 'react-icons/fa';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 import Table from '../components/Table';
 
 import NewPayroll from '../modals/NewPayroll';
@@ -20,8 +19,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 import Utils from '../utils';
 
 const Payroll: React.FC = () => {
-    const { selectedEmployee, updateEmployees, payrolls, addPayroll, loans, loading, isSidebarOpen } =
-        useGlobalContext();
+    const { selectedEmployee, updateEmployees, payrolls, addPayroll, loans, isSidebarOpen } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
@@ -123,12 +121,6 @@ const Payroll: React.FC = () => {
                     Nueva nómina
                 </Button>
             </Header>
-
-            {loading && (
-                <div className='my-4 flex justify-center'>
-                    <Loader />
-                </div>
-            )}
 
             <Table columns={columns} data={payrolls} />
 

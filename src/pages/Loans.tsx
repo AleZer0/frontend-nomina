@@ -6,7 +6,6 @@ import { HiOutlineCash } from 'react-icons/hi';
 import Table from '../components/Table';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 
 import ViewLoan from '../modals/ViewLoan';
 import NewLoan from '../modals/NewLoan';
@@ -20,7 +19,7 @@ import { Column } from '../types/extras';
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { employees, updateEmployees, loans, selectedLoan, addLoan, updateLoan, loading, selectLoan, isSidebarOpen } =
+    const { employees, updateEmployees, loans, selectedLoan, addLoan, updateLoan, selectLoan, isSidebarOpen } =
         useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
@@ -108,12 +107,6 @@ const Loans: React.FC = () => {
                     Nuevo Préstamo
                 </Button>
             </Header>
-
-            {loading && (
-                <div className='my-4 flex justify-center'>
-                    <Loader />
-                </div>
-            )}
 
             <Table columns={columns} data={loans.filter(prev => prev.saldo_pendiente !== 0)} />
 

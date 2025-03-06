@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PiUsersThreeFill } from 'react-icons/pi';
@@ -17,9 +17,11 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 const Sidebar: React.FC = () => {
     const [selectedPage, setSelectedPage] = useState<Route>(routes[0]);
+    const [showText, setShowText] = useState(false);
 
     const { logout } = useAuth();
     const navigate = useNavigate();
+    const { isSidebarOpen, toggleSidebar } = useGlobalContext();
 
     const handleClickPage = (page: Route) => {
         if (!page) return;
@@ -32,7 +34,15 @@ const Sidebar: React.FC = () => {
         navigate('/login');
     };
 
-    const { isSidebarOpen, toggleSidebar } = useGlobalContext();
+    // Manejo del estado para ocultar nombres hasta que la animación termine
+    useEffect(() => {
+        if (isSidebarOpen) {
+            const timeout = setTimeout(() => setShowText(true), 200); // Aparece después de la animación
+            return () => clearTimeout(timeout);
+        } else {
+            setShowText(false);
+        }
+    }, [isSidebarOpen]);
 
     return (
         <>
@@ -40,7 +50,9 @@ const Sidebar: React.FC = () => {
                 <IoMenu size={22} />
             </button>
             <nav
-                className={`transition-width fixed z-40 flex h-screen flex-col bg-slate-900 bg-gradient-to-r to-slate-800 pt-20 text-white duration-300 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-16'}`}>
+                className={`fixed z-40 flex h-screen flex-col bg-slate-900 bg-gradient-to-r to-slate-800 pt-20 text-white transition-all duration-500 ease-in-out ${
+                    isSidebarOpen ? 'w-64' : 'w-16'
+                }`}>
                 <ul className='flex flex-col'>
                     {routes.map((route, index) => (
                         <li
@@ -60,10 +72,11 @@ const Sidebar: React.FC = () => {
                             ) : (
                                 <IoDocuments size={20} />
                             )}
-                            <span
-                                className={`text-sm font-medium transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'hidden opacity-0'}`}>
-                                {route.name}
-                            </span>
+                            {showText && (
+                                <span className='text-sm font-medium opacity-100 transition-opacity duration-300'>
+                                    {route.name}
+                                </span>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -75,7 +88,7 @@ const Sidebar: React.FC = () => {
                         icon={<GiEntryDoor size={17} />}
                         onClick={handleLogout}
                         className='w-full rounded-none bg-gradient-to-r px-4 py-2 transition-all duration-200 hover:to-slate-500'>
-                        {isSidebarOpen && 'Cerrar sesión'}
+                        {showText && 'Cerrar sesión'}
                     </Button>
                 </div>
             </nav>

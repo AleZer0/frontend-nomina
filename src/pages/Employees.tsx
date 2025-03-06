@@ -6,7 +6,6 @@ import { CgDetailsMore } from 'react-icons/cg';
 import Header from '../components/Header';
 import Table from '../components/Table';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 
 import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
@@ -27,7 +26,6 @@ const Employees: React.FC = () => {
         updateEmployee,
         removeEmployee,
         addPayroll,
-        loading,
         isSidebarOpen,
     } = useGlobalContext();
 
@@ -109,14 +107,7 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
 
-            {loading && (
-                <div className='my-4 flex justify-center'>
-                    <Loader />
-                </div>
-            )}
-
             <Table columns={columns} data={employees} />
-
             <ViewEmployee
                 isOpen={isOpenViewEmployee}
                 onClose={() => {

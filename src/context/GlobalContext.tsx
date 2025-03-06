@@ -24,6 +24,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+    const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
+
     const fetchEmployees = async () => {
         setLoading(true);
         try {
@@ -203,6 +207,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 selectLoan,
                 addLoan,
                 updateLoan,
+                isSidebarOpen, // Importar el estado global del Sidebar
+                toggleSidebar,
             }}>
             {children}
         </GlobalContext.Provider>

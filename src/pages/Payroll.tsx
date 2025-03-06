@@ -20,7 +20,8 @@ import { useGlobalContext } from '../context/GlobalContext';
 import Utils from '../utils';
 
 const Payroll: React.FC = () => {
-    const { selectedEmployee, updateEmployees, payrolls, addPayroll, loans, loading } = useGlobalContext();
+    const { selectedEmployee, updateEmployees, payrolls, addPayroll, loans, loading, isSidebarOpen } =
+        useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
@@ -109,7 +110,10 @@ const Payroll: React.FC = () => {
     );
 
     return (
-        <section className='mb-20 ml-64 flex-auto p-8'>
+        <section
+            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+                isSidebarOpen ? 'ml-64' : 'ml-16'
+            }`}>
             <Header title='Listado de Nóminas'>
                 <Button
                     variant='add'

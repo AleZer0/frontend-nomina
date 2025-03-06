@@ -20,7 +20,7 @@ import { Column } from '../types/extras';
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { employees, updateEmployees, loans, selectedLoan, addLoan, updateLoan, loading, selectLoan } =
+    const { employees, updateEmployees, loans, selectedLoan, addLoan, updateLoan, loading, selectLoan, isSidebarOpen } =
         useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
@@ -95,7 +95,10 @@ const Loans: React.FC = () => {
     );
 
     return (
-        <section className='mb-20 ml-64 flex-auto p-8'>
+        <section
+            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+                isSidebarOpen ? 'ml-64' : 'ml-16'
+            }`}>
             <Header title='Listado de préstamos'>
                 <Button
                     variant='add'

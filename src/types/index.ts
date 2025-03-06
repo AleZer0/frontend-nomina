@@ -23,6 +23,8 @@ export interface GlobalContextInterface {
     selectLoan: (id?: number, newSelectedLoan?: LoanInterface | null) => void;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
     updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<void>;
+    isSidebarOpen: boolean;
+    toggleSidebar: () => void;
 }
 
 export interface AuthContextType {

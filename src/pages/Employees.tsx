@@ -28,6 +28,7 @@ const Employees: React.FC = () => {
         removeEmployee,
         addPayroll,
         loading,
+        isSidebarOpen,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
@@ -94,7 +95,10 @@ const Employees: React.FC = () => {
     );
 
     return (
-        <section className='mb-20 ml-64 flex-auto p-8'>
+        <section
+            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+                isSidebarOpen ? 'ml-64' : 'ml-16'
+            }`}>
             <Header title='Listado de Empleados'>
                 <Button
                     variant='add'

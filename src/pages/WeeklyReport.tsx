@@ -18,7 +18,7 @@ const totalNeto = (total: number) => {
 };
 
 const WeeklyReport: React.FC = () => {
-    const { weeklyReport, createPreviewWeeklyReportPDF, loading } = useGlobalContext();
+    const { entitiesState, createPreviewWeeklyReportPDF, loading } = useGlobalContext();
 
     const columns: Column<WeeklyReportData>[] = useMemo(
         () => [
@@ -84,7 +84,7 @@ const WeeklyReport: React.FC = () => {
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
             <Header title='Reportes semanales' />
-            {loading['loadingReports'] ? <Loader /> : <Table columns={columns} data={weeklyReport} />}
+            {loading['loadingReports'] ? <Loader /> : <Table columns={columns} data={entitiesState.weeklyReports} />}
         </section>
     );
 };

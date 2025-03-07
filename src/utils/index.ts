@@ -1,9 +1,14 @@
 class Utils {
     static formatDateDDMMYYYY = (dateInput: string | Date): string => {
-        // Convierte el parámetro en objeto Date
+        if (!dateInput) return 'Fecha no disponible';
+
+        // Convierte el parámetro en un objeto Date
         const date = new Date(dateInput);
 
-        // Extrae día, mes y año
+        // Ajuste de zona horaria para evitar desfase
+        date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
+        // Extrae día, mes y año después del ajuste
         const day = date.getDate(); // 1 - 31
         const month = date.getMonth() + 1; // 0 - 11 (por eso sumamos 1)
         const year = date.getFullYear(); // 2025, 2026, etc.
@@ -23,7 +28,13 @@ class Utils {
             return Object.keys(data).reduce((acc, key) => {
                 if (typeof data[key] === 'string' && data[key].includes('T')) {
                     const dateValue = new Date(data[key]);
-                    acc[key] = isNaN(dateValue.getTime()) ? data[key] : dateValue.toISOString().split('T')[0];
+                    if (!isNaN(dateValue.getTime())) {
+                        // Ajuste de zona horaria para evitar desfase
+                        dateValue.setMinutes(dateValue.getMinutes() + dateValue.getTimezoneOffset());
+                        acc[key] = dateValue.toISOString().split('T')[0]; // Retorna YYYY-MM-DD corregido
+                    } else {
+                        acc[key] = data[key];
+                    }
                 } else if (Array.isArray(data[key]) || typeof data[key] === 'object') {
                     acc[key] = Utils.formatDates(data[key]); // Recursión para formatear fechas en objetos anidados.
                 } else {

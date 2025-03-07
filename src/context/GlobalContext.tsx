@@ -126,18 +126,33 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(prev => ({ ...prev, addPayroll: true }));
         try {
             const payroll = await PayrollServices.createPayroll(newPayroll);
-            if (metaData.payrolls.currentPage === metaData.payrolls.totalPages)
-                setEntitiesState(prev => ({ ...prev, payrolls: [...prev.payrolls, payroll] }));
-
+            if (metaData.payrolls.currentPage === metaData.payrolls.totalPages) {
+                setEntitiesState(prev => ({
+                    ...prev,
+                    payrolls: [...prev.payrolls, payroll],
+                }));
+            }
             setEntitiesState(prev => ({
                 ...prev,
                 employees: prev.employees.map(emp =>
                     emp.id_empleado === newPayroll.id_empleado
-                        ? { ...emp, nomina: [...(emp.nomina || []), payroll] }
+                        ? {
+                              ...emp,
+                              nomina: [...(emp.nomina || []), payroll],
+                              ultima_nomina: payroll.folio,
+                          }
                         : emp
                 ),
             }));
-            fetchEmployees();
+            setSelectedEntities(prev => ({
+                ...prev,
+                selectedEmployee: {
+                    ...prev.selectedEmployee!,
+                    nomina: [...(prev.selectedEmployee?.nomina || []), payroll],
+                    ultima_nomina: payroll.folio,
+                },
+            }));
+            await fetchEmployees();
         } catch (error: any) {
             setError(error.message);
         } finally {

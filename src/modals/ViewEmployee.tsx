@@ -100,7 +100,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
             { key: 'prestamos', header: 'Prestamos', render: (_, row) => `$${(row.prestamos ?? 0).toFixed(2)}` },
             { key: 'sueldo', header: 'Sueldo', render: (_, row) => `$${row.sueldo.toFixed(2)}` },
         ],
-        []
+        [selectedEntities.selectedEmployee]
     );
 
     const buttons: ButtonProps[] = useMemo(

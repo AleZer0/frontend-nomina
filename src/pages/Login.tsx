@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { FaEye, FaEyeSlash, FaRegUser } from 'react-icons/fa';
 import { MdPassword } from 'react-icons/md';
@@ -11,7 +11,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Login: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const { isAuthenticated, login, error } = useAuth();
+    const { isAuthenticated, login, error, loading } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (values: Record<string, string>) => {
@@ -70,13 +70,9 @@ const Login: React.FC = () => {
                     submitIcon={<CiLogin size={17} />}
                     submitLabel='Ingresar'
                     variant='details'
-                    loadingKey={'login'}>
-                    <div className='mt-2 text-right'>
-                        <Link to='/forgot-password' className='text-sm text-blue-500 hover:underline'>
-                            ¿Olvidaste tu contraseña?
-                        </Link>
-                    </div>
-                </Form>
+                    loadingButton={loading}
+                    labelLoadingButton='Ingresando...'
+                />
             </div>
         </div>
     );

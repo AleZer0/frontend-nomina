@@ -12,7 +12,7 @@ export class WeeklyReports {
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
-            return response.data.data;
+            return response.data;
         } catch (error: any) {
             console.error(
                 'Error al obtener listado de todos los reportes semanales.',

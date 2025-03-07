@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 
-import { IoIosPersonAdd } from 'react-icons/io';
+import { FaUserPlus } from 'react-icons/fa';
 import { CgDetailsMore } from 'react-icons/cg';
 
 import Header from '../components/Header';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
+import Pagination from '../components/Pagination';
 
 import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
@@ -19,8 +20,16 @@ import { Column } from '../types/extras';
 import { useGlobalContext } from '../context/GlobalContext';
 
 const Employees: React.FC = () => {
-    const { employees, addEmployee, updateEmployee, statusEmployee, selectEmployee, addPayroll, loading } =
-        useGlobalContext();
+    const {
+        entitiesState,
+        selectedEntities,
+        setSelectedEntities,
+        addEmployee,
+        updateEmployee,
+        statusEmployee,
+        addPayroll,
+        loading,
+    } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
@@ -34,17 +43,18 @@ const Employees: React.FC = () => {
 
     const handleUpdateEmployee = async (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => {
         const newSelectedEmployee = await updateEmployee(id_empleado, updatedEmployee);
-        selectEmployee(newSelectedEmployee);
+        setSelectedEntities(prev => ({ ...prev, selectedEmployee: newSelectedEmployee }));
         setIsOpenEditEmployee(false);
     };
 
     const handleDeleteEmployee = async (id_empleado: number) => {
         await statusEmployee(id_empleado, 0);
-        selectEmployee();
+        setSelectedEntities(prev => ({ ...prev, selectedEmployee: null }));
         setIsOpenViewEmployee(false);
     };
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        if (!selectedEntities.selectedEmployee) return;
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
     };
@@ -75,7 +85,7 @@ const Employees: React.FC = () => {
                         size='md'
                         icon={<CgDetailsMore size={15} />}
                         onClick={() => {
-                            selectEmployee(row);
+                            setSelectedEntities(prev => ({ ...prev, selectedEmployee: row }));
                             setIsOpenViewEmployee(true);
                         }}>
                         Detalles
@@ -83,7 +93,7 @@ const Employees: React.FC = () => {
                 ),
             },
         ],
-        [employees]
+        [entitiesState.employees]
     );
 
     return (
@@ -92,25 +102,27 @@ const Employees: React.FC = () => {
                 <Button
                     variant='add'
                     size='md'
-                    icon={<IoIosPersonAdd size={17} />}
+                    icon={<FaUserPlus size={17} />}
                     onClick={() => setIsOpenCreateEmployee(true)}>
                     Nuevo empleado
                 </Button>
             </Header>
 
-            {loading && (
+            {loading['employees'] ? (
                 <div className='my-4 flex justify-center'>
                     <Loader />
                 </div>
+            ) : (
+                <Table columns={columns} data={entitiesState.employees.filter(employee => employee.estado !== 0)} />
             )}
 
-            <Table columns={columns} data={employees.filter(employee => employee.estado !== 0)} />
+            <Pagination />
 
             <ViewEmployee
                 isOpen={isOpenViewEmployee}
                 onClose={() => {
                     setIsOpenViewEmployee(false);
-                    selectEmployee();
+                    setSelectedEntities(prev => ({ ...prev, selectedEmployee: null }));
                 }}
                 handleClickCreatePayroll={() => setIsOpenCreatePayroll(true)}
                 handleClickEdit={() => setIsOpenEditEmployee(true)}

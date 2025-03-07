@@ -9,8 +9,6 @@ import Table from '../components/Table';
 
 import { WeeklyReportData } from '../types';
 
-import { previewWeeklyReportsPDF } from '../services/pdf.service';
-
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
@@ -20,16 +18,7 @@ const totalNeto = (total: number) => {
 };
 
 const WeeklyReport: React.FC = () => {
-    const { weeklyReport, loading, loadingButtons, setLoadingButtons } = useGlobalContext();
-
-    const handleDownload = (year: number, row: WeeklyReportData) => {
-        setLoadingButtons(prev => ({ ...prev, [row.semana]: true }));
-
-        setTimeout(() => {
-            previewWeeklyReportsPDF(year, row);
-            setLoadingButtons(prev => ({ ...prev, [row.semana]: false }));
-        }, 3000);
-    };
+    const { weeklyReport, createPreviewWeeklyReportPDF, loading } = useGlobalContext();
 
     const columns: Column<WeeklyReportData>[] = useMemo(
         () => [
@@ -81,22 +70,21 @@ const WeeklyReport: React.FC = () => {
                         variant='details'
                         size='md'
                         icon={<FaFilePdf size={15} />}
-                        isLoading={loadingButtons[row.semana]}
-                        disabled={loadingButtons[row.semana]}
-                        onClick={() => handleDownload(2025, row)}>
+                        isLoading={loading[row.semana]}
+                        disabled={loading[row.semana]}
+                        onClick={() => createPreviewWeeklyReportPDF(2025, row)}>
                         Descargar
                     </Button>
                 ),
             },
         ],
-        [loadingButtons]
+        [loading]
     );
 
     return (
         <section className='mb-20 ml-64 flex-auto p-8'>
             <Header title='Reportes semanales' />
-            {loading && <Loader />}
-            <Table columns={columns} data={weeklyReport}></Table>
+            {loading['loadingReports'] ? <Loader /> : <Table columns={columns} data={weeklyReport} />}
         </section>
     );
 };

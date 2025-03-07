@@ -27,7 +27,7 @@ const App: React.FC = () => {
                                         {routes.map((route, index) => (
                                             <Route
                                                 key={index}
-                                                path={route.path}
+                                                path={'/' + route.path}
                                                 element={<Layout>{route.element}</Layout>}
                                             />
                                         ))}

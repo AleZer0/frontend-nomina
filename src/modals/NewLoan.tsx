@@ -1,12 +1,14 @@
-import { useMemo } from 'react';
-import { BsCash } from 'react-icons/bs';
+import { useEffect, useMemo, useState } from 'react';
+
+import { MdAttachMoney } from 'react-icons/md';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
 
 import { useGlobalContext } from '../context/GlobalContext';
-import { LoanInterface } from '../types';
+import { EmployeeInterface, LoanInterface } from '../types';
 import { FormField } from '../types/extras';
+import EmployeeServices from '../services/employees.service';
 
 interface CreateLoanModalProps {
     isOpen: boolean;
@@ -15,19 +17,24 @@ interface CreateLoanModalProps {
 }
 
 const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee, selectEmployee } = useGlobalContext();
+    const { entitiesState, selectedEntities, setSelectedEntities, loading } = useGlobalContext();
 
     const emptyLoan: Omit<LoanInterface, 'id_prestamo'> = {
-        id_empleado: selectedEmployee?.id_empleado || 0,
+        id_empleado: selectedEntities['selectedEmployee']?.id_empleado || 0,
         monto_total: 0,
         saldo_pendiente: 0,
     };
 
+    const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
+
     const handleSelectEmployee = (id_empleado: number) =>
-        selectEmployee(employees.find(emp => emp.id_empleado === id_empleado));
+        setSelectedEntities(prev => ({
+            ...prev,
+            ['selectedEmployee']: entitiesState['employees'].find(emp => emp.id_empleado === id_empleado) ?? null,
+        }));
 
     const handleClickClose = () => {
-        selectEmployee();
+        setSelectedEntities(prev => ({ ...prev, ['selectedEmployee']: null }));
         onClose();
     };
 
@@ -44,8 +51,16 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
         };
 
         onSubmit(newLoan);
-        selectEmployee();
+        setSelectedEntities(prev => ({ ...prev, ['selectedEmployee']: null }));
     };
+
+    useEffect(() => {
+        EmployeeServices.getEmployees({ estado: 1, page: 1, limit: 200 })
+            .then(({ data }) => setEmployees(data))
+            .catch(err => {
+                throw new Error(`Error al obtener todos los empleados ${err}`);
+            });
+    }, []);
 
     const fields: FormField[] = useMemo(
         () => [
@@ -57,7 +72,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
                     id: id_empleado,
                     label: `${nombre} ${apellido}`,
                 })),
-                default_value: selectedEmployee?.id_empleado.toString(),
+                default_value: selectedEntities['selectedEmployee']?.id_empleado.toString(),
                 placeholder: 'Seleccione un empleado',
                 required: true,
             },
@@ -80,7 +95,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
                 inputSize: 'md',
             },
         ],
-        [employees, selectedEmployee]
+        [employees, selectedEntities['selectedEmployee']]
     );
 
     if (!isOpen) return null;
@@ -95,13 +110,14 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
                 fields={fields}
                 data={emptyLoan}
                 onSubmit={handleSubmit}
-                submitIcon={<BsCash size={17} />}
-                submitLabel='Guardar préstamo'
-                variant='add'
+                submitIcon={<MdAttachMoney size={17} />}
+                submitLabel='Registrar préstamo'
+                variant='save'
                 direction='end'
                 columns={1}
                 extra={handleSelectEmployee}
-                loadingKey={'addLoan'}
+                loadingButton={loading['addLoan']}
+                labelLoadingButton='Registrando préstamo...'
             />
         </Modal>
     );

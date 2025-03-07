@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FaRegSave } from 'react-icons/fa';
+import { FaUserEdit } from 'react-icons/fa';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
@@ -15,28 +15,28 @@ interface EditEmployeeModalProps {
 }
 
 const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { selectedEmployee } = useGlobalContext();
+    const { selectedEntities, loading } = useGlobalContext();
 
     const handleSubmit = (values: Partial<EmployeeInterface>) => {
-        if (!values.nombre && !selectedEmployee?.nombre) {
+        if (!values.nombre && !selectedEntities['selectedEmployee']?.nombre) {
             alert('El campo Nombre es obligatorio.');
             return;
         }
-        if (!values.apellido && !selectedEmployee?.apellido) {
+        if (!values.apellido && !selectedEntities['selectedEmployee']?.apellido) {
             alert('El campo Apellido es obligatorio.');
             return;
         }
-        if (!values.puesto && !selectedEmployee?.puesto) {
+        if (!values.puesto && !selectedEntities['selectedEmployee']?.puesto) {
             alert('El campo Puesto es obligatorio.');
             return;
         }
 
         const updatedEmployee: Partial<EmployeeInterface> = {
-            ...selectedEmployee,
+            ...selectedEntities['selectedEmployee'],
             ...values,
         };
 
-        onSubmit(selectedEmployee?.id_empleado ?? 0, updatedEmployee);
+        onSubmit(selectedEntities['selectedEmployee']?.id_empleado ?? 0, updatedEmployee);
     };
 
     const fields: FormField[] = useMemo(
@@ -103,7 +103,7 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
             <Form
                 fields={fields}
                 data={
-                    selectedEmployee ?? {
+                    selectedEntities['selectedEmployee'] ?? {
                         nombre: '',
                         apellido: '',
                         fecha_incorporacion: '',
@@ -113,12 +113,13 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
                     }
                 }
                 onSubmit={handleSubmit}
-                submitIcon={<FaRegSave size={17} />}
+                submitIcon={<FaUserEdit size={17} />}
                 submitLabel='Guardar cambios'
-                variant='add'
+                variant='edit'
                 direction='end'
                 columns={2}
-                loadingKey={'updateEmployee'}
+                loadingButton={loading['updateEmployee']}
+                labelLoadingButton='Guardando cambios...'
             />
         </Modal>
     );

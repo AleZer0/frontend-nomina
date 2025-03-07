@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
-import { FaRegSave } from 'react-icons/fa';
-import { LiaPiggyBankSolid } from 'react-icons/lia';
+import { HiDocumentAdd } from 'react-icons/hi';
+import { MdPayments } from 'react-icons/md';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
@@ -11,7 +11,8 @@ import Table from '../components/Table';
 import { useGlobalContext } from '../context/GlobalContext';
 
 import { Column, FormField } from '../types/extras';
-import { LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
+import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
+import EmployeeServices from '../services/employees.service';
 
 interface CreatePayrollModalProps {
     isOpen: boolean;
@@ -20,32 +21,39 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee, selectEmployee } = useGlobalContext();
+    const { entitiesState, selectedEntities, setSelectedEntities, loading, activeEntity } = useGlobalContext();
 
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
         dias_trabajados: 0,
         infonavit: 0,
-        sueldo: selectedEmployee?.sueldo ?? 0,
+        sueldo: selectedEntities.selectedEmployee?.sueldo ?? 0,
         finiquito: 0,
         vacaciones: 0,
         aguinaldo: 0,
-        id_empleado: selectedEmployee?.id_empleado ?? 0,
+        id_empleado: selectedEntities.selectedEmployee?.id_empleado ?? 0,
         ids_prestamos: [] as PrestamoAbono[],
     };
 
     const [idsPrestamos, setIdsPrestamos] = useState<PrestamoAbono[]>([]);
     const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
+    const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
 
     const handleClickClose = () => {
         setIdsPrestamos([]);
         setInputValues({});
-        selectEmployee();
+        if (activeEntity !== 'employees') setSelectedEntities(prev => ({ ...prev, selectedEmployee: null }));
         onClose();
     };
 
     const handleSelectEmployee = (id_empleado: number) => {
-        selectEmployee(employees.find(emp => emp.id_empleado === id_empleado));
+        setSelectedEntities(prev => ({
+            ...prev,
+            selectedEmployee: entitiesState.employees.find(emp => emp.id_empleado === id_empleado) ?? null,
+        }));
+        console.log('Empleado seleccionado:', selectedEntities.selectedEmployee);
+        console.log('Préstamos del empleado seleccionado:', selectedEntities.selectedEmployee?.prestamos);
+
         setIdsPrestamos([]);
         setInputValues({});
     };
@@ -80,6 +88,14 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         setInputValues({});
         onSubmit(newPayroll);
     };
+
+    useEffect(() => {
+        EmployeeServices.getEmployees({ estado: 1, page: 1, limit: 200 })
+            .then(({ data }) => setEmployees(data))
+            .catch(err => {
+                throw new Error(`Error al obtener todos los empleados ${err}`);
+            });
+    }, [entitiesState]);
 
     const fields: FormField[] = useMemo(
         () => [
@@ -154,7 +170,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 inputSize: 'md',
             },
         ],
-        [employees, selectedEmployee]
+        [selectedEntities.selectedEmployee, employees]
     );
 
     const columns: Column<LoanInterface>[] = useMemo(
@@ -177,16 +193,17 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                     <Input
                         variant='default'
                         inputSize='md'
-                        leftIcon={<LiaPiggyBankSolid size={17} />}
+                        leftIcon={<MdPayments size={17} />}
                         type='number'
                         placeholder={`$${row.saldo_pendiente.toFixed(2)}`}
                         value={inputValues[row.id_prestamo] || ''}
+                        disabled={loading['addPayroll']}
                         onChange={e => handleChangeAbono(row.id_prestamo, Number(e.target.value))}
                     />
                 ),
             },
         ],
-        [inputValues]
+        [selectedEntities, inputValues]
     );
 
     if (!isOpen) return null;
@@ -197,18 +214,19 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 fields={fields}
                 data={emptyPayroll}
                 onSubmit={handleSubmit}
-                submitIcon={<FaRegSave size={17} />}
-                submitLabel='Guardar nómina'
-                variant='add'
+                submitIcon={<HiDocumentAdd size={17} />}
+                submitLabel='Crear nómina'
+                variant='save'
                 direction='end'
                 columns={2}
                 extra={handleSelectEmployee}
-                loadingKey={'addPayroll'}>
+                loadingButton={loading['addPayroll']}
+                labelLoadingButton='Creando nómina...'>
                 <Table
                     columns={columns}
                     data={
-                        selectedEmployee?.prestamos
-                            ? selectedEmployee.prestamos.filter(pres => pres.saldo_pendiente !== 0)
+                        selectedEntities.selectedEmployee?.prestamos
+                            ? selectedEntities.selectedEmployee.prestamos.filter(pres => pres.saldo_pendiente !== 0)
                             : []
                     }
                 />

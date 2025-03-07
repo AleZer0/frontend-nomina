@@ -1,159 +1,65 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { GlobalContextInterface, EmployeeInterface, PayrollInterface, LoanInterface, WeeklyReportData } from '../types';
+import {
+    GlobalContextInterface,
+    EmployeeInterface,
+    PayrollInterface,
+    LoanInterface,
+    WeeklyReportData,
+    MetaInterface,
+} from '../types';
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
 import LoanServices from '../services/loan.service';
 import WeeklyReports from '../services/weeklyReport.service';
 import Utils from '../utils';
-
-const defaultParams = { estado: 1, page: 1, limit: 100 };
+import PDF from '../services/pdf.service';
 
 const GlobalContext = createContext<GlobalContextInterface | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
-    const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
-    const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInterface | null>(null);
-    const [payrolls, setPayrolls] = useState<PayrollInterface[]>([]);
-    const [loans, setLoans] = useState<LoanInterface[]>([]);
-    const [selectedLoan, setSelectedLoan] = useState<LoanInterface | null>(null);
-    const [weeklyReport, setWeeklyReport] = useState<WeeklyReportData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [loadingButtons, setLoadingButtons] = useState<{ [key: number | string]: boolean }>({});
+    const [entitiesState, setEntitiesState] = useState({
+        employees: [] as EmployeeInterface[],
+        payrolls: [] as PayrollInterface[],
+        loans: [] as LoanInterface[],
+        weeklyReports: [] as WeeklyReportData[],
+    });
+    const [selectedEntities, setSelectedEntities] = useState({
+        selectedEmployee: null as EmployeeInterface | null,
+        selectedLoan: null as LoanInterface | null,
+    });
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
+    const [pagination, setPagination] = useState({ page: 1, limit: 10 });
+    const [activeEntity, setActiveEntity] = useState<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>('employees');
+    const [metaData, setMetaData] = useState<Record<string, MetaInterface>>({
+        employees: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
+        payrolls: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
+        loans: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
+        weeklyReports: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
+    });
 
-    const addEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
-        setLoadingButtons(prev => ({ ...prev, addEmployee: true }));
+    const fetchData = async (
+        service: (params: any) => Promise<{ data: any; meta: MetaInterface }>,
+        entity: keyof typeof entitiesState
+    ) => {
+        setLoading(prev => ({ ...prev, [entity]: true }));
         try {
-            const employee = await EmployeeServices.createEmployee(newEmployee);
-            setEmployees([...employees, employee]);
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoadingButtons(prev => ({ ...prev, addEmployee: false }));
-        }
-    };
-
-    const updateEmployee = async (
-        id_empleado: number,
-        updatedData: Partial<EmployeeInterface>
-    ): Promise<EmployeeInterface> => {
-        try {
-            let updatedEmployee = await EmployeeServices.updateEmployee(id_empleado, updatedData);
-            const fecha_incorporacion = updatedEmployee.fecha_incorporacion.split('T')[0];
-            updatedEmployee = { ...updatedEmployee, fecha_incorporacion };
-            setEmployees(prev =>
-                prev.map(emp => (emp.id_empleado === id_empleado ? { ...emp, ...updatedEmployee } : emp))
+            const { data, meta } = await service(
+                entity === 'weeklyReports' ? { estado: 1, ...pagination, year: 2025 } : { estado: 1, ...pagination }
             );
-            return updatedEmployee;
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
-        }
-    };
-
-    const statusEmployee = async (id_empleado: number, status: 0 | 1) => {
-        try {
-            await EmployeeServices.changeStatusEmployee(id_empleado, status);
-            setEmployees(prev => prev.map(emp => (emp.id_empleado === id_empleado ? { ...emp, estado: status } : emp)));
-        } catch (error: any) {
-            setError(error.message);
-        }
-    };
-
-    const selectEmployee = (employee?: EmployeeInterface) => {
-        if (employee) setSelectedEmployee(employee);
-        else setSelectedEmployee(null);
-    };
-
-    const addPayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
-        try {
-            const payroll = await PayrollServices.createPayroll(newPayroll);
-            const employees = await EmployeeServices.getEmployees(defaultParams);
-            const loans = await LoanServices.getLoans(defaultParams);
-            setPayrolls([...payrolls, payroll]);
-            setEmployees(employees);
-            setLoans(loans);
-        } catch (error: any) {
-            setError(error.message);
-        }
-    };
-
-    const addLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
-        try {
-            const createdLoan = await LoanServices.createLoan(newLoan);
-            const employees = await EmployeeServices.getEmployees(defaultParams);
-            setLoans([...loans, createdLoan]);
-            setEmployees(employees);
-        } catch (error: any) {
-            setError(error.message);
-        }
-    };
-
-    const updateLoan = async (id_prestamo: number, monto_abonado: number): Promise<LoanInterface> => {
-        try {
-            const loanUpdated = await LoanServices.updateLoan(id_prestamo, { monto_abonado });
-            const employees = await EmployeeServices.getEmployees(defaultParams);
-            setLoans(prev => prev.map(loan => (loan.id_prestamo === id_prestamo ? loanUpdated : loan)));
-            setEmployees(employees);
-            return loanUpdated;
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
-        }
-    };
-
-    const selectLoan = async (loan?: LoanInterface) => {
-        if (loan) setSelectedLoan(loan);
-        else setSelectedLoan(null);
-    };
-
-    const fetchEmployees = async () => {
-        setLoading(true);
-        try {
-            const employeesData = await EmployeeServices.getEmployees(defaultParams);
-            setEmployees(Utils.formatDates(employeesData));
+            setEntitiesState(prev => ({ ...prev, [entity]: Utils.formatDates(data) }));
+            setMetaData(prev => ({ ...prev, [entity]: meta }));
         } catch (error: any) {
             setError(error.message);
         } finally {
-            setLoading(false);
+            setLoading(prev => ({ ...prev, [entity]: false }));
         }
     };
 
-    const fetchPayrolls = async () => {
-        setLoading(true);
-        try {
-            const payrollsData = await PayrollServices.getPayrolls(defaultParams);
-            setPayrolls(Utils.formatDates(payrollsData));
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchLoans = async () => {
-        setLoading(true);
-        try {
-            const loanData = await LoanServices.getLoans(defaultParams);
-            setLoans(Utils.formatDates(loanData));
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchWeeklyReports = async () => {
-        setLoading(true);
-        try {
-            const WeeklyReportsData = await WeeklyReports.getReportsList({ page: 1, limit: 100, year: 2025 });
-            setWeeklyReport(Utils.formatDates(WeeklyReportsData));
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const fetchEmployees = () => fetchData(EmployeeServices.getEmployees, 'employees');
+    const fetchPayrolls = () => fetchData(PayrollServices.getPayrolls, 'payrolls');
+    const fetchLoans = () => fetchData(LoanServices.getLoans, 'loans');
+    const fetchWeeklyReports = () => fetchData(WeeklyReports.getReportsList, 'weeklyReports');
 
     useEffect(() => {
         fetchEmployees();
@@ -162,27 +68,178 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         fetchWeeklyReports();
     }, []);
 
+    const addEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
+        setLoading(prev => ({ ...prev, addEmployee: true }));
+        try {
+            const employee = await EmployeeServices.createEmployee(newEmployee);
+            if (metaData.employees.currentPage === metaData.employees.totalPages)
+                setEntitiesState(prev => ({ ...prev, employees: [...prev.employees, employee] }));
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, addEmployee: false }));
+        }
+    };
+
+    const updateEmployee = async (
+        id_empleado: number,
+        updatedData: Partial<EmployeeInterface>
+    ): Promise<EmployeeInterface> => {
+        setLoading(prev => ({ ...prev, updateEmployee: true }));
+        try {
+            let updatedEmployee = await EmployeeServices.updateEmployee(id_empleado, updatedData);
+            const fecha_incorporacion = updatedEmployee.fecha_incorporacion
+                ? updatedEmployee.fecha_incorporacion.split('T')[0]
+                : null;
+            updatedEmployee = { ...updatedEmployee, fecha_incorporacion };
+            setEntitiesState(prev => ({
+                ...prev,
+                employees: prev.employees.map(item => (item.id_empleado === id_empleado ? updatedEmployee : item)),
+            }));
+            return updatedEmployee;
+        } catch (error: any) {
+            setError(error.message);
+            throw error;
+        } finally {
+            setLoading(prev => ({ ...prev, updateEmployee: false }));
+        }
+    };
+
+    const statusEmployee = async (id_empleado: number, status: 0 | 1) => {
+        setLoading(prev => ({ ...prev, statusEmployee: true }));
+        try {
+            await EmployeeServices.changeStatusEmployee(id_empleado, status);
+            setEntitiesState(prev => ({
+                ...prev,
+                employees: prev.employees.map(item =>
+                    item.id_empleado === id_empleado ? { ...item, estado: status } : item
+                ),
+            }));
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, statusEmployee: false }));
+        }
+    };
+
+    const addPayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
+        setLoading(prev => ({ ...prev, addPayroll: true }));
+        try {
+            const payroll = await PayrollServices.createPayroll(newPayroll);
+            if (metaData.payrolls.currentPage === metaData.payrolls.totalPages)
+                setEntitiesState(prev => ({ ...prev, payrolls: [...prev.payrolls, payroll] }));
+
+            setEntitiesState(prev => ({
+                ...prev,
+                employees: prev.employees.map(emp =>
+                    emp.id_empleado === newPayroll.id_empleado
+                        ? { ...emp, nomina: [...(emp.nomina || []), payroll] }
+                        : emp
+                ),
+            }));
+            fetchEmployees();
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, addPayroll: false }));
+        }
+    };
+
+    const addLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
+        setLoading(prev => ({ ...prev, addLoan: true }));
+        try {
+            const loan = await LoanServices.createLoan(newLoan);
+            if (metaData.loans.currentPage === metaData.loans.totalPages || metaData.loans.totalPages === 0)
+                setEntitiesState(prev => ({ ...prev, loans: [...prev.loans, loan] }));
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, addLoan: false }));
+        }
+    };
+
+    const updateLoan = async (id_prestamo: number, monto_abonado: number): Promise<LoanInterface> => {
+        setLoading(prev => ({ ...prev, updateLoan: true }));
+        try {
+            const loanUpdated = await LoanServices.updateLoan(id_prestamo, { monto_abonado });
+            setEntitiesState(prev => ({
+                ...prev,
+                loans: prev.loans.map(item => (item.id_prestamo === id_prestamo ? loanUpdated : item)),
+            }));
+            return loanUpdated;
+        } catch (error: any) {
+            setError(error.message);
+            throw error;
+        } finally {
+            setLoading(prev => ({ ...prev, updateLoan: false }));
+        }
+    };
+
+    const createPreviewPayrollPDF = (folio: number) => {
+        setLoading(prev => ({ ...prev, [folio]: true }));
+        try {
+            PDF.previewPayrollPDF(folio);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, [folio]: false }));
+        }
+    };
+
+    const createPreviewWeeklyReportPDF = (year: number, row: WeeklyReportData) => {
+        setLoading(prev => ({ ...prev, [row.semana]: true }));
+        try {
+            PDF.previewWeeklyReportsPDF(year, row);
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, [row.semana]: false }));
+        }
+    };
+
+    useEffect(() => {
+        setLoading(prev => ({ ...prev, loadingAllData: true }));
+
+        const fetchData = async () => {
+            if (activeEntity === 'employees') await fetchEmployees();
+            if (activeEntity === 'payrolls') await fetchPayrolls();
+            if (activeEntity === 'loans') await fetchLoans();
+            if (activeEntity === 'weeklyReports') await fetchWeeklyReports();
+        };
+
+        fetchData().finally(() => {
+            setLoading(prev => ({ ...prev, loadingAllData: false }));
+        });
+    }, [pagination, activeEntity]);
+
     return (
         <GlobalContext.Provider
             value={{
-                employees,
-                selectedEmployee,
-                payrolls,
-                loans,
-                selectedLoan,
-                weeklyReport,
-                loading,
-                loadingButtons,
-                setLoadingButtons,
+                entitiesState,
+                selectedEntities,
+                setSelectedEntities,
                 error,
+                setError,
+                loading,
+                setLoading,
+                pagination,
+                setPagination,
+                activeEntity,
+                setActiveEntity,
+                metaData,
+                setMetaData,
                 addEmployee,
                 updateEmployee,
                 statusEmployee,
-                selectEmployee,
                 addPayroll,
                 addLoan,
                 updateLoan,
-                selectLoan,
+                createPreviewPayrollPDF,
+                createPreviewWeeklyReportPDF,
+                fetchEmployees,
+                fetchPayrolls,
+                fetchLoans,
+                fetchWeeklyReports,
             }}>
             {children}
         </GlobalContext.Provider>

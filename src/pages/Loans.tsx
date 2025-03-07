@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 
 import { MdAttachMoney } from 'react-icons/md';
-import { HiOutlineCash } from 'react-icons/hi';
+import { CgDetailsMore } from 'react-icons/cg';
 
 import Table from '../components/Table';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
+import Pagination from '../components/Pagination';
 
 import ViewLoan from '../modals/ViewLoan';
 import NewLoan from '../modals/NewLoan';
@@ -20,7 +21,7 @@ import { Column } from '../types/extras';
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { loans, selectedLoan, addLoan, updateLoan, loading, selectLoan } = useGlobalContext();
+    const { entitiesState, selectedEntities, setSelectedEntities, addLoan, updateLoan, loading } = useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
@@ -28,15 +29,18 @@ const Loans: React.FC = () => {
 
     const handleCreateLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         await addLoan(newLoan);
-        setTimeout(() => setIsOpenCreateLoan(false), 3000);
+        setIsOpenCreateLoan(false);
     };
 
     const handlePayLoan = async (updatedLoan: Partial<PaymentInterface>) => {
-        if (!selectedLoan) return;
-        const newSelectedLoan = await updateLoan(selectedLoan.id_prestamo, updatedLoan.monto_abonado ?? 0);
-        selectLoan(newSelectedLoan);
+        if (!selectedEntities.selectedLoan) return;
+        const newSelectedLoan = await updateLoan(
+            selectedEntities.selectedLoan.id_prestamo,
+            updatedLoan.monto_abonado ?? 0
+        );
+        setSelectedEntities(prev => ({ ...prev, selectedLoan: newSelectedLoan }));
         setIsOpenPayLoan(false);
-        if (selectedLoan.saldo_pendiente === 0) setIsOpenViewLoan(false);
+        if (newSelectedLoan.saldo_pendiente === 0) setIsOpenViewLoan(false);
     };
 
     const columns: Column<LoanInterface>[] = useMemo(
@@ -73,17 +77,17 @@ const Loans: React.FC = () => {
                     <Button
                         variant='details'
                         size='md'
-                        icon={<HiOutlineCash size={15} />}
+                        icon={<CgDetailsMore size={17} />}
                         onClick={() => {
-                            selectLoan(row);
-                            setTimeout(() => setIsOpenViewLoan(true), 100);
+                            setSelectedEntities(prev => ({ ...prev, selectedLoan: row }));
+                            setIsOpenViewLoan(true);
                         }}>
                         Detalles
                     </Button>
                 ),
             },
         ],
-        [loans]
+        [entitiesState.loans]
     );
 
     return (
@@ -94,17 +98,19 @@ const Loans: React.FC = () => {
                     size='md'
                     icon={<MdAttachMoney size={17} />}
                     onClick={() => setIsOpenCreateLoan(true)}>
-                    Nuevo Préstamo
+                    Nuevo préstamo
                 </Button>
             </Header>
 
-            {loading && (
+            {loading['loadingLoans'] ? (
                 <div className='my-4 flex justify-center'>
                     <Loader />
                 </div>
+            ) : (
+                <Table columns={columns} data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)} />
             )}
 
-            <Table columns={columns} data={loans.filter(prev => prev.saldo_pendiente !== 0)} />
+            <Pagination />
 
             <ViewLoan
                 isOpen={isOpenViewLoan}

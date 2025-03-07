@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
 
 export interface Route {
-    path: string;
+    path: 'employees' | 'payrolls' | 'loans' | 'weeklyReports';
     element: ReactNode;
     name?: string;
+    entity?: string;
 }
 
 export interface Column<T> {

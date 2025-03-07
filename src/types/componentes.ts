@@ -10,7 +10,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'add' | 'edit' | 'delete' | 'details' | 'generate' | 'ghost' | 'disabled';
+    variant?: 'add' | 'save' | 'save' | 'edit' | 'delete' | 'details' | 'generate' | 'ghost' | 'disabled';
     size?: 'sm' | 'md' | 'lg';
     icon?: ReactNode;
     asChild?: boolean;
@@ -30,11 +30,12 @@ export interface FormProps {
     onSubmit?: (values: Record<string, string>) => void;
     submitIcon?: ReactNode;
     submitLabel?: string;
-    variant?: 'add' | 'edit' | 'delete' | 'details' | 'generate' | 'disabled';
+    variant?: 'add' | 'save' | 'edit' | 'delete' | 'details' | 'generate' | 'disabled';
     direction?: 'start' | 'center' | 'end';
     disabled?: boolean;
     columns?: 1 | 2;
     extra?: (id_empleado: number) => void;
     children?: ReactNode;
-    loadingKey?: number | string;
+    loadingButton?: boolean;
+    labelLoadingButton?: string;
 }

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { HiDocumentPlus } from 'react-icons/hi2';
+import { HiDocumentAdd } from 'react-icons/hi';
 import { FaUserEdit } from 'react-icons/fa';
-import { MdDelete } from 'react-icons/md';
+import { FaUserMinus } from 'react-icons/fa';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
@@ -31,11 +31,11 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     handleClickEdit,
     handleClickDelate,
 }) => {
-    const { selectedEmployee } = useGlobalContext();
+    const { selectedEntities } = useGlobalContext();
 
     const handleClickDelateButton = () => {
-        if (!selectedEmployee) return;
-        handleClickDelate(selectedEmployee.id_empleado);
+        if (!selectedEntities.selectedEmployee) return;
+        handleClickDelate(selectedEntities.selectedEmployee.id_empleado);
     };
 
     const fields: FormField[] = useMemo(
@@ -108,8 +108,9 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
             {
                 variant: 'add',
                 children: 'Generar nómina',
-                icon: <HiDocumentPlus size={17} />,
+                icon: <HiDocumentAdd size={17} />,
                 onClick: () => handleClickCreatePayroll(),
+                className: 'text-white',
             },
             {
                 variant: 'edit',
@@ -120,11 +121,11 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
             {
                 variant: 'delete',
                 children: 'Eliminar',
-                icon: <MdDelete size={17} />,
+                icon: <FaUserMinus size={17} />,
                 onClick: () => handleClickDelateButton(),
             },
         ],
-        [selectedEmployee]
+        [selectedEntities.selectedEmployee]
     );
 
     if (!isOpen) return null;
@@ -132,13 +133,19 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado'>
             <div className='flex flex-col space-y-8'>
-                <Form fields={fields} data={selectedEmployee ?? {}} disabled={true} columns={2} />
+                <Form fields={fields} data={selectedEntities.selectedEmployee ?? {}} disabled={true} columns={2} />
 
-                <Table columns={columns} data={selectedEmployee?.nomina ?? []} />
+                <Table columns={columns} data={selectedEntities.selectedEmployee?.nomina ?? []} />
 
                 <div className='mt-4 flex justify-end gap-2'>
-                    {buttons.map(({ variant, children, icon, onClick }) => (
-                        <Button key={variant} variant={variant} size='md' icon={icon} onClick={onClick}>
+                    {buttons.map(({ variant, children, icon, onClick, className }) => (
+                        <Button
+                            key={variant}
+                            variant={variant}
+                            size='md'
+                            icon={icon}
+                            onClick={onClick}
+                            className={className}>
                             {children}
                         </Button>
                     ))}

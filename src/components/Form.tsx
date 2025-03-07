@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import clsx from 'clsx';
 
 import Input from './Input';
 import Button from './Button';
-import Select from './Select'; // Importamos el nuevo Select
+import Select from './Select';
 
 import { FormProps } from '../types/componentes';
 
@@ -19,38 +19,35 @@ const Form: React.FC<FormProps> = ({
     columns = 1,
     extra,
     children,
-    loadingKey,
+    loadingButton,
+    labelLoadingButton,
 }) => {
-    const [loadingButtons, setLoadingButtons] = useState<{ [key: number | string]: boolean }>({});
+    const initialData = useMemo(() => {
+        return fields.reduce(
+            (acc, field) => {
+                acc[field.name] = data[field.name] ?? (field.type === 'number' || field.type === 'select' ? '' : '');
+                return acc;
+            },
+            {} as Record<string, any>
+        );
+    }, [data, fields]);
 
-    const [formData, setFormData] = useState<Record<string, any>>(() => {
-        const initialData = { ...data };
-
-        Object.keys(initialData).forEach(key => {
-            if (initialData[key] === undefined || initialData[key] === null) {
-                initialData[key] = '';
-            }
-        });
-
-        return initialData;
-    });
-
-    const [isFormValid, setIsFormValid] = useState<boolean>(false);
+    const [formData, setFormData] = useState(initialData);
+    const [isFormValid, setIsFormValid] = useState(false);
     const isFirstRender = useRef(true);
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            setFormData({ ...data });
+        if (isFirstRender.current || disabled) {
+            setFormData(initialData);
             isFirstRender.current = false;
-        } else if (disabled) {
-            setFormData({ ...data });
         }
-    }, [data]);
+    }, [initialData, disabled]);
 
     const handleChange = (name: string, type: string, value: any) => {
         if (name === 'id_empleado' && extra) {
             extra(parseInt(value));
         }
+
         setFormData(prev => ({
             ...prev,
             [name]: type === 'number' ? (value === '' ? undefined : Number(value)) : value,
@@ -58,19 +55,26 @@ const Form: React.FC<FormProps> = ({
     };
 
     useEffect(() => {
-        const allRequiredFilled = fields.every(field => {
-            const value = formData[field.name];
+        setIsFormValid(
+            fields.every(field => {
+                if (!field.required) return true;
+                const value = formData[field.name];
 
-            if (!field.required) return true;
+                if (field.type === 'number') {
+                    return value !== '' && value !== null && value !== undefined && value > 0;
+                }
 
-            if (field.type === 'date') {
-                return value && !isNaN(new Date(value).getTime());
-            }
+                if (field.type === 'select') {
+                    return value !== '' && value !== null && value !== undefined && value !== '0';
+                }
 
-            return value !== undefined && value !== null && value.toString().trim() !== '';
-        });
+                if (field.type === 'date') {
+                    return value && !isNaN(new Date(value).getTime());
+                }
 
-        setIsFormValid(allRequiredFilled);
+                return value !== '' && value !== null && value !== undefined;
+            })
+        );
     }, [formData, fields]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -82,57 +86,42 @@ const Form: React.FC<FormProps> = ({
 
     return (
         <form onSubmit={handleSubmit} className='flex flex-col space-y-4 text-blue-950'>
-            <div className={clsx('grid gap-4', { 'grid-cols-1': columns === 1, 'grid-cols-2': columns === 2 })}>
-                {fields.map(field => (
-                    <div key={field.name} className='flex flex-col'>
-                        <label htmlFor={field.name} className='mb-1'>
-                            {field.label} {field.required && <span className='text-red-500'>*</span>}
+            <div className={clsx('grid gap-4', `grid-cols-${columns}`)}>
+                {fields.map(({ name, label, required, type, data, ...rest }) => (
+                    <div key={name} className='flex flex-col'>
+                        <label htmlFor={name} className='mb-1'>
+                            {label} {required && <span className='text-red-500'>*</span>}
                         </label>
-                        {field.type === 'select' ? (
+                        {type === 'select' || type === 'multi_select' ? (
                             <Select
                                 options={
-                                    field.data?.map(option => ({
+                                    data?.map(option => ({
                                         value: option.id,
                                         label: option.label,
                                     })) || []
                                 }
-                                value={formData[field.name]}
-                                onChange={value => handleChange(field.name, field.type, value)}
+                                value={formData[name] || (type === 'multi_select' ? [] : '')}
+                                onChange={value => handleChange(name, type, value)}
+                                multiple={type === 'multi_select'}
                                 placeholder='Selecciona una opción...'
-                            />
-                        ) : field.type === 'multi_select' ? (
-                            <Select
-                                options={
-                                    field.data?.map(option => ({
-                                        value: option.id,
-                                        label: option.label,
-                                    })) || []
-                                }
-                                value={formData[field.name] || []}
-                                onChange={value => handleChange(field.name, field.type, value)}
-                                multiple
-                                placeholder='Selecciona múltiples opciones...'
                             />
                         ) : (
                             <Input
-                                variant={field.variant}
-                                inputSize={field.inputSize}
-                                leftIcon={field.leftIcon}
-                                rightIcon={field.rightIcon}
-                                isPassword={field.isPassword}
+                                {...rest}
                                 disabled={disabled}
-                                type={field.type}
-                                id={field.name}
-                                name={field.name}
-                                placeholder={field.placeholder}
-                                value={formData[field.name] === 0 ? '' : (formData[field.name] ?? '')}
-                                onChange={e => handleChange(field.name, field.type, e.target.value)}
+                                type={type}
+                                id={name}
+                                name={name}
+                                value={formData[name] === 0 ? '' : (formData[name] ?? '')}
+                                onChange={e => handleChange(name, type, e.target.value)}
                             />
                         )}
                     </div>
                 ))}
             </div>
+
             {children}
+
             {!disabled && (
                 <div
                     className={clsx('mt-2 flex items-center', {
@@ -145,9 +134,9 @@ const Form: React.FC<FormProps> = ({
                         variant={!isFormValid || disabled ? 'disabled' : variant}
                         size='md'
                         icon={submitIcon}
-                        disabled={!isFormValid || disabled || loadingButtons[loadingKey ?? '']}
-                        isLoading={loadingButtons[loadingKey ?? '']}>
-                        {loadingButtons[loadingKey ?? ''] ? 'Procesando...' : submitLabel}
+                        disabled={!isFormValid || disabled || loadingButton}
+                        isLoading={loadingButton}>
+                        {loadingButton ? labelLoadingButton : submitLabel}
                     </Button>
                 </div>
             )}

@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 
-import { BsCash } from 'react-icons/bs';
+import { MdPayments } from 'react-icons/md';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
 
 import { FormField } from '../types/extras';
 import { PaymentInterface } from '../types';
+import { useGlobalContext } from '../context/GlobalContext';
 
 interface PayloanProps {
     isOpen: boolean;
@@ -15,6 +16,8 @@ interface PayloanProps {
 }
 
 const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
+    const { loading } = useGlobalContext();
+
     const emptyPayment = {
         id_prestamo: 0,
         monto_abonado: 0,
@@ -52,17 +55,18 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={`Abonar a prestamo`} containerClassName='max-w-xl'>
+        <Modal isOpen={isOpen} onClose={onClose} title='Abonar a préstamo' containerClassName='max-w-xl'>
             <Form
                 fields={fields}
                 data={emptyPayment}
                 onSubmit={handleSubmit}
-                submitIcon={<BsCash size={17} />}
+                submitIcon={<MdPayments size={17} />}
                 submitLabel='Abonar'
-                variant='add'
+                variant='save'
                 direction='end'
                 columns={1}
-                loadingKey={'updateLoan'}
+                loadingButton={loading['updateLoan']}
+                labelLoadingButton='Abonando...'
             />
         </Modal>
     );

@@ -12,7 +12,7 @@ class PayrollServices {
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Error desconocido.');
             }
-            return response.data.data;
+            return response.data;
         } catch (error: any) {
             console.error('Error al obtener nóminas:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'Error al obtener nóminas.');

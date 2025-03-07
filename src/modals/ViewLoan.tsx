@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { LiaPiggyBankSolid } from 'react-icons/lia';
+import { MdPayments } from 'react-icons/md';
 
 import Modal from '../components/Modal';
 import Table from '../components/Table';
@@ -19,7 +19,7 @@ interface ViewLoanProps {
 }
 
 const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan }) => {
-    const { selectedLoan } = useGlobalContext();
+    const { selectedEntities } = useGlobalContext();
 
     const fields: FormField[] = useMemo(
         () => [
@@ -89,7 +89,7 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan
                 render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha),
             },
         ],
-        [selectedLoan]
+        [selectedEntities.selectedLoan]
     );
 
     if (!isOpen) return null;
@@ -97,11 +97,11 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Detalles de Préstamos' containerClassName='max-w-3xl'>
             <div className='flex flex-col space-y-8'>
-                <Form fields={fields} data={selectedLoan ?? {}} disabled={true} columns={2} />
+                <Form fields={fields} data={selectedEntities.selectedLoan ?? {}} disabled={true} columns={2} />
 
-                <Table columns={columns} data={selectedLoan?.abonos ?? []} />
+                <Table columns={columns} data={selectedEntities.selectedLoan?.abonos ?? []} />
                 <div className='mt-4 flex justify-end gap-2'>
-                    <Button variant='add' icon={<LiaPiggyBankSolid size={17} />} onClick={() => handleClickPayLoan()}>
+                    <Button variant='add' icon={<MdPayments size={17} />} onClick={() => handleClickPayLoan()}>
                         Abonar
                     </Button>
                 </div>

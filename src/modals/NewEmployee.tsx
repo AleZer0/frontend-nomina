@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 
-import { FaRegSave } from 'react-icons/fa';
+import { AiOutlineUserAdd } from 'react-icons/ai';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
 
 import { EmployeeInterface } from '../types';
 import { FormField } from '../types/extras';
+import { useGlobalContext } from '../context/GlobalContext';
 
 interface CreateEmployeeModalProps {
     isOpen: boolean;
@@ -15,6 +16,8 @@ interface CreateEmployeeModalProps {
 }
 
 const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
+    const { loading } = useGlobalContext();
+
     const emptyEmployee: Omit<EmployeeInterface, 'id_empleado'> = {
         nombre: '',
         apellido: '',
@@ -100,12 +103,13 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
                 fields={fields}
                 data={emptyEmployee}
                 onSubmit={handleSubmit}
-                submitIcon={<FaRegSave size={17} />}
-                submitLabel='Guardar empleado'
-                variant='add'
+                submitIcon={<AiOutlineUserAdd size={17} />}
+                submitLabel='Registrar empleado'
+                variant='save'
                 direction='end'
                 columns={2}
-                loadingKey={'addEmployee'}
+                loadingButton={loading['addEmployee']}
+                labelLoadingButton='Registrando empleado...'
             />
         </Modal>
     );

@@ -1,16 +1,15 @@
 import { useMemo, useState } from 'react';
 
-import { HiDocumentPlus } from 'react-icons/hi2';
-import { FaFilePdf } from 'react-icons/fa';
+import { HiDocumentAdd } from 'react-icons/hi';
+import { FaFilePdf } from 'react-icons/fa6';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
 import Table from '../components/Table';
+import Pagination from '../components/Pagination';
 
 import NewPayroll from '../modals/NewPayroll';
-
-import { previewPayrollPDF } from '../services/pdf.service';
 
 import { PayrollInterface } from '../types';
 import { Column } from '../types/extras';
@@ -24,22 +23,13 @@ const totalPagar = (total: number) => {
 };
 
 const Payroll: React.FC = () => {
-    const { payrolls, addPayroll, loading, loadingButtons, setLoadingButtons } = useGlobalContext();
+    const { entitiesState, addPayroll, createPreviewPayrollPDF, loading } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
-    };
-
-    const handleDownload = (folio: number) => {
-        setLoadingButtons(prev => ({ ...prev, [folio]: true }));
-
-        setTimeout(() => {
-            previewPayrollPDF(folio);
-            setLoadingButtons(prev => ({ ...prev, [folio]: false }));
-        }, 3000);
     };
 
     const columns: Column<PayrollInterface>[] = useMemo(
@@ -87,15 +77,15 @@ const Payroll: React.FC = () => {
                         variant='details'
                         size='md'
                         icon={<FaFilePdf size={15} />}
-                        onClick={() => handleDownload(row.folio)}
-                        isLoading={loadingButtons[row.folio]}
-                        disabled={loadingButtons[row.folio]}>
+                        onClick={() => createPreviewPayrollPDF(row.folio)}
+                        isLoading={loading[row.folio]}
+                        disabled={loading[row.folio]}>
                         Descargar
                     </Button>
                 ),
             },
         ],
-        [loadingButtons]
+        [entitiesState.payrolls]
     );
 
     return (
@@ -104,19 +94,21 @@ const Payroll: React.FC = () => {
                 <Button
                     variant='add'
                     size='md'
-                    icon={<HiDocumentPlus size={17} />}
+                    icon={<HiDocumentAdd size={17} />}
                     onClick={() => setIsOpenCreatePayroll(true)}>
                     Nueva nómina
                 </Button>
             </Header>
 
-            {loading && (
+            {loading['payrolls'] ? (
                 <div className='my-4 flex justify-center'>
                     <Loader />
                 </div>
+            ) : (
+                <Table columns={columns} data={entitiesState.payrolls} />
             )}
 
-            <Table columns={columns} data={payrolls} />
+            <Pagination />
 
             <NewPayroll
                 isOpen={isOpenCreatePayroll}

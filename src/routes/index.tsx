@@ -6,8 +6,8 @@ import WeeklyReport from '../pages/WeeklyReport';
 import { Route } from '../types/extras';
 
 export const routes: Route[] = [
-    { path: '/employees', element: <Employees />, name: 'Empleados' },
-    { path: '/payroll', element: <Payroll />, name: 'Nominas' },
-    { path: '/loans', element: <Loans />, name: 'Préstamos' },
-    { path: '/weekly_report', element: <WeeklyReport />, name: 'Reportes semanales' },
+    { path: 'employees', element: <Employees />, name: 'Empleados' },
+    { path: 'payrolls', element: <Payroll />, name: 'Nominas' },
+    { path: 'loans', element: <Loans />, name: 'Préstamos' },
+    { path: 'weeklyReports', element: <WeeklyReport />, name: 'Reportes semanales' },
 ];

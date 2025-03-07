@@ -1,6 +1,6 @@
 import { TableProps } from '../types/componentes';
 
-const Table = <T extends object>({ columns, data, onRowClick }: TableProps<T>) => {
+const Table = <T extends object>({ columns, data = [], onRowClick }: TableProps<T>) => {
     return (
         <div className='relative overflow-x-auto shadow-md sm:rounded-2xl'>
             <table className='text-md w-full text-blue-950'>
@@ -14,15 +14,7 @@ const Table = <T extends object>({ columns, data, onRowClick }: TableProps<T>) =
                     </tr>
                 </thead>
 
-                {data.length === 0 ? (
-                    <tbody className='text-center'>
-                        <tr>
-                            <td colSpan={columns.length} className='bg-white p-4'>
-                                No hay registros disponibles
-                            </td>
-                        </tr>
-                    </tbody>
-                ) : (
+                {Array.isArray(data) && data.length > 0 ? (
                     <tbody className='text-center'>
                         {data.map((row, rowIndex) => (
                             <tr
@@ -40,6 +32,14 @@ const Table = <T extends object>({ columns, data, onRowClick }: TableProps<T>) =
                                 ))}
                             </tr>
                         ))}
+                    </tbody>
+                ) : (
+                    <tbody className='text-center'>
+                        <tr>
+                            <td colSpan={columns.length} className='bg-white p-4'>
+                                No hay registros disponibles
+                            </td>
+                        </tr>
                     </tbody>
                 )}
             </table>

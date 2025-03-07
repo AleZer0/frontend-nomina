@@ -1,30 +1,83 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useGlobalContext } from '../context/GlobalContext';
+import Button from './Button';
+import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa';
 
-interface PaginationProps {
-    currentPage: number;
-    totalPages: number;
-    onPrevious: () => void;
-    onNext: () => void;
-}
+const Pagination: React.FC = () => {
+    const { pagination, setPagination, activeEntity, metaData } = useGlobalContext();
+    const { page } = pagination;
+    const totalPages = metaData[activeEntity].totalPages;
+    const [inputPage, setInputPage] = useState(page);
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPrevious, onNext }) => {
+    useEffect(() => {
+        setPagination({ page: 1, limit: 10 });
+        setInputPage(1);
+    }, [activeEntity, setPagination]);
+
+    const goToPage = (newPage: number) => {
+        const validPage = Math.max(1, Math.min(newPage, totalPages));
+        setPagination(prev => ({ ...prev, page: validPage }));
+        setInputPage(validPage); // Mantener sincronizado el input con la paginación
+    };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setInputPage(Number(event.target.value));
+    };
+
+    const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        goToPage(inputPage);
+    };
+
     return (
-        <div className='flex justify-between p-4'>
-            <button
-                className='rounded bg-blue-500 px-4 py-2 text-white'
-                onClick={onPrevious}
-                disabled={currentPage === 1}>
-                Anterior
-            </button>
-            <span>
-                Página {currentPage} de {totalPages}
-            </span>
-            <button
-                className='rounded bg-blue-500 px-4 py-2 text-white'
-                onClick={onNext}
-                disabled={currentPage === totalPages}>
-                Siguiente
-            </button>
+        <div className='mt-8 flex h-12 w-full items-center justify-center gap-2 bg-slate-200 bg-gradient-to-r to-slate-300 p-6'>
+            {/* Primera Página */}
+            <Button
+                variant='ghost'
+                size='md'
+                icon={<FaAngleDoubleLeft size={17} />}
+                onClick={() => goToPage(1)}
+                disabled={page === 1}
+            />
+
+            {/* Página Anterior */}
+            <Button
+                variant='ghost'
+                size='md'
+                icon={<FaAngleLeft size={17} />}
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
+            />
+
+            {/* Input de Página */}
+            <form onSubmit={handleInputSubmit} className='flex items-center gap-2 text-lg font-medium'>
+                <span>Página</span>
+                <input
+                    type='number'
+                    value={inputPage}
+                    onChange={handleInputChange}
+                    className='w-14 rounded-lg border border-gray-300 px-2 py-1 text-center hover:shadow-xl'
+                />
+                <span>de {totalPages}</span>
+            </form>
+
+            {/* Página Siguiente */}
+            <Button
+                variant='ghost'
+                size='md'
+                icon={<FaAngleRight size={17} />}
+                onClick={() => goToPage(page + 1)}
+                disabled={page >= totalPages}
+            />
+
+            {/* Última Página */}
+            <Button
+                variant='ghost'
+                size='md'
+                icon={<FaAngleDoubleRight size={17} />}
+                onClick={() => goToPage(totalPages)}
+                disabled={page >= totalPages}
+            />
         </div>
     );
 };

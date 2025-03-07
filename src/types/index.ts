@@ -4,28 +4,41 @@ export interface UsuarioType {
 }
 
 export interface GlobalContextInterface {
-    employees: EmployeeInterface[];
-    selectedEmployee: EmployeeInterface | null;
-    payrolls: PayrollInterface[];
-    loans: LoanInterface[];
-    selectedLoan: LoanInterface | null;
-    weeklyReport: WeeklyReportData[];
-    loading: boolean;
-    loadingButtons: { [key: number | string]: boolean };
-    setLoadingButtons: React.Dispatch<
+    entitiesState: {
+        employees: EmployeeInterface[];
+        payrolls: PayrollInterface[];
+        loans: LoanInterface[];
+        weeklyReports: WeeklyReportData[];
+    };
+    selectedEntities: { selectedEmployee: EmployeeInterface | null; selectedLoan: LoanInterface | null };
+    setSelectedEntities: React.Dispatch<
         React.SetStateAction<{
-            [key: number]: boolean;
+            selectedEmployee: EmployeeInterface | null;
+            selectedLoan: LoanInterface | null;
         }>
     >;
     error: string | null;
+    setError: React.Dispatch<React.SetStateAction<string | null>>;
+    loading: { [key: number | string]: boolean };
+    setLoading: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>;
+    pagination: { page: number; limit: number };
+    setPagination: React.Dispatch<React.SetStateAction<{ page: number; limit: number }>>;
+    activeEntity: 'employees' | 'payrolls' | 'loans' | 'weeklyReports';
+    setActiveEntity: React.Dispatch<React.SetStateAction<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>>;
+    metaData: Record<string, MetaInterface>;
+    setMetaData: React.Dispatch<React.SetStateAction<Record<string, MetaInterface>>>;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
     updateEmployee: (id_empleado: number, updatedData: Partial<EmployeeInterface>) => Promise<EmployeeInterface>;
     statusEmployee: (id_empleado: number, status: 0 | 1) => Promise<void>;
-    selectEmployee: (employee?: EmployeeInterface) => void;
     addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
     updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<LoanInterface>;
-    selectLoan: (loan?: LoanInterface) => void;
+    createPreviewPayrollPDF: (folio: number) => void;
+    createPreviewWeeklyReportPDF: (year: number, row: WeeklyReportData) => void;
+    fetchEmployees: () => Promise<void>;
+    fetchPayrolls: () => Promise<void>;
+    fetchLoans: () => Promise<void>;
+    fetchWeeklyReports: () => Promise<void>;
 }
 
 export interface AuthContextType {

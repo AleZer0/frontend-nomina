@@ -86,7 +86,7 @@ const Form: React.FC<FormProps> = ({
 
     return (
         <form onSubmit={handleSubmit} className='flex flex-col space-y-4 text-blue-950'>
-            <div className={clsx('grid gap-4', `grid-cols-${columns}`)}>
+            <div className={clsx('grid gap-4', { 'grid-cols-1': columns === 1, 'grid-cols-2': columns === 2 })}>
                 {fields.map(({ name, label, required, type, data, ...rest }) => (
                     <div key={name} className='flex flex-col'>
                         <label htmlFor={name} className='mb-1'>

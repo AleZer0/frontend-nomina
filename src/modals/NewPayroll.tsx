@@ -21,7 +21,7 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { entitiesState, selectedEntities, setSelectedEntities, loading, activeEntity } = useGlobalContext();
+    const { selectedEntities, setSelectedEntities, loading, activeEntity } = useGlobalContext();
 
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
@@ -47,9 +47,10 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
     };
 
     const handleSelectEmployee = (id_empleado: number) => {
+        console.log(id_empleado);
         setSelectedEntities(prev => ({
             ...prev,
-            selectedEmployee: entitiesState.employees.find(emp => emp.id_empleado === id_empleado) ?? null,
+            selectedEmployee: employees.find(emp => emp.id_empleado === id_empleado) ?? null,
         }));
         console.log('Empleado seleccionado:', selectedEntities.selectedEmployee);
         console.log('Préstamos del empleado seleccionado:', selectedEntities.selectedEmployee?.prestamos);
@@ -95,7 +96,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             .catch(err => {
                 throw new Error(`Error al obtener todos los empleados ${err}`);
             });
-    }, [entitiesState]);
+    }, [employees]);
 
     const fields: FormField[] = useMemo(
         () => [
@@ -170,7 +171,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 inputSize: 'md',
             },
         ],
-        [selectedEntities.selectedEmployee, employees]
+        [selectedEntities, employees]
     );
 
     const columns: Column<LoanInterface>[] = useMemo(

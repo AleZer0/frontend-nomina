@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { FaEye, FaEyeSlash, FaRegUser } from 'react-icons/fa';
 import { MdPassword } from 'react-icons/md';
-import { Oval } from 'react-loader-spinner';
+import { CiLogin } from 'react-icons/ci';
 
 import Form from '../components/Form';
 import { FormField } from '../types/extras';
@@ -11,7 +11,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Login: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const { isAuthenticated, login, loading, error } = useAuth();
+    const { isAuthenticated, login, error } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (values: Record<string, string>) => {
@@ -67,20 +67,10 @@ const Login: React.FC = () => {
                 <Form
                     fields={fields}
                     onSubmit={handleLogin}
-                    submitIcon={
-                        loading && (
-                            <Oval
-                                height='20'
-                                width='20'
-                                color='#1646db'
-                                strokeWidth={4}
-                                secondaryColor='#88a3f5'
-                                ariaLabel='oval-loading'
-                            />
-                        )
-                    }
+                    submitIcon={<CiLogin size={17} />}
                     submitLabel='Ingresar'
-                    variant='details'>
+                    variant='details'
+                    loadingKey={'login'}>
                     <div className='mt-2 text-right'>
                         <Link to='/forgot-password' className='text-sm text-blue-500 hover:underline'>
                             ¿Olvidaste tu contraseña?

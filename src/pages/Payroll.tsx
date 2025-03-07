@@ -12,29 +12,23 @@ import NewPayroll from '../modals/NewPayroll';
 
 import { previewPayrollPDF } from '../services/pdf.service';
 
-import { EmployeeInterface, PayrollInterface } from '../types';
+import { PayrollInterface } from '../types';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
 
 import Utils from '../utils';
 
+const totalPagar = (total: number) => {
+    return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+};
+
 const Payroll: React.FC = () => {
-    const { selectedEmployee, updateEmployees, payrolls, addPayroll, loans, loading } = useGlobalContext();
+    const { payrolls, addPayroll, loading, loadingButtons, setLoadingButtons } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
-    const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
-        const updatedLoans = [...loans];
-        if (selectedEmployee) {
-            const newUpdatedEmployee: EmployeeInterface = {
-                ...selectedEmployee,
-                prestamos: updatedLoans.filter(pres => pres.id_empleado === selectedEmployee.id_empleado),
-            };
-            updateEmployees(selectedEmployee.id_empleado, newUpdatedEmployee);
-        }
-
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
     };
@@ -46,10 +40,6 @@ const Payroll: React.FC = () => {
             previewPayrollPDF(folio);
             setLoadingButtons(prev => ({ ...prev, [folio]: false }));
         }, 3000);
-    };
-
-    const totalPagar = (total: number) => {
-        return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
     };
 
     const columns: Column<PayrollInterface>[] = useMemo(
@@ -100,7 +90,7 @@ const Payroll: React.FC = () => {
                         onClick={() => handleDownload(row.folio)}
                         isLoading={loadingButtons[row.folio]}
                         disabled={loadingButtons[row.folio]}>
-                        Descargar PDF
+                        Descargar
                     </Button>
                 ),
             },

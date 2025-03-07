@@ -14,14 +14,13 @@ import PayLoan from '../modals/Payloan';
 
 import { useGlobalContext } from '../context/GlobalContext';
 
-import { EmployeeInterface, LoanInterface, PaymentInterface } from '../types';
+import { LoanInterface, PaymentInterface } from '../types';
 import { Column } from '../types/extras';
 
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { employees, updateEmployees, loans, selectedLoan, addLoan, updateLoan, loading, selectLoan } =
-        useGlobalContext();
+    const { loans, selectedLoan, addLoan, updateLoan, loading, selectLoan } = useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
@@ -33,22 +32,15 @@ const Loans: React.FC = () => {
     };
 
     const handlePayLoan = async (updatedLoan: Partial<PaymentInterface>) => {
-        const updatedLoans = [...loans];
-        if (selectedLoan) {
-            const newUpdatedEmployee: Partial<EmployeeInterface> = {
-                ...employees.find(emp => emp.id_empleado === selectedLoan.id_empleado),
-                prestamos: updatedLoans.filter(pres => pres.id_empleado === selectedLoan.id_empleado),
-            };
-            updateEmployees(selectedLoan.id_empleado, newUpdatedEmployee);
-        }
         if (!selectedLoan) return;
-        await updateLoan(selectedLoan.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
-        setTimeout(() => setIsOpenPayLoan(false), 2000);
+        const newSelectedLoan = await updateLoan(selectedLoan.id_prestamo, updatedLoan.monto_abonado ?? 0);
+        selectLoan(newSelectedLoan);
+        setIsOpenPayLoan(false);
+        if (selectedLoan.saldo_pendiente === 0) setIsOpenViewLoan(false);
     };
 
     const columns: Column<LoanInterface>[] = useMemo(
         () => [
-            { key: 'id_empleado', header: 'No. Empleado' },
             {
                 key: 'empleado',
                 header: 'Empleado',
@@ -83,7 +75,7 @@ const Loans: React.FC = () => {
                         size='md'
                         icon={<HiOutlineCash size={15} />}
                         onClick={() => {
-                            selectLoan(undefined, row);
+                            selectLoan(row);
                             setTimeout(() => setIsOpenViewLoan(true), 100);
                         }}>
                         Detalles

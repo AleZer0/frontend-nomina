@@ -23,6 +23,9 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
         saldo_pendiente: 0,
     };
 
+    const handleSelectEmployee = (id_empleado: number) =>
+        selectEmployee(employees.find(emp => emp.id_empleado === id_empleado));
+
     const handleClickClose = () => {
         selectEmployee();
         onClose();
@@ -34,15 +37,10 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
             return;
         }
 
-        const empleadoSeleccionado = employees.find(emp => emp.id_empleado === values.id_empleado);
-
         const newLoan: LoanInterface = {
             id_prestamo: 0,
             ...emptyLoan,
             ...values,
-            empleado: empleadoSeleccionado
-                ? `${empleadoSeleccionado.nombre} ${empleadoSeleccionado.apellido}`
-                : 'Desconocido',
         };
 
         onSubmit(newLoan);
@@ -102,7 +100,8 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
                 variant='add'
                 direction='end'
                 columns={1}
-                extra={(id: number) => selectEmployee(id)}
+                extra={handleSelectEmployee}
+                loadingKey={'addLoan'}
             />
         </Modal>
     );

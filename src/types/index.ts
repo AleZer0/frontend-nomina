@@ -11,6 +11,12 @@ export interface GlobalContextInterface {
     selectedLoan: LoanInterface | null;
     weeklyReport: WeeklyReportData[];
     loading: boolean;
+    loadingButtons: { [key: number | string]: boolean };
+    setLoadingButtons: React.Dispatch<
+        React.SetStateAction<{
+            [key: number]: boolean;
+        }>
+    >;
     error: string | null;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
     updateEmployee: (id_empleado: number, updatedData: Partial<EmployeeInterface>) => Promise<EmployeeInterface>;
@@ -18,7 +24,7 @@ export interface GlobalContextInterface {
     selectEmployee: (employee?: EmployeeInterface) => void;
     addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
-    updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<void>;
+    updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<LoanInterface>;
     selectLoan: (loan?: LoanInterface) => void;
 }
 

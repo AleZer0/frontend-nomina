@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { FaFilePdf } from 'react-icons/fa6';
 
@@ -15,13 +15,12 @@ import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
 
-const WeeklyReport: React.FC = () => {
-    const { weeklyReport, loading } = useGlobalContext();
-    const [loadingButtons, setLoadingButtons] = useState<{ [key: number]: boolean }>({});
+const totalNeto = (total: number) => {
+    return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
+};
 
-    const totalNeto = (total: number) => {
-        return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
-    };
+const WeeklyReport: React.FC = () => {
+    const { weeklyReport, loading, loadingButtons, setLoadingButtons } = useGlobalContext();
 
     const handleDownload = (year: number, row: WeeklyReportData) => {
         setLoadingButtons(prev => ({ ...prev, [row.semana]: true }));
@@ -80,12 +79,12 @@ const WeeklyReport: React.FC = () => {
                 render: (_, row) => (
                     <Button
                         variant='details'
-                        size='sm'
+                        size='md'
                         icon={<FaFilePdf size={15} />}
                         isLoading={loadingButtons[row.semana]}
                         disabled={loadingButtons[row.semana]}
                         onClick={() => handleDownload(2025, row)}>
-                        Descargar PDF
+                        Descargar
                     </Button>
                 ),
             },

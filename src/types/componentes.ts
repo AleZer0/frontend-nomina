@@ -34,6 +34,7 @@ export interface FormProps {
     direction?: 'start' | 'center' | 'end';
     disabled?: boolean;
     columns?: 1 | 2;
-    extra?: (id: number) => void;
+    extra?: (id_empleado: number) => void;
     children?: ReactNode;
+    loadingKey?: number | string;
 }

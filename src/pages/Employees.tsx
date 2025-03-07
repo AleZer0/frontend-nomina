@@ -39,8 +39,8 @@ const Employees: React.FC = () => {
     };
 
     const handleDeleteEmployee = async (id_empleado: number) => {
-        console.log('Si entra aquí 2');
         await statusEmployee(id_empleado, 0);
+        selectEmployee();
         setIsOpenViewEmployee(false);
     };
 

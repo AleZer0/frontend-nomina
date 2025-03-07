@@ -19,7 +19,10 @@ const Form: React.FC<FormProps> = ({
     columns = 1,
     extra,
     children,
+    loadingKey,
 }) => {
+    const [loadingButtons, setLoadingButtons] = useState<{ [key: number | string]: boolean }>({});
+
     const [formData, setFormData] = useState<Record<string, any>>(() => {
         const initialData = { ...data };
 
@@ -122,7 +125,7 @@ const Form: React.FC<FormProps> = ({
                                 id={field.name}
                                 name={field.name}
                                 placeholder={field.placeholder}
-                                value={formData[field.name] ?? ''}
+                                value={formData[field.name] === 0 ? '' : (formData[field.name] ?? '')}
                                 onChange={e => handleChange(field.name, field.type, e.target.value)}
                             />
                         )}
@@ -142,8 +145,9 @@ const Form: React.FC<FormProps> = ({
                         variant={!isFormValid || disabled ? 'disabled' : variant}
                         size='md'
                         icon={submitIcon}
-                        disabled={!isFormValid || disabled}>
-                        {!isFormValid ? 'Esperando...' : submitLabel}
+                        disabled={!isFormValid || disabled || loadingButtons[loadingKey ?? '']}
+                        isLoading={loadingButtons[loadingKey ?? '']}>
+                        {loadingButtons[loadingKey ?? ''] ? 'Procesando...' : submitLabel}
                     </Button>
                 </div>
             )}

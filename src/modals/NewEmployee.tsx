@@ -105,6 +105,7 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
                 variant='add'
                 direction='end'
                 columns={2}
+                loadingKey={'addEmployee'}
             />
         </Modal>
     );

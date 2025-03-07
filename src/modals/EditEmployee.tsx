@@ -118,6 +118,7 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
                 variant='add'
                 direction='end'
                 columns={2}
+                loadingKey={'updateEmployee'}
             />
         </Modal>
     );

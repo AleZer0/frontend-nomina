@@ -27,7 +27,6 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
         }
 
         const updatedLoan: Partial<PaymentInterface> = {
-            id_abono: 0,
             ...emptyPayment,
             ...values,
         };
@@ -63,6 +62,7 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
                 variant='add'
                 direction='end'
                 columns={1}
+                loadingKey={'updateLoan'}
             />
         </Modal>
     );

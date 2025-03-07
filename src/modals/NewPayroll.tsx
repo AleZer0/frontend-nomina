@@ -20,7 +20,7 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { employees, selectedEmployee, selectEmployee, updateLoan } = useGlobalContext();
+    const { employees, selectedEmployee, selectEmployee } = useGlobalContext();
 
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',
@@ -38,14 +38,14 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
     const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
 
     const handleClickClose = () => {
-        selectEmployee();
         setIdsPrestamos([]);
         setInputValues({});
+        selectEmployee();
         onClose();
     };
 
-    const handleSelectEmployee = (id: number) => {
-        selectEmployee(id);
+    const handleSelectEmployee = (id_empleado: number) => {
+        selectEmployee(employees.find(emp => emp.id_empleado === id_empleado));
         setIdsPrestamos([]);
         setInputValues({});
     };
@@ -76,11 +76,9 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             ids_prestamos: idsPrestamos,
         };
 
-        idsPrestamos.forEach(async pres => await updateLoan(pres.id_prestamo, pres.monto_abonado));
-
-        onSubmit(newPayroll);
         setIdsPrestamos([]);
         setInputValues({});
+        onSubmit(newPayroll);
     };
 
     const fields: FormField[] = useMemo(
@@ -204,7 +202,8 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 variant='add'
                 direction='end'
                 columns={2}
-                extra={handleSelectEmployee}>
+                extra={handleSelectEmployee}
+                loadingKey={'addPayroll'}>
                 <Table
                     columns={columns}
                     data={

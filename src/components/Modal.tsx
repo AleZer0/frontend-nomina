@@ -54,9 +54,9 @@ const Modal: React.FC<ModalProps> = ({
             className={`bg-opacity-40 fixed inset-0 flex items-center justify-center backdrop-blur-md transition-opacity duration-300 ${overlayClassName || ''}`}
             style={{ zIndex }}>
             <div
-                className={`relative max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg transition-transform duration-300 sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 ${containerClassName || ''}`}
+                className={`relative max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white shadow-lg transition-transform duration-300 sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 ${containerClassName || ''}`}
                 style={{ zIndex: zIndex + 1 }}>
-                <div className='mb-4 flex items-center justify-between'>
+                <div className='sticky top-0 z-10 flex items-center justify-between bg-white px-10 pt-6 pb-2'>
                     <h2 className='text-xl font-bold'>{title}</h2>
                     <AiOutlineClose
                         className='cursor-pointer rounded-2xl bg-gray-100 p-0.5 text-2xl hover:bg-gray-200'
@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({
                         size={25}
                     />
                 </div>
-                <div>{children}</div>
+                <div className='px-10 pt-2 pb-6'>{children}</div>
                 {footer && <div className='mt-4'>{footer}</div>}
             </div>
         </div>

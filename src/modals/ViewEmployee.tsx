@@ -35,7 +35,6 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
 
     const handleClickDelateButton = () => {
         if (!selectedEmployee) return;
-        console.log('Si entra aquí 1');
         handleClickDelate(selectedEmployee.id_empleado);
     };
 
@@ -125,7 +124,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 onClick: () => handleClickDelateButton(),
             },
         ],
-        []
+        [selectedEmployee]
     );
 
     if (!isOpen) return null;

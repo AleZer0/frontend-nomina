@@ -20,12 +20,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copiar los archivos compilados de React
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar certificados SSL
-COPY certs/_.xrom.cc.crt /etc/nginx/ssl/_.xrom.cc.crt
-COPY certs/_.xrom.cc.key /etc/nginx/ssl/_.xrom.cc.key
-
 # Exponer solo el puerto 443 (HTTPS)
-EXPOSE 443
+EXPOSE 80
 
 # Iniciar Nginx
 CMD ["nginx", "-g", "daemon off;"]

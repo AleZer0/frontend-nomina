@@ -7,7 +7,6 @@ import Table from '../components/Table';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
-import Pagination from '../components/Pagination';
 
 import ViewLoan from '../modals/ViewLoan';
 import NewLoan from '../modals/NewLoan';
@@ -21,7 +20,8 @@ import { Column } from '../types/extras';
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { entitiesState, selectedEntities, setSelectedEntities, addLoan, updateLoan, loading } = useGlobalContext();
+    const { entitiesState, selectedEntities, setSelectedEntities, addLoan, updateLoan, loading, isSidebarOpen } =
+        useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
@@ -91,7 +91,10 @@ const Loans: React.FC = () => {
     );
 
     return (
-        <section className='mb-20 ml-64 flex-auto p-8'>
+        <section
+            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+                isSidebarOpen ? 'ml-64' : 'ml-16'
+            }`}>
             <Header title='Listado de préstamos'>
                 <Button
                     variant='add'
@@ -109,8 +112,6 @@ const Loans: React.FC = () => {
             ) : (
                 <Table columns={columns} data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)} />
             )}
-
-            <Pagination />
 
             <ViewLoan
                 isOpen={isOpenViewLoan}

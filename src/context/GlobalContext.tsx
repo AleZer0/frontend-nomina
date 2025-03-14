@@ -23,6 +23,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         loans: [] as LoanInterface[],
         weeklyReports: [] as WeeklyReportData[],
     });
+    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
     const [selectedEntities, setSelectedEntities] = useState({
         selectedEmployee: null as EmployeeInterface | null,
         selectedLoan: null as LoanInterface | null,
@@ -255,6 +257,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 fetchPayrolls,
                 fetchLoans,
                 fetchWeeklyReports,
+                isSidebarOpen,
+                toggleSidebar,
             }}>
             {children}
         </GlobalContext.Provider>

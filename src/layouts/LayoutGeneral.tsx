@@ -1,3 +1,4 @@
+import Pagination from '../components/Pagination';
 import Sidebar from '../components/Sidebar';
 import { ReactNode } from 'react';
 
@@ -11,6 +12,7 @@ const Layout: React.FC<LayoutType> = ({ children }) => {
             <Sidebar />
             <main className='relative top-20 min-h-screen flex-1 overflow-y-auto bg-slate-200 bg-gradient-to-r to-slate-300'>
                 {children}
+                <Pagination />
             </main>
         </div>
     );

@@ -7,7 +7,6 @@ import Header from '../components/Header';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
 import Table from '../components/Table';
-import Pagination from '../components/Pagination';
 
 import NewPayroll from '../modals/NewPayroll';
 
@@ -23,7 +22,7 @@ const totalPagar = (total: number) => {
 };
 
 const Payroll: React.FC = () => {
-    const { entitiesState, addPayroll, createPreviewPayrollPDF, loading } = useGlobalContext();
+    const { entitiesState, addPayroll, createPreviewPayrollPDF, loading, isSidebarOpen } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
 
@@ -89,7 +88,10 @@ const Payroll: React.FC = () => {
     );
 
     return (
-        <section className='mb-20 ml-64 flex-auto p-8'>
+        <section
+            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+                isSidebarOpen ? 'ml-64' : 'ml-16'
+            }`}>
             <Header title='Listado de Nóminas'>
                 <Button
                     variant='add'
@@ -107,8 +109,6 @@ const Payroll: React.FC = () => {
             ) : (
                 <Table columns={columns} data={entitiesState.payrolls} />
             )}
-
-            <Pagination />
 
             <NewPayroll
                 isOpen={isOpenCreatePayroll}

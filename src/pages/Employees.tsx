@@ -7,7 +7,6 @@ import Header from '../components/Header';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
-import Pagination from '../components/Pagination';
 
 import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
@@ -29,6 +28,7 @@ const Employees: React.FC = () => {
         statusEmployee,
         addPayroll,
         loading,
+        isSidebarOpen,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
@@ -59,16 +59,36 @@ const Employees: React.FC = () => {
         setIsOpenCreatePayroll(false);
     };
 
+    const total_sueldo = (sueldo: number | undefined | null) => {
+        if (sueldo === undefined || sueldo === null) {
+            return (
+                <span className='inline-block rounded-full border border-orange-200 bg-orange-50 px-3 py-1 font-semibold text-orange-700'>
+                    Sin sueldo
+                </span>
+            );
+        }
+        return (
+            <span
+                className={`${sueldo < 0 ? 'text-red-500' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${sueldo.toFixed(2)}
+            </span>
+        );
+    };
+
     const columns: Column<EmployeeInterface>[] = useMemo(
         () => [
             { key: 'id_empleado', header: 'No. Empleado' },
             { key: 'nombre', header: 'Nombre' },
             { key: 'apellido', header: 'Apellido' },
-            { key: 'puesto', header: 'Puesto' },
+            {
+                key: 'puesto',
+                header: 'Puesto',
+                render: (_, row) => <span className='px-3 py-1 font-semibold text-blue-700'>{row.puesto}</span>,
+            },
             {
                 key: 'sueldo',
                 header: 'Sueldo',
-                render: (_, row) => (row.sueldo ? `$${row.sueldo.toFixed(2)}` : 'Sin sueldo'),
+                render: (_, row) => total_sueldo(row.sueldo),
             },
             {
                 key: 'ultima_nomina',
@@ -97,7 +117,10 @@ const Employees: React.FC = () => {
     );
 
     return (
-        <section className='mb-20 ml-64 flex-auto p-8'>
+        <section
+            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+                isSidebarOpen ? 'ml-64' : 'ml-16'
+            }`}>
             <Header title='Listado de Empleados'>
                 <Button
                     variant='add'
@@ -115,8 +138,6 @@ const Employees: React.FC = () => {
             ) : (
                 <Table columns={columns} data={entitiesState.employees.filter(employee => employee.estado !== 0)} />
             )}
-
-            <Pagination />
 
             <ViewEmployee
                 isOpen={isOpenViewEmployee}

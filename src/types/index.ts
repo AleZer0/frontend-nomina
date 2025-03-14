@@ -39,6 +39,8 @@ export interface GlobalContextInterface {
     fetchPayrolls: () => Promise<void>;
     fetchLoans: () => Promise<void>;
     fetchWeeklyReports: () => Promise<void>;
+    isSidebarOpen: boolean;
+    toggleSidebar: () => void;
 }
 
 export interface AuthContextType {

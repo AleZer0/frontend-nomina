@@ -77,9 +77,21 @@ const Employees: React.FC = () => {
 
     const columns: Column<EmployeeInterface>[] = useMemo(
         () => [
-            { key: 'id_empleado', header: 'No. Empleado' },
-            { key: 'nombre', header: 'Nombre' },
-            { key: 'apellido', header: 'Apellido' },
+            {
+                key: 'id_empleado',
+                header: 'No. Empleado',
+                render: (_, row) => <span className='px-3 py-1 font-semibold text-blue-700'>{row.id_empleado}</span>,
+            },
+            {
+                key: 'nombre',
+                header: 'Nombre',
+                render: (_, row) => <span className='px-3 py-1 font-semibold'>{row.nombre}</span>,
+            },
+            {
+                key: 'apellido',
+                header: 'Apellido',
+                render: (_, row) => <span className='px-3 py-1 font-semibold'>{row.apellido}</span>,
+            },
             {
                 key: 'puesto',
                 header: 'Puesto',
@@ -93,8 +105,16 @@ const Employees: React.FC = () => {
             {
                 key: 'ultima_nomina',
                 header: 'Última Nómina',
-                render: (_, row) =>
-                    row.ultima_nomina ? `NOM${row.ultima_nomina.toString().padStart(4, '0')}` : 'Sin nóminas',
+                render: (_, row) => (
+                    <span
+                        className={
+                            row.ultima_nomina
+                                ? 'inline-block rounded-full border border-green-700 bg-green-500 px-3 py-1 font-semibold text-white'
+                                : 'text-gray-500'
+                        }>
+                        {row.ultima_nomina ? `NOM${row.ultima_nomina.toString().padStart(4, '0')}` : 'Sin nóminas'}
+                    </span>
+                ),
             },
             {
                 key: 'accion',

@@ -33,7 +33,13 @@ const Payroll: React.FC = () => {
 
     const columns: Column<PayrollInterface>[] = useMemo(
         () => [
-            { key: 'folio', header: 'Folio', render: (_, row) => `NOM${row.folio.toString().padStart(4, '0')}` },
+            {
+                key: 'folio',
+                header: 'Folio',
+                render: (_, row) => (
+                    <span className='font-semibold text-blue-700'>{`NOM${row.folio.toString().padStart(4, '0')}`}</span>
+                ),
+            },
             {
                 key: 'empleado',
                 header: 'Empleado',

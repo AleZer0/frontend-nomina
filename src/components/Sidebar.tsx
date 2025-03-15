@@ -47,7 +47,9 @@ const Sidebar: React.FC = () => {
 
     return (
         <>
-            <button className='fixed top-4 left-2 z-50 p-2 text-white' onClick={toggleSidebar}>
+            <button
+                className='fixed top-4 left-2 z-50 cursor-pointer p-2 text-white hover:text-slate-400'
+                onClick={toggleSidebar}>
                 <IoMenu size={22} />
             </button>
             <nav

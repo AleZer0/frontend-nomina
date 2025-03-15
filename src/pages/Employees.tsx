@@ -60,22 +60,64 @@ const Employees: React.FC = () => {
         setIsOpenCreatePayroll(false);
     };
 
+    const total_sueldo = (sueldo: number | undefined | null) => {
+        if (sueldo === undefined || sueldo === null) {
+            return (
+                <span className='inline-block rounded-full border border-red-300 bg-red-100 px-3 py-1 font-semibold text-red-500'>
+                    Sin sueldo
+                </span>
+            );
+        }
+        return (
+            <span
+                className={`${sueldo < 0 ? 'text-red-500' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${sueldo.toFixed(2)}
+            </span>
+        );
+    };
+
     const columns: Column<EmployeeInterface>[] = useMemo(
         () => [
-            { key: 'id_empleado', header: 'No. Empleado' },
-            { key: 'nombre', header: 'Nombre' },
-            { key: 'apellido', header: 'Apellido' },
-            { key: 'puesto', header: 'Puesto' },
+            {
+                key: 'id_empleado',
+                header: 'No. Empleado',
+                render: (_, row) => <span className='px-3 py-1 font-semibold text-blue-700'>{row.id_empleado}</span>,
+            },
+            {
+                key: 'nombre',
+                header: 'Nombre',
+            },
+            {
+                key: 'apellido',
+                header: 'Apellido',
+            },
+            {
+                key: 'puesto',
+                header: 'Puesto',
+                render: (_, row) => (
+                    <span className='inline-block rounded-full border border-blue-200 bg-blue-50 px-3 py-1 font-semibold text-blue-700'>
+                        {row.puesto}
+                    </span>
+                ),
+            },
             {
                 key: 'sueldo',
                 header: 'Sueldo',
-                render: (_, row) => (row.sueldo ? `$${row.sueldo.toFixed(2)}` : 'Sin sueldo'),
+                render: (_, row) => total_sueldo(row.sueldo),
             },
             {
                 key: 'ultima_nomina',
                 header: 'Última Nómina',
-                render: (_, row) =>
-                    row.ultima_nomina ? `NOM${row.ultima_nomina.toString().padStart(4, '0')}` : 'Sin nóminas',
+                render: (_, row) => (
+                    <span
+                        className={
+                            row.ultima_nomina
+                                ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold text-gray-500'
+                                : 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold text-gray-500'
+                        }>
+                        {row.ultima_nomina ? `NOM${row.ultima_nomina.toString().padStart(4, '0')}` : 'Sin nóminas'}
+                    </span>
+                ),
             },
             {
                 key: 'accion',

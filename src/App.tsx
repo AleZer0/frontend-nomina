@@ -23,6 +23,7 @@ const App: React.FC = () => {
                         element={
                             <ProtectedRoute>
                                 <GlobalProvider>
+                                    {/* HeaderContext */}
                                     <Routes>
                                         {routes.map((route, index) => (
                                             <Route
@@ -32,6 +33,7 @@ const App: React.FC = () => {
                                             />
                                         ))}
                                     </Routes>
+                                    {/* HeaderContext */}
                                 </GlobalProvider>
                             </ProtectedRoute>
                         }

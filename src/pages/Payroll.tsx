@@ -18,10 +18,6 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 import Utils from '../utils';
 
-const totalPagar = (total: number) => {
-    return <span className={`${total < 0 ? 'text-red-500' : 'text-green-500'}`}>${total.toFixed(2)}</span>;
-};
-
 const Payroll: React.FC = () => {
     const { entitiesState, addPayroll, createPreviewPayrollPDF, loading, isSidebarOpen } = useGlobalContext();
 
@@ -32,9 +28,55 @@ const Payroll: React.FC = () => {
         setIsOpenCreatePayroll(false);
     };
 
+    const totalPagar = (total: number) => {
+        return (
+            <span
+                className={`${
+                    total < 0
+                        ? 'inline-block rounded-full border border-red-700 bg-red-500 px-3 py-1 font-semibold text-white'
+                        : 'inline-block rounded-full border border-blue-400 bg-blue-50 px-3 py-1 font-semibold text-blue-500'
+                }`}>
+                ${total.toFixed(2)}
+            </span>
+        );
+    };
+
+    const styleSueldo = (sueldo: number) => {
+        return (
+            <span
+                className={`${sueldo < 0 ? 'text-red-500' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${sueldo.toFixed(2)}
+            </span>
+        );
+    };
+    const stylePrestamo = (prestamos: number) => {
+        return (
+            <span
+                className={`${prestamos <= 0 ? 'inline-block rounded-full border border-gray-700 bg-gray-500 px-3 py-1 font-semibold text-white' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${prestamos.toFixed(2)}
+            </span>
+        );
+    };
+    const styleInfonavit = (infonavit: number) => {
+        return (
+            <span
+                className={`${infonavit <= 0 ? 'inline-block rounded-full border border-gray-700 bg-gray-500 px-3 py-1 font-semibold text-white' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${infonavit.toFixed(2)}
+            </span>
+        );
+    };
+
     const columns: Column<PayrollInterface>[] = useMemo(
         () => [
-            { key: 'folio', header: 'Folio', render: (_, row) => `NOM${row.folio.toString().padStart(4, '0')}` },
+            {
+                key: 'folio',
+                header: 'Folio',
+                render: (_, row) => (
+                    <span className='inline-block rounded-full border border-blue-700 bg-blue-500 px-3 py-1 font-semibold text-white'>
+                        {`NOM${row.folio.toString().padStart(4, '0')}`}
+                    </span>
+                ),
+            },
             {
                 key: 'empleado',
                 header: 'Empleado',
@@ -44,17 +86,17 @@ const Payroll: React.FC = () => {
             {
                 key: 'sueldo',
                 header: 'Sueldo',
-                render: (_, row) => (row.sueldo ? `$${row.sueldo.toFixed(2)}` : 'Sin sueldo definido'),
+                render: (_, row) => styleSueldo(row.sueldo ?? 0),
             },
             {
                 key: 'prestamos',
                 header: 'Prestamos',
-                render: (_, row) => `$${(row.prestamos ?? 0).toFixed(2)}`,
+                render: (_, row) => stylePrestamo(row.prestamos ?? 0),
             },
             {
                 key: 'infonavit',
                 header: 'Infonavit',
-                render: (_, row) => `$${(row.infonavit ?? 0).toFixed(2)}`,
+                render: (_, row) => styleInfonavit(row.infonavit ?? 0),
             },
             {
                 key: 'total_pagar',

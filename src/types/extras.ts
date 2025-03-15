@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface Route {
-    path: 'employees' | 'payrolls' | 'loans' | 'weeklyReports';
+    path: 'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports';
     element: ReactNode;
     name?: string;
     entity?: string;

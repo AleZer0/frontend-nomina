@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import {
     GlobalContextInterface,
     EmployeeInterface,
+    OperatorInterface,
     PayrollInterface,
     LoanInterface,
     WeeklyReportData,
@@ -19,6 +20,7 @@ const GlobalContext = createContext<GlobalContextInterface | undefined>(undefine
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [entitiesState, setEntitiesState] = useState({
         employees: [] as EmployeeInterface[],
+        operators: [] as OperatorInterface[],
         payrolls: [] as PayrollInterface[],
         loans: [] as LoanInterface[],
         weeklyReports: [] as WeeklyReportData[],
@@ -30,13 +32,18 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
     const [pagination, setPagination] = useState({ page: 1, limit: 10 });
-    const [activeEntity, setActiveEntity] = useState<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>('employees');
+    const [activeEntity, setActiveEntity] = useState<
+        'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports'
+    >('employees');
     const [metaData, setMetaData] = useState<Record<string, MetaInterface>>({
         employees: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
+        operators: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
         payrolls: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
         loans: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
         weeklyReports: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
     });
+    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
 
     const fetchData = async (
         service: (params: any) => Promise<{ data: any; meta: MetaInterface }>,
@@ -57,12 +64,14 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const fetchEmployees = () => fetchData(EmployeeServices.getEmployees, 'employees');
+    const fetchOperators = () => fetchData(EmployeeServices.getEmployees, 'operators');
     const fetchPayrolls = () => fetchData(PayrollServices.getPayrolls, 'payrolls');
     const fetchLoans = () => fetchData(LoanServices.getLoans, 'loans');
     const fetchWeeklyReports = () => fetchData(WeeklyReports.getReportsList, 'weeklyReports');
 
     useEffect(() => {
         fetchEmployees();
+        fetchOperators();
         fetchPayrolls();
         fetchLoans();
         fetchWeeklyReports();
@@ -217,6 +226,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
         const fetchData = async () => {
             if (activeEntity === 'employees') await fetchEmployees();
+            if (activeEntity === 'operators') await fetchOperators();
             if (activeEntity === 'payrolls') await fetchPayrolls();
             if (activeEntity === 'loans') await fetchLoans();
             if (activeEntity === 'weeklyReports') await fetchWeeklyReports();
@@ -255,6 +265,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 fetchPayrolls,
                 fetchLoans,
                 fetchWeeklyReports,
+                isSidebarOpen,
+                toggleSidebar,
             }}>
             {children}
         </GlobalContext.Provider>

@@ -6,6 +6,7 @@ export interface UsuarioType {
 export interface GlobalContextInterface {
     entitiesState: {
         employees: EmployeeInterface[];
+        operators: OperatorInterface[];
         payrolls: PayrollInterface[];
         loans: LoanInterface[];
         weeklyReports: WeeklyReportData[];
@@ -23,8 +24,10 @@ export interface GlobalContextInterface {
     setLoading: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>;
     pagination: { page: number; limit: number };
     setPagination: React.Dispatch<React.SetStateAction<{ page: number; limit: number }>>;
-    activeEntity: 'employees' | 'payrolls' | 'loans' | 'weeklyReports';
-    setActiveEntity: React.Dispatch<React.SetStateAction<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>>;
+    activeEntity: 'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports';
+    setActiveEntity: React.Dispatch<
+        React.SetStateAction<'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports'>
+    >;
     metaData: Record<string, MetaInterface>;
     setMetaData: React.Dispatch<React.SetStateAction<Record<string, MetaInterface>>>;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;
@@ -39,6 +42,8 @@ export interface GlobalContextInterface {
     fetchPayrolls: () => Promise<void>;
     fetchLoans: () => Promise<void>;
     fetchWeeklyReports: () => Promise<void>;
+    isSidebarOpen: boolean;
+    toggleSidebar: () => void;
 }
 
 export interface AuthContextType {
@@ -77,6 +82,19 @@ export interface EmployeeInterface {
     nomina?: PayrollInterface[];
     prestamos?: LoanInterface[];
     ultima_nomina?: number;
+}
+
+export interface OperatorInterface {
+    id_operador: number;
+    estado: number;
+    pension_alimenticia?: number;
+    horas_extras?: number;
+    maniobras?: number;
+    diesel?: number;
+    precio_viaje?: number;
+    viaticos?: number;
+    casetas?: number;
+    otros?: number;
 }
 
 export interface PaymentInterface {

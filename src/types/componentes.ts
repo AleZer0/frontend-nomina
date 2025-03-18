@@ -19,6 +19,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 export interface TableProps<T> {
+    loading: boolean;
     columns: Column<T>[];
     data: T[];
     onRowClick?: (row: T) => void;

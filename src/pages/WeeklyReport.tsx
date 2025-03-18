@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { FaFilePdf } from 'react-icons/fa6';
 
-import Loader from '../components/Loader';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import Table from '../components/Table';
@@ -108,20 +107,10 @@ const WeeklyReport: React.FC = () => {
             {
                 key: 'semana',
                 header: 'Semana',
-                render: (_, row) => (
-                    <span className='inline-block rounded-full border border-blue-700 bg-blue-500 px-3 py-1 font-semibold text-white'>
-                        {row.semana}
-                    </span>
-                ),
             },
             {
                 key: 'empleados_pagados',
                 header: 'Empleados',
-                render: (_, row) => (
-                    <span className='inline-block rounded-full border border-blue-700 bg-blue-500 px-3 py-1 font-semibold text-white'>
-                        {row.empleados_pagados}
-                    </span>
-                ),
             },
             {
                 key: 'total_sueldos',
@@ -183,7 +172,7 @@ const WeeklyReport: React.FC = () => {
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
             <Header title='Reportes semanales' />
-            {loading['loadingReports'] ? <Loader /> : <Table columns={columns} data={entitiesState.weeklyReports} />}
+            <Table columns={columns} data={entitiesState.weeklyReports} loading={loading['weeklyReports']} />
         </section>
     );
 };

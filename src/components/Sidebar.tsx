@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { IoDocuments, IoMenu } from 'react-icons/io5';
+// import logotransportes from '../assets/logotransportes.png';
+
+import { IoDocuments } from 'react-icons/io5';
 import { BiSolidReport } from 'react-icons/bi';
-import { GiEntryDoor } from 'react-icons/gi';
 import { PiUsersThreeFill } from 'react-icons/pi';
 import { BsCash } from 'react-icons/bs';
 import { FaTruck } from 'react-icons/fa';
+import { CiLogout } from 'react-icons/ci';
 
 import Button from './Button';
 
@@ -21,7 +23,7 @@ const Sidebar: React.FC = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [showText, setShowText] = useState(false);
-    const { setPagination, setActiveEntity, isSidebarOpen, toggleSidebar } = useGlobalContext();
+    const { setPagination, setActiveEntity, isSidebarOpen } = useGlobalContext();
 
     const handleClickPage = (page: Route) => {
         if (!page) return;
@@ -38,7 +40,7 @@ const Sidebar: React.FC = () => {
 
     useEffect(() => {
         if (isSidebarOpen) {
-            const timeout = setTimeout(() => setShowText(true), 200); // Aparece después de la animación
+            const timeout = setTimeout(() => setShowText(true), 300);
             return () => clearTimeout(timeout);
         } else {
             setShowText(false);
@@ -47,21 +49,21 @@ const Sidebar: React.FC = () => {
 
     return (
         <>
-            <button
-                className='fixed top-4 left-2 z-50 cursor-pointer p-2 text-white hover:text-slate-400'
+            {/* <button
+                className='fixed top-4 left-2 z-50 cursor-pointer p-2 text-black hover:text-gray-400'
                 onClick={toggleSidebar}>
                 <IoMenu size={22} />
-            </button>
+            </button> */}
             <nav
-                className={`fixed z-40 flex h-screen flex-col bg-slate-900 bg-gradient-to-r to-slate-800 pt-20 text-white transition-all duration-500 ease-in-out ${
-                    isSidebarOpen ? 'w-64' : 'w-16'
+                className={`fixed z-40 flex h-screen flex-col bg-white pt-20 text-black transition-all duration-500 ease-in-out ${
+                    isSidebarOpen ? 'w-64' : 'w-20'
                 }`}>
                 <ul className='flex flex-col'>
                     {routes.map((route, index) => (
                         <li
                             key={index}
                             onClick={() => handleClickPage(route)}
-                            className={`flex cursor-pointer items-center gap-3 border-b border-slate-400 bg-gradient-to-r px-4 py-2 transition-all duration-200 ${route.name === selectedPage?.name && 'to-slate-500'} hover:to-slate-500`}>
+                            className={`m-3 flex cursor-pointer items-center gap-3 border-y border-gray-500 bg-gradient-to-r px-4 py-2 transition-all hover:border-l-8 hover:border-blue-500 ${route.name === selectedPage?.name && 'to-blue-300'} hover:to-blue-400`}>
                             {route.name === 'Empleados' ? (
                                 <PiUsersThreeFill size={20} />
                             ) : route.name === 'Operadores' ? (
@@ -85,13 +87,13 @@ const Sidebar: React.FC = () => {
                     ))}
                 </ul>
 
-                <div className='mt-auto border-t border-slate-400'>
+                <div className='mt-auto'>
                     <Button
                         variant='ghost'
                         size='md'
-                        icon={<GiEntryDoor size={17} />}
+                        icon={<CiLogout size={17} />}
                         onClick={handleLogout}
-                        className='w-full rounded-none bg-gradient-to-r px-4 py-2 transition-all duration-200 hover:to-slate-500'>
+                        className='w-full rounded-none border-y bg-gradient-to-r px-4 py-2 transition-all duration-200 hover:to-blue-500'>
                         {showText && 'Cerrar sesión'}
                     </Button>
                 </div>

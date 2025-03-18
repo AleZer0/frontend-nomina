@@ -6,7 +6,6 @@ import { CgDetailsMore } from 'react-icons/cg';
 import Table from '../components/Table';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 import Pagination from '../components/Pagination';
 
 import ViewLoan from '../modals/ViewLoan';
@@ -106,14 +105,11 @@ const Loans: React.FC = () => {
                 </Button>
             </Header>
 
-            {loading['loadingLoans'] ? (
-                <div className='my-4 flex justify-center'>
-                    <Loader />
-                </div>
-            ) : (
-                <Table columns={columns} data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)} />
-            )}
-
+            <Table
+                columns={columns}
+                data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)}
+                loading={loading['loans']}
+            />
             <Pagination />
 
             <ViewLoan

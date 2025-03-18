@@ -6,7 +6,6 @@ import { CgDetailsMore } from 'react-icons/cg';
 import Header from '../components/Header';
 import Table from '../components/Table';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 import Pagination from '../components/Pagination';
 
 import ViewEmployee from '../modals/ViewEmployee';
@@ -81,7 +80,6 @@ const Employees: React.FC = () => {
             {
                 key: 'id_empleado',
                 header: 'No. Empleado',
-                render: (_, row) => <span className='px-3 py-1 font-semibold text-blue-700'>{row.id_empleado}</span>,
             },
             {
                 key: 'nombre',
@@ -154,13 +152,11 @@ const Employees: React.FC = () => {
                 </Button>
             </Header>
 
-            {loading['employees'] ? (
-                <div className='my-4 flex justify-center'>
-                    <Loader />
-                </div>
-            ) : (
-                <Table columns={columns} data={entitiesState.employees.filter(employee => employee.estado !== 0)} />
-            )}
+            <Table
+                columns={columns}
+                data={entitiesState.employees.filter(employee => employee.estado !== 0)}
+                loading={loading['employees']}
+            />
 
             <Pagination />
 

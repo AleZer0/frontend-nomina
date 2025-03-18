@@ -30,7 +30,7 @@ const Pagination: React.FC = () => {
     };
 
     return (
-        <div className='mt-8 flex h-12 w-full items-center justify-center gap-2 bg-slate-200 bg-gradient-to-r to-slate-300 p-6'>
+        <div className='mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white p-6'>
             {/* Primera Página */}
             <Button
                 variant='ghost'
@@ -51,14 +51,14 @@ const Pagination: React.FC = () => {
 
             {/* Input de Página */}
             <form onSubmit={handleInputSubmit} className='flex items-center gap-2 text-lg font-medium'>
-                <span>Página</span>
+                {/* <span>Página</span> */}
                 <input
                     type='number'
                     value={inputPage}
                     onChange={handleInputChange}
                     className='w-14 rounded-lg border border-gray-300 px-2 py-1 text-center hover:shadow-xl'
                 />
-                <span>de {totalPages}</span>
+                <span> de {totalPages}</span>
             </form>
 
             {/* Página Siguiente */}

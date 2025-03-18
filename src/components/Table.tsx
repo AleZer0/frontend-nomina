@@ -1,9 +1,10 @@
 import { TableProps } from '../types/componentes';
+import Loader from '../components/Loader'; // Asegúrate de importar Loader
 
-const Table = <T extends object>({ columns, data = [], onRowClick }: TableProps<T>) => {
+const Table = <T extends object>({ columns, data = [], onRowClick, loading }: TableProps<T>) => {
     return (
         <div className='relative overflow-x-auto shadow-md sm:rounded-2xl'>
-            <table className='text-md w-full text-blue-950'>
+            <table className='text-md w-full text-black'>
                 <thead className='bg-gray-200 text-center uppercase'>
                     <tr className='flex flex-row items-center justify-between'>
                         {columns.map(col => (
@@ -14,9 +15,15 @@ const Table = <T extends object>({ columns, data = [], onRowClick }: TableProps<
                     </tr>
                 </thead>
 
-                {Array.isArray(data) && data.length > 0 ? (
-                    <tbody className='text-center'>
-                        {data.map((row, rowIndex) => (
+                <tbody className='text-center'>
+                    {loading ? (
+                        <td colSpan={columns.length} className='bg-white p-4'>
+                            <div className='flex justify-center'>
+                                <Loader />
+                            </div>
+                        </td>
+                    ) : Array.isArray(data) && data.length > 0 ? (
+                        data.map((row, rowIndex) => (
                             <tr
                                 key={rowIndex}
                                 className='flex flex-row items-center justify-between border-b border-gray-200 odd:bg-white even:bg-gray-50'
@@ -31,17 +38,15 @@ const Table = <T extends object>({ columns, data = [], onRowClick }: TableProps<
                                     </td>
                                 ))}
                             </tr>
-                        ))}
-                    </tbody>
-                ) : (
-                    <tbody className='text-center'>
+                        ))
+                    ) : (
                         <tr>
                             <td colSpan={columns.length} className='bg-white p-4'>
                                 No hay registros disponibles
                             </td>
                         </tr>
-                    </tbody>
-                )}
+                    )}
+                </tbody>
             </table>
         </div>
     );

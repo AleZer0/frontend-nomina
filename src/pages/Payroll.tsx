@@ -5,7 +5,6 @@ import { FaFilePdf } from 'react-icons/fa6';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
-import Loader from '../components/Loader';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
 
@@ -72,7 +71,7 @@ const Payroll: React.FC = () => {
                 key: 'folio',
                 header: 'Folio',
                 render: (_, row) => (
-                    <span className='inline-block rounded-full border border-blue-700 bg-blue-500 px-3 py-1 font-semibold text-white'>
+                    <span className='inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold text-gray-500'>
                         {`NOM${row.folio.toString().padStart(4, '0')}`}
                     </span>
                 ),
@@ -145,13 +144,7 @@ const Payroll: React.FC = () => {
                 </Button>
             </Header>
 
-            {loading['payrolls'] ? (
-                <div className='my-4 flex justify-center'>
-                    <Loader />
-                </div>
-            ) : (
-                <Table columns={columns} data={entitiesState.payrolls} />
-            )}
+            <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
 
             <Pagination />
 

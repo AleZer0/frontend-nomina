@@ -43,6 +43,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         weeklyReports: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
     });
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const [contentHeader, setContentHeader] = useState<ReactNode | null>(null);
     const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
 
     const fetchData = async (
@@ -266,6 +267,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 fetchLoans,
                 fetchWeeklyReports,
                 isSidebarOpen,
+                contentHeader,
+                setContentHeader,
                 toggleSidebar,
             }}>
             {children}

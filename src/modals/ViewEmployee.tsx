@@ -31,7 +31,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     handleClickEdit,
     handleClickDelate,
 }) => {
-    const { selectedEntities } = useGlobalContext();
+    const { selectedEntities, loading } = useGlobalContext();
 
     const handleClickDelateButton = () => {
         if (!selectedEntities.selectedEmployee) return;
@@ -135,7 +135,11 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
             <div className='flex flex-col space-y-8'>
                 <Form fields={fields} data={selectedEntities.selectedEmployee ?? {}} disabled={true} columns={2} />
 
-                <Table columns={columns} data={selectedEntities.selectedEmployee?.nomina ?? []} />
+                <Table
+                    columns={columns}
+                    data={selectedEntities.selectedEmployee?.nomina ?? []}
+                    loading={loading['prestamos']}
+                />
 
                 <div className='mt-4 flex justify-end gap-2'>
                     {buttons.map(({ variant, children, icon, onClick, className }) => (

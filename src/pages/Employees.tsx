@@ -1,9 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { FaUserPlus } from 'react-icons/fa';
 import { CgDetailsMore } from 'react-icons/cg';
 
-import Header from '../components/Header';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import Pagination from '../components/Pagination';
@@ -17,6 +15,7 @@ import { EmployeeInterface, PayrollInterface } from '../types';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
+import { FaUserPlus } from 'react-icons/fa';
 
 const Employees: React.FC = () => {
     const {
@@ -29,12 +28,31 @@ const Employees: React.FC = () => {
         addPayroll,
         loading,
         isSidebarOpen,
+        setContentHeader,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
+
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Empleados
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<FaUserPlus size={17} />}
+                    onClick={() => setIsOpenCreateEmployee(true)}>
+                    Nuevo empleado
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
 
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
@@ -139,19 +157,9 @@ const Employees: React.FC = () => {
 
     return (
         <section
-            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+            className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
-            <Header title='Listado de Empleados'>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<FaUserPlus size={17} />}
-                    onClick={() => setIsOpenCreateEmployee(true)}>
-                    Nuevo empleado
-                </Button>
-            </Header>
-
             <Table
                 columns={columns}
                 data={entitiesState.employees.filter(employee => employee.estado !== 0)}

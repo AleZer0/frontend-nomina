@@ -19,7 +19,7 @@ interface ViewLoanProps {
 }
 
 const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan }) => {
-    const { selectedEntities } = useGlobalContext();
+    const { selectedEntities, loading } = useGlobalContext();
 
     const fields: FormField[] = useMemo(
         () => [
@@ -99,7 +99,11 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan
             <div className='flex flex-col space-y-8'>
                 <Form fields={fields} data={selectedEntities.selectedLoan ?? {}} disabled={true} columns={2} />
 
-                <Table columns={columns} data={selectedEntities.selectedLoan?.abonos ?? []} />
+                <Table
+                    columns={columns}
+                    data={selectedEntities.selectedLoan?.abonos ?? []}
+                    loading={loading['abonos']}
+                />
                 <div className='mt-4 flex justify-end gap-2'>
                     <Button variant='add' icon={<MdPayments size={17} />} onClick={() => handleClickPayLoan()}>
                         Abonar

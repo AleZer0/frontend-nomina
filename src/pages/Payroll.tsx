@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { HiDocumentAdd } from 'react-icons/hi';
 import { FaFilePdf } from 'react-icons/fa6';
 
-import Header from '../components/Header';
 import Button from '../components/Button';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
@@ -18,7 +17,8 @@ import { useGlobalContext } from '../context/GlobalContext';
 import Utils from '../utils';
 
 const Payroll: React.FC = () => {
-    const { entitiesState, addPayroll, createPreviewPayrollPDF, loading, isSidebarOpen } = useGlobalContext();
+    const { entitiesState, addPayroll, createPreviewPayrollPDF, loading, isSidebarOpen, setContentHeader } =
+        useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
 
@@ -26,6 +26,42 @@ const Payroll: React.FC = () => {
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
     };
+
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Nóminas
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<HiDocumentAdd size={17} />}
+                    onClick={() => setIsOpenCreatePayroll(true)}>
+                    Nueva nómina
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
+
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Nóminas
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<HiDocumentAdd size={17} />}
+                    onClick={() => setIsOpenCreatePayroll(true)}>
+                    Nueva nómina
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
 
     const totalPagar = (total: number) => {
         return (
@@ -51,7 +87,7 @@ const Payroll: React.FC = () => {
     const stylePrestamo = (prestamos: number) => {
         return (
             <span
-                className={`${prestamos <= 0 ? 'inline-block rounded-full border border-gray-700 bg-gray-500 px-3 py-1 font-semibold text-white' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                className={`${prestamos <= 0 ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
                 ${prestamos.toFixed(2)}
             </span>
         );
@@ -59,8 +95,40 @@ const Payroll: React.FC = () => {
     const styleInfonavit = (infonavit: number) => {
         return (
             <span
-                className={`${infonavit <= 0 ? 'inline-block rounded-full border border-gray-700 bg-gray-500 px-3 py-1 font-semibold text-white' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                className={`${infonavit <= 0 ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
                 ${infonavit.toFixed(2)}
+            </span>
+        );
+    };
+    const stylePension = (pension_alimenticia: number) => {
+        return (
+            <span
+                className={`${pension_alimenticia <= 0 ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${pension_alimenticia.toFixed(2)}
+            </span>
+        );
+    };
+    const styleHoras = (horas_extras: number) => {
+        return (
+            <span
+                className={`${horas_extras <= 0 ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${horas_extras.toFixed(2)}
+            </span>
+        );
+    };
+    const styleManiobras = (maniobras: number) => {
+        return (
+            <span
+                className={`${maniobras <= 0 ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${maniobras.toFixed(2)}
+            </span>
+        );
+    };
+    const styleOtros = (otros: number) => {
+        return (
+            <span
+                className={`${otros <= 0 ? 'inline-block rounded-full border border-gray-300 bg-gray-200 px-3 py-1 font-semibold' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                ${otros.toFixed(2)}
             </span>
         );
     };
@@ -98,6 +166,26 @@ const Payroll: React.FC = () => {
                 render: (_, row) => styleInfonavit(row.infonavit ?? 0),
             },
             {
+                key: 'pension_alimenticia',
+                header: 'Pensión alimenticia',
+                render: (_, row) => stylePension(row.pension_alimenticia ?? 0),
+            },
+            {
+                key: 'horas_extras',
+                header: 'Horas extras',
+                render: (_, row) => styleHoras(row.horas_extras ?? 0),
+            },
+            {
+                key: 'maniobras',
+                header: 'Maniobras',
+                render: (_, row) => styleManiobras(row.maniobras ?? 0),
+            },
+            {
+                key: 'otros',
+                header: 'Otros',
+                render: (_, row) => styleOtros(row.otros ?? 0),
+            },
+            {
                 key: 'total_pagar',
                 header: 'Total a Pagar',
                 render: (_, row) =>
@@ -131,19 +219,9 @@ const Payroll: React.FC = () => {
 
     return (
         <section
-            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+            className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
-            <Header title='Listado de Nóminas'>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<HiDocumentAdd size={17} />}
-                    onClick={() => setIsOpenCreatePayroll(true)}>
-                    Nueva nómina
-                </Button>
-            </Header>
-
             <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
 
             <Pagination />

@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface UsuarioType {
     id_usuario: number;
     nombre_usuario: string;
@@ -43,6 +45,8 @@ export interface GlobalContextInterface {
     fetchLoans: () => Promise<void>;
     fetchWeeklyReports: () => Promise<void>;
     isSidebarOpen: boolean;
+    contentHeader: ReactNode;
+    setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
 }
 
@@ -127,6 +131,10 @@ export interface PayrollInterface {
     aguinaldo?: number;
     finiquito?: number;
     sueldo: number;
+    pension_alimenticia: number;
+    horas_extras: number;
+    maniobras: number;
+    otros: number;
     id_empleado: number;
     created_at?: string;
     updated_at?: string;

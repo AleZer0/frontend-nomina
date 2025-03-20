@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { MdAttachMoney } from 'react-icons/md';
 import { CgDetailsMore } from 'react-icons/cg';
+import { MdAttachMoney } from 'react-icons/md';
 
 import Table from '../components/Table';
-import Header from '../components/Header';
 import Button from '../components/Button';
 import Pagination from '../components/Pagination';
 
@@ -20,8 +19,16 @@ import { Column } from '../types/extras';
 import Utils from '../utils';
 
 const Loans: React.FC = () => {
-    const { entitiesState, selectedEntities, setSelectedEntities, addLoan, updateLoan, loading, isSidebarOpen } =
-        useGlobalContext();
+    const {
+        entitiesState,
+        selectedEntities,
+        setSelectedEntities,
+        addLoan,
+        updateLoan,
+        loading,
+        isSidebarOpen,
+        setContentHeader,
+    } = useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
@@ -42,6 +49,24 @@ const Loans: React.FC = () => {
         setIsOpenPayLoan(false);
         if (newSelectedLoan.saldo_pendiente === 0) setIsOpenViewLoan(false);
     };
+
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Préstamos
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<MdAttachMoney size={17} />}
+                    onClick={() => setIsOpenCreateLoan(true)}>
+                    Nuevo préstamo
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
 
     const columns: Column<LoanInterface>[] = useMemo(
         () => [
@@ -92,19 +117,9 @@ const Loans: React.FC = () => {
 
     return (
         <section
-            className={`mb-20 flex-auto p-8 transition-all duration-300 ease-in-out ${
+            className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
-            <Header title='Listado de préstamos'>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<MdAttachMoney size={17} />}
-                    onClick={() => setIsOpenCreateLoan(true)}>
-                    Nuevo préstamo
-                </Button>
-            </Header>
-
             <Table
                 columns={columns}
                 data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)}

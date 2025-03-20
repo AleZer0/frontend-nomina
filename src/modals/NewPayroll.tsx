@@ -31,6 +31,10 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         finiquito: 0,
         vacaciones: 0,
         aguinaldo: 0,
+        pension_alimenticia: 0,
+        horas_extras: 0,
+        maniobras: 0,
+        otros: 0,
         id_empleado: selectedEntities.selectedEmployee?.id_empleado ?? 0,
         ids_prestamos: [] as PrestamoAbono[],
     };
@@ -162,6 +166,38 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 inputSize: 'md',
             },
             {
+                name: 'pension_alimenticia',
+                label: 'Pension Alimenticia',
+                type: 'number',
+                placeholder: 'Ingrese la cantidad a pension alimenticia',
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'horas_extras',
+                label: 'Horas extras',
+                type: 'number',
+                placeholder: 'Ingrese la cantidad a horas extras',
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'maniobras',
+                label: 'Maniobras',
+                type: 'number',
+                placeholder: 'Ingrese la cantidad a maniobras',
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'Otros',
+                label: 'Otros',
+                type: 'number',
+                placeholder: 'Ingrese la cantidad a otros',
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
                 name: 'sueldo',
                 label: 'Sueldo',
                 type: 'number',
@@ -230,6 +266,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                             ? selectedEntities.selectedEmployee.prestamos.filter(pres => pres.saldo_pendiente !== 0)
                             : []
                     }
+                    loading={loading['prestamos']}
                 />
             </Form>
         </Modal>

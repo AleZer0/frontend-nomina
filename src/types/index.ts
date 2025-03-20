@@ -167,6 +167,10 @@ export interface WeeklyReportData {
     total_finiquitos: number;
     total_prestamos: number;
     total_infonavit: number;
+    total_pension_alimenticia: number;
+    total_pago_horas_extras: number;
+    total_maniobras: number;
+    total_otros: number;
     total_neto: number;
 }
 

@@ -94,7 +94,7 @@ const WeeklyReport: React.FC = () => {
                         isLoading={loading[row.semana]}
                         disabled={loading[row.semana]}
                         onClick={() => createPreviewWeeklyReportPDF(2025, row)}>
-                        Descargar
+                        PDF
                     </Button>
                 ),
             },

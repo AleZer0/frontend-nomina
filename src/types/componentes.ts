@@ -34,7 +34,7 @@ export interface FormProps {
     variant?: 'add' | 'save' | 'edit' | 'delete' | 'details' | 'generate' | 'disabled';
     direction?: 'start' | 'center' | 'end';
     disabled?: boolean;
-    columns?: 1 | 2;
+    columns?: 1 | 2 | 3;
     extra?: (id_empleado: number) => void;
     children?: ReactNode;
     loadingButton?: boolean;

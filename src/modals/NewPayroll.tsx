@@ -33,6 +33,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         aguinaldo: 0,
         pension_alimenticia: 0,
         horas_extras: 0,
+        pago_horas_extras: 0,
         maniobras: 0,
         otros: 0,
         id_empleado: selectedEntities.selectedEmployee?.id_empleado ?? 0,
@@ -100,7 +101,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             .catch(err => {
                 throw new Error(`Error al obtener todos los empleados ${err}`);
             });
-    }, [employees]);
+    }, []);
 
     const fields: FormField[] = useMemo(
         () => [
@@ -182,6 +183,14 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 inputSize: 'md',
             },
             {
+                name: 'pago_horas_extras',
+                label: 'Pago de horas extras',
+                type: 'number',
+                placeholder: 'Ingrese el pago de horas extras',
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
                 name: 'maniobras',
                 label: 'Maniobras',
                 type: 'number',
@@ -255,7 +264,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 submitLabel='Crear nómina'
                 variant='save'
                 direction='end'
-                columns={2}
+                columns={3}
                 extra={handleSelectEmployee}
                 loadingButton={loading['addPayroll']}
                 labelLoadingButton='Creando nómina...'>

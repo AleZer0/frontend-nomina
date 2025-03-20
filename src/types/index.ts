@@ -133,6 +133,7 @@ export interface PayrollInterface {
     sueldo: number;
     pension_alimenticia: number;
     horas_extras: number;
+    pago_horas_extras: number;
     maniobras: number;
     otros: number;
     id_empleado: number;

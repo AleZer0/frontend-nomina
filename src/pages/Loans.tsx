@@ -50,6 +50,15 @@ const Loans: React.FC = () => {
         if (newSelectedLoan.saldo_pendiente === 0) setIsOpenViewLoan(false);
     };
 
+    const styleMoney = (cantidad: number) => {
+        return (
+            <span
+                className={`inline-block rounded-full border px-1.5 py-1 font-semibold ${!cantidad ? 'border-gray-300 bg-gray-100 text-gray-500' : cantidad && cantidad < 0 ? 'border-red-400 bg-red-200 text-red-700' : 'border-green-200 bg-green-50 text-green-700'}`}>
+                ${cantidad.toFixed(2)}
+            </span>
+        );
+    };
+
     useEffect(() => {
         setContentHeader(
             <div className='flex w-full items-center justify-between px-4'>
@@ -83,17 +92,17 @@ const Loans: React.FC = () => {
             {
                 key: 'monto_total',
                 header: 'Monto Total',
-                render: (_, row) => `$${(row.monto_total ?? 0).toFixed(2)}`,
+                render: (_, row) => styleMoney(row.monto_total ?? 0),
             },
             {
                 key: 'saldo_pendiente',
                 header: 'Saldo Pendiente',
-                render: (_, row) => `$${(row.saldo_pendiente ?? 0).toFixed(2)}`,
+                render: (_, row) => styleMoney(row.saldo_pendiente ?? 0),
             },
             {
                 key: 'ultimo_abono',
                 header: 'Último Abono',
-                render: (_, row) => `$${(row.ultimo_abono ?? 0).toFixed(2)}`,
+                render: (_, row) => styleMoney(row.ultimo_abono ?? 0),
             },
             {
                 key: 'accion',

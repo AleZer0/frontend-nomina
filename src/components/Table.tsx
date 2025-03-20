@@ -4,8 +4,8 @@ import Loader from '../components/Loader'; // Asegúrate de importar Loader
 const Table = <T extends object>({ columns, data = [], onRowClick, loading }: TableProps<T>) => {
     return (
         <div className='relative overflow-x-auto shadow-2xl sm:rounded-2xl'>
-            <table className='text-md w-full text-black'>
-                <thead className='bg-gray-200 text-center uppercase'>
+            <table className='w-full text-base text-black'>
+                <thead className='bg-gray-300 text-center uppercase'>
                     <tr className='flex flex-row items-center justify-between'>
                         {columns.map(col => (
                             <th scope='col' key={String(col.key)} className='flex-1 p-3'>

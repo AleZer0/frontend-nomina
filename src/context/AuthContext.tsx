@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setError('Usuario o contraseña incorrectos.');
             }
         } catch (err) {
-            setError('Error al iniciar sesión.');
+            setError('Usuario o contraseña incorrectos.');
             console.error('Error en login:', err);
         } finally {
             setLoading(false);

@@ -10,6 +10,7 @@ import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
 import EditEmployee from '../modals/EditEmployee';
 import NewPayroll from '../modals/NewPayroll';
+import Popup from '../components/Popup';
 
 import { EmployeeInterface, PayrollInterface } from '../types';
 import { Column } from '../types/extras';
@@ -35,6 +36,7 @@ const Employees: React.FC = () => {
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     useEffect(() => {
         setContentHeader(
@@ -57,6 +59,8 @@ const Employees: React.FC = () => {
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
         setIsOpenCreateEmployee(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
     };
 
     const handleUpdateEmployee = async (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => {
@@ -160,6 +164,12 @@ const Employees: React.FC = () => {
             className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
+            {showSuccess && (
+                <div className='mb-4 flex justify-center'>
+                    <Popup>¡Empleado registrado con éxito!</Popup>
+                </div>
+            )}
+
             <Table
                 columns={columns}
                 data={entitiesState.employees.filter(employee => employee.estado !== 0)}

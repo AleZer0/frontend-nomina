@@ -6,6 +6,7 @@ import { FaFilePdf } from 'react-icons/fa6';
 import Button from '../components/Button';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
+import Popup from '../components/Popup';
 
 import NewPayroll from '../modals/NewPayroll';
 
@@ -21,29 +22,14 @@ const Payroll: React.FC = () => {
         useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
     };
-
-    useEffect(() => {
-        setContentHeader(
-            <div className='flex w-full items-center justify-between px-4'>
-                <h1
-                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
-                    Listado de Nóminas
-                </h1>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<HiDocumentAdd size={17} />}
-                    onClick={() => setIsOpenCreatePayroll(true)}>
-                    Nueva nómina
-                </Button>
-            </div>
-        );
-    }, [isSidebarOpen]);
 
     useEffect(() => {
         setContentHeader(
@@ -193,6 +179,11 @@ const Payroll: React.FC = () => {
             className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
+            {showSuccess && (
+                <div className='mb-4 flex justify-center'>
+                    <Popup>¡Nómina registrada con éxito!</Popup>
+                </div>
+            )}
             <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
 
             <Pagination />

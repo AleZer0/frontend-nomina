@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { AiOutlineUserAdd } from 'react-icons/ai';
 
 import Modal from '../components/Modal';
 import Form from '../components/Form';
-import Popup from '../components/Popup';
 
 import { EmployeeInterface } from '../types';
 import { FormField } from '../types/extras';
@@ -18,8 +17,6 @@ interface CreateEmployeeModalProps {
 
 const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const { loading } = useGlobalContext();
-    const [showSuccess, setShowSuccess] = useState(false);
-
     const emptyEmployee: Omit<EmployeeInterface, 'id_empleado'> = {
         nombre: '',
         apellido: '',
@@ -40,8 +37,6 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
 
         try {
             await onSubmit(newEmployee);
-            setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 3000);
         } catch (error) {
             console.error('Error al registrar el empleado', error);
         }
@@ -109,7 +104,6 @@ const NewEmployee: React.FC<CreateEmployeeModalProps> = ({ isOpen, onClose, onSu
     return (
         <>
             <Modal isOpen={isOpen} onClose={onClose} title='Añadir un nuevo empleado' containerClassName='max-w-3xl'>
-                {showSuccess && <Popup>¡Empleado registrado con éxito!</Popup>}
                 <Form
                     fields={fields}
                     data={emptyEmployee}

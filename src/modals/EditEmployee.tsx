@@ -18,6 +18,8 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
     const { selectedEntities, loading } = useGlobalContext();
 
     const handleSubmit = (values: Partial<EmployeeInterface>) => {
+        let newValues = { ...values };
+
         if (!values.nombre && !selectedEntities['selectedEmployee']?.nombre) {
             alert('El campo Nombre es obligatorio.');
             return;
@@ -30,10 +32,16 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
             alert('El campo Puesto es obligatorio.');
             return;
         }
+        if (!values.sueldo && !selectedEntities['selectedEmployee']?.sueldo) {
+            newValues = {
+                ...values,
+                sueldo: 0,
+            };
+        }
 
         const updatedEmployee: Partial<EmployeeInterface> = {
             ...selectedEntities['selectedEmployee'],
-            ...values,
+            ...newValues,
         };
 
         onSubmit(selectedEntities['selectedEmployee']?.id_empleado ?? 0, updatedEmployee);

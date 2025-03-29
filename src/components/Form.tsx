@@ -50,7 +50,7 @@ const Form: React.FC<FormProps> = ({
 
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'number' ? (value === '' ? undefined : Number(value)) : value,
+            [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value,
         }));
     };
 

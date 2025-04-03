@@ -7,7 +7,7 @@ import Button from '../components/Button';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
 
-import NewPayroll from '../modals/NewPayroll';
+import NewPayroll from '../components/modals/NewPayroll';
 
 import { PayrollInterface } from '../types';
 import { Column } from '../types/extras';

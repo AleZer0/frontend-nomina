@@ -7,10 +7,10 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 import Pagination from '../components/Pagination';
 
-import ViewEmployee from '../modals/ViewEmployee';
-import NewEmployee from '../modals/NewEmployee';
-import EditEmployee from '../modals/EditEmployee';
-import NewPayroll from '../modals/NewPayroll';
+import ViewEmployee from '../components/modals/ViewEmployee';
+import NewEmployee from '../components/modals/NewEmployee';
+import EditEmployee from '../components/modals/EditEmployee';
+import NewPayroll from '../components/modals/NewPayroll';
 import Search from '../components/Search';
 import Popup from '../components/Popup';
 
@@ -31,7 +31,6 @@ const Employees: React.FC = () => {
         loading,
         isSidebarOpen,
         setContentHeader,
-        fetchSearchEmployees,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);

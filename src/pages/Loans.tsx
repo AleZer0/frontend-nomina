@@ -7,9 +7,9 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 import Pagination from '../components/Pagination';
 
-import ViewLoan from '../modals/ViewLoan';
-import NewLoan from '../modals/NewLoan';
-import PayLoan from '../modals/Payloan';
+import ViewLoan from '../components/modals/ViewLoan';
+import NewLoan from '../components/modals/NewLoan';
+import PayLoan from '../components/modals/Payloan';
 
 import { useGlobalContext } from '../context/GlobalContext';
 

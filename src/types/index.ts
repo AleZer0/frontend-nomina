@@ -182,4 +182,6 @@ export interface MetaInterface {
     totalPages: number;
     currentPage: number;
     recordsPerPage: number;
+    sortBy: string;
+    order: 'asc' | 'desc';
 }

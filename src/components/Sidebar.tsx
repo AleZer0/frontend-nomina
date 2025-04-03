@@ -55,7 +55,7 @@ const Sidebar: React.FC = () => {
                 <IoMenu size={22} />
             </button>
             <nav
-                className={`fixed z-40 flex h-screen flex-col bg-white pt-20 text-black shadow-2xl transition-all duration-500 ease-in-out ${
+                className={`fixed z-40 flex h-screen flex-col bg-white pt-20 text-black inset-shadow-xs shadow-current transition-all duration-500 ease-in-out ${
                     isSidebarOpen ? 'w-64' : 'w-20'
                 }`}>
                 <ul className='flex flex-col'>

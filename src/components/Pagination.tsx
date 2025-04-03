@@ -30,7 +30,7 @@ const Pagination: React.FC = () => {
     };
 
     return (
-        <div className='mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white p-6'>
+        <div className='mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white p-6'>
             {/* Primera Página */}
             <Button
                 variant='ghost'

@@ -64,6 +64,19 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const fetchSearchEmployees = async (q: string) => {
+        setLoading(prev => ({ ...prev, ['employees']: true }));
+        try {
+            const { data, meta } = await EmployeeServices.searchEmployees(q, { estado: 1, ...pagination });
+            setEntitiesState(preview => ({ ...preview, ['employees']: Utils.formatDates(data) }));
+            setMetaData(prev => ({ ...prev, ['employees']: meta }));
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, ['employees']: false }));
+        }
+    };
+
     const fetchEmployees = () => fetchData(EmployeeServices.getEmployees, 'employees');
     const fetchOperators = () => fetchData(EmployeeServices.getEmployees, 'operators');
     const fetchPayrolls = () => fetchData(PayrollServices.getPayrolls, 'payrolls');
@@ -270,6 +283,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 contentHeader,
                 setContentHeader,
                 toggleSidebar,
+                fetchSearchEmployees,
             }}>
             {children}
         </GlobalContext.Provider>

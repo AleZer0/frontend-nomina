@@ -48,6 +48,7 @@ export interface GlobalContextInterface {
     contentHeader: ReactNode;
     setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
+    fetchSearchEmployees: (q: string) => Promise<void>;
 }
 
 export interface AuthContextType {

@@ -16,6 +16,7 @@ import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
 import { FaUserPlus } from 'react-icons/fa';
+import Search from '../components/Search';
 
 const Employees: React.FC = () => {
     const {
@@ -35,7 +36,6 @@ const Employees: React.FC = () => {
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
-
     useEffect(() => {
         setContentHeader(
             <div className='flex w-full items-center justify-between px-4'>
@@ -77,17 +77,17 @@ const Employees: React.FC = () => {
         setIsOpenCreatePayroll(false);
     };
 
-    const total_sueldo = (sueldo: number | undefined | null) => {
-        if (sueldo === undefined || sueldo === null) {
+    const total_sueldo = (sueldo: number | undefined | null | '') => {
+        if (sueldo === undefined || sueldo === null || sueldo === '') {
             return (
                 <span className='inline-block rounded-full border border-red-300 bg-red-100 px-3 py-1 font-semibold text-red-500'>
-                    Sin sueldo
+                    Sin sueldo asignado
                 </span>
             );
         }
         return (
             <span
-                className={`${sueldo < 0 ? 'text-red-500' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
+                className={`${sueldo <= 0 ? 'inline-block rounded-full border border-red-300 bg-red-100 px-3 py-1 font-semibold text-red-500' : 'inline-block rounded-full border border-green-200 bg-green-50 px-3 py-1 font-semibold text-green-700'}`}>
                 ${sueldo.toFixed(2)}
             </span>
         );
@@ -157,14 +157,12 @@ const Employees: React.FC = () => {
 
     return (
         <section
-            className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
+            className={`mb-20 flex-auto p-6 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
-            <Table
-                columns={columns}
-                data={entitiesState.employees.filter(employee => employee.estado !== 0)}
-                loading={loading['employees']}
-            />
+            <Search />
+
+            <Table columns={columns} data={entitiesState.employees} loading={loading['employees']} />
 
             <Pagination />
 

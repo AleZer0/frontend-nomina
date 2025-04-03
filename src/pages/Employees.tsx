@@ -17,6 +17,7 @@ import { Column } from '../types/extras';
 import { useGlobalContext } from '../context/GlobalContext';
 import { FaUserPlus } from 'react-icons/fa';
 import Search from '../components/Search';
+import Popup from '../components/Popup';
 
 const Employees: React.FC = () => {
     const {
@@ -36,6 +37,7 @@ const Employees: React.FC = () => {
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     useEffect(() => {
         setContentHeader(
             <div className='flex w-full items-center justify-between px-4'>
@@ -57,6 +59,8 @@ const Employees: React.FC = () => {
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
         setIsOpenCreateEmployee(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
     };
 
     const handleUpdateEmployee = async (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => {
@@ -160,6 +164,11 @@ const Employees: React.FC = () => {
             className={`mb-20 flex-auto p-6 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
+            {showSuccess && (
+                <div className='mb-4 flex justify-center'>
+                    <Popup>¡Empleado registrado con éxito!</Popup>
+                </div>
+            )}
             <Search />
 
             <Table columns={columns} data={entitiesState.employees} loading={loading['employees']} />

@@ -17,6 +17,7 @@ import { LoanInterface, PaymentInterface } from '../types';
 import { Column } from '../types/extras';
 
 import Utils from '../utils';
+import Popup from '../components/Popup';
 
 const Loans: React.FC = () => {
     const {
@@ -33,10 +34,13 @@ const Loans: React.FC = () => {
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
     const [isOpenPayLoan, setIsOpenPayLoan] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleCreateLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         await addLoan(newLoan);
         setIsOpenCreateLoan(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
     };
 
     const handlePayLoan = async (updatedLoan: Partial<PaymentInterface>) => {
@@ -129,6 +133,11 @@ const Loans: React.FC = () => {
             className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
+            {showSuccess && (
+                <div className='mb-4 flex justify-center'>
+                    <Popup>¡Prestamo registrado con éxito!</Popup>
+                </div>
+            )}
             <Table
                 columns={columns}
                 data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)}

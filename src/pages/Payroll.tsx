@@ -15,16 +15,20 @@ import { Column } from '../types/extras';
 import { useGlobalContext } from '../context/GlobalContext';
 
 import Utils from '../utils';
+import Popup from '../components/Popup';
 
 const Payroll: React.FC = () => {
     const { entitiesState, addPayroll, createPreviewPayrollPDF, loading, isSidebarOpen, setContentHeader } =
         useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
     };
 
     useEffect(() => {
@@ -193,6 +197,11 @@ const Payroll: React.FC = () => {
             className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-16'
             }`}>
+            {showSuccess && (
+                <div className='mb-4 flex justify-center'>
+                    <Popup>¡Nómina registrada con éxito!</Popup>
+                </div>
+            )}
             <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
 
             <Pagination />

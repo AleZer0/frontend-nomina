@@ -64,16 +64,21 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const fetchSearchEmployees = async (q: string) => {
-        setLoading(prev => ({ ...prev, ['employees']: true }));
+    const fetchSearchEmployees = async (query: string, sortKey?: string, sortDirection?: 'asc' | 'desc') => {
         try {
-            const { data, meta } = await EmployeeServices.searchEmployees(q, { estado: 1, ...pagination });
-            setEntitiesState(preview => ({ ...preview, ['employees']: Utils.formatDates(data) }));
-            setMetaData(prev => ({ ...prev, ['employees']: meta }));
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(prev => ({ ...prev, ['employees']: false }));
+            const params = {
+                estado: 1,
+                page: 1,
+                limit: 10,
+                q: query,
+                sort: sortKey,
+                order: sortDirection,
+            };
+
+            const { data } = await EmployeeServices.getEmployees(params);
+            setEntitiesState(prev => ({ ...prev, employees: Utils.formatDates(data) }));
+        } catch (err) {
+            setError('Error al buscar empleados');
         }
     };
 

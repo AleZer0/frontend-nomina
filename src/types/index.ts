@@ -48,7 +48,6 @@ export interface GlobalContextInterface {
     contentHeader: ReactNode;
     setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
-    fetchSearchEmployees: (q: string) => Promise<void>;
 }
 
 export interface AuthContextType {
@@ -71,6 +70,9 @@ export interface ParamsInterface {
     page: number;
     limit: number;
     year?: number;
+    q?: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
 }
 
 export interface EmployeeInterface {

@@ -8,8 +8,8 @@ export interface Route {
 }
 
 export interface Column<T> {
-    key: keyof T | string;
-    header: string;
+    key: keyof T | string | 'action';
+    header: string | JSX.Element;
     render?: (value: any, row: T) => React.ReactNode;
 }
 

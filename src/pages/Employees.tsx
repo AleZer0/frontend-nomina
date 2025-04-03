@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { CgDetailsMore } from 'react-icons/cg';
+import { FaSortAmountDown, FaUserPlus } from 'react-icons/fa';
 
 import Table from '../components/Table';
 import Button from '../components/Button';
@@ -10,14 +11,13 @@ import ViewEmployee from '../modals/ViewEmployee';
 import NewEmployee from '../modals/NewEmployee';
 import EditEmployee from '../modals/EditEmployee';
 import NewPayroll from '../modals/NewPayroll';
+import Search from '../components/Search';
+import Popup from '../components/Popup';
 
 import { EmployeeInterface, PayrollInterface } from '../types';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
-import { FaUserPlus } from 'react-icons/fa';
-import Search from '../components/Search';
-import Popup from '../components/Popup';
 
 const Employees: React.FC = () => {
     const {
@@ -31,6 +31,7 @@ const Employees: React.FC = () => {
         loading,
         isSidebarOpen,
         setContentHeader,
+        fetchSearchEmployees,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
@@ -38,6 +39,10 @@ const Employees: React.FC = () => {
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [query, setQuery] = useState('');
+    const [sortKey, setSortKey] = useState<string>('nombre');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
     useEffect(() => {
         setContentHeader(
             <div className='flex w-full items-center justify-between px-4'>
@@ -105,15 +110,69 @@ const Employees: React.FC = () => {
             },
             {
                 key: 'nombre',
-                header: 'Nombre',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                const newDirection = sortKey === 'nombre' && sortDirection === 'asc' ? 'desc' : 'asc';
+                                setSortKey('nombre');
+                                setSortDirection(newDirection);
+                                fetchSearchEmployees(query, 'nombre', newDirection);
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    sortKey === 'nombre' && sortDirection === 'desc' ? 'rotate-180' : ''
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Nombre</span>
+                    </div>
+                ),
             },
             {
                 key: 'apellido',
-                header: 'Apellido',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                const newDirection = sortKey === 'apellido' && sortDirection === 'asc' ? 'desc' : 'asc';
+                                setSortKey('apellido');
+                                setSortDirection(newDirection);
+                                fetchSearchEmployees(query, 'apellido', newDirection);
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    sortKey === 'apellido' && sortDirection === 'desc' ? 'rotate-180' : ''
+                                }text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Apellido</span>
+                    </div>
+                ),
             },
             {
                 key: 'puesto',
-                header: 'Puesto',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                const newDirection = sortKey === 'puesto' && sortDirection === 'asc' ? 'desc' : 'asc';
+                                setSortKey('puesto');
+                                setSortDirection(newDirection);
+                                fetchSearchEmployees(query, 'puesto', newDirection);
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    sortKey === 'puesto' && sortDirection === 'desc' ? 'rotate-180' : ''
+                                }text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Puesto</span>
+                    </div>
+                ),
                 render: (_, row) => (
                     <span className='inline-block rounded-full border border-blue-200 bg-blue-50 px-3 py-1 font-semibold text-blue-700'>
                         {row.puesto}
@@ -169,7 +228,12 @@ const Employees: React.FC = () => {
                     <Popup>¡Empleado registrado con éxito!</Popup>
                 </div>
             )}
-            <Search />
+            <Search
+                query={query}
+                onChangeQuery={setQuery}
+                onSearch={() => fetchSearchEmployees(query, sortKey, sortDirection)}
+                onClear={() => fetchSearchEmployees('', sortKey, sortDirection)}
+            />
 
             <Table columns={columns} data={entitiesState.employees} loading={loading['employees']} />
 

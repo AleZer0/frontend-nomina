@@ -19,26 +19,6 @@ class EmployeeServices {
         }
     };
 
-    static async searchEmployees(q: string, params: ParamsInterface) {
-        if (!params || typeof params.estado !== 'number') {
-            throw new Error('El parámetro "estado" es obligatorio y debe ser un número.');
-        }
-
-        const newParams = { q, ...params };
-        try {
-            const response = await axiosInstance.get('/empleado/search', { params: newParams });
-
-            if (!response.data.success) {
-                throw new Error(response.data.message || 'Error desconocido.');
-            }
-
-            return response.data;
-        } catch (error: any) {
-            console.error('Error al obtener empleados:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'Error al obtener empleados.');
-        }
-    }
-
     static createEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         try {
             const response = await axiosInstance.post('/empleado', newEmployee);

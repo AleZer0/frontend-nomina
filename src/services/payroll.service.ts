@@ -31,6 +31,27 @@ class PayrollServices {
             throw new Error(error.response?.data?.message || 'Error al crear una nómina.');
         }
     };
+
+    static updatePayroll = async (
+        folio: number,
+        updatedPayroll: Partial<PayrollInterface>
+    ): Promise<PayrollInterface> => {
+        if (!Number.isInteger(folio) || folio <= 0) {
+            throw new Error('El folio de la nómina debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.put<{ success: boolean; data: PayrollInterface }>(
+                `/nomina/${folio}`,
+                updatedPayroll
+            );
+
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al actualizar una nómina:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al actualizar una nómina.');
+        }
+    };
 }
 
 export default PayrollServices;

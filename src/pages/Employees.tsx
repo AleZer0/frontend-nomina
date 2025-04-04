@@ -143,9 +143,7 @@ const Employees: React.FC = () => {
                             }}>
                             <FaSortAmountDown
                                 size={17}
-                                className={`transition-transform duration-200 ${
-                                    sortKey === 'apellido' && sortDirection === 'desc' ? 'rotate-180' : ''
-                                }text-gray-500 hover:text-gray-700`}
+                                className={`transition-transform duration-200 ${sortKey === 'apellido' && sortDirection === 'desc' ? 'rotate-180' : ''} text-gray-500 hover:text-gray-700`}
                             />
                         </button>
                         <span>Apellido</span>
@@ -165,9 +163,7 @@ const Employees: React.FC = () => {
                             }}>
                             <FaSortAmountDown
                                 size={17}
-                                className={`transition-transform duration-200 ${
-                                    sortKey === 'puesto' && sortDirection === 'desc' ? 'rotate-180' : ''
-                                }text-gray-500 hover:text-gray-700`}
+                                className={`transition-transform duration-200 ${sortKey === 'puesto' && sortDirection === 'desc' ? 'rotate-180' : ''} text-gray-500 hover:text-gray-700`}
                             />
                         </button>
                         <span>Puesto</span>

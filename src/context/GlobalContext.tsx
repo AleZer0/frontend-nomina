@@ -28,6 +28,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [selectedEntities, setSelectedEntities] = useState({
         selectedEmployee: null as EmployeeInterface | null,
         selectedLoan: null as LoanInterface | null,
+        selectedPayroll: null as PayrollInterface | null,
     });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
@@ -125,6 +126,25 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 employees: prev.employees.map(item => (item.id_empleado === id_empleado ? updatedEmployee : item)),
             }));
             return updatedEmployee;
+        } catch (error: any) {
+            setError(error.message);
+            throw error;
+        } finally {
+            setLoading(prev => ({ ...prev, updateEmployee: false }));
+        }
+    };
+
+    const updatePayroll = async (folio: number, updatedData: Partial<PayrollInterface>): Promise<PayrollInterface> => {
+        setLoading(prev => ({ ...prev, updatePayroll: true }));
+        try {
+            let updatedPayroll = await PayrollServices.updatePayroll(folio, updatedData);
+            const fecha = updatedPayroll.fecha ? updatedPayroll.fecha.split('T')[0] : null;
+            updatedPayroll = { ...updatedPayroll, fecha };
+            setEntitiesState(prev => ({
+                ...prev,
+                Payrolls: prev.payrolls.map(item => (item.folio === folio ? updatedPayroll : item)),
+            }));
+            return updatedPayroll;
         } catch (error: any) {
             setError(error.message);
             throw error;
@@ -289,6 +309,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 setContentHeader,
                 toggleSidebar,
                 fetchSearchEmployees,
+                updatePayroll,
             }}>
             {children}
         </GlobalContext.Provider>

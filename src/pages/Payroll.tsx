@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { HiDocumentAdd } from 'react-icons/hi';
-import { FaFilePdf } from 'react-icons/fa6';
 
 import Button from '../components/Button';
 import Table from '../components/Table';
@@ -16,12 +15,17 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 import Utils from '../utils';
 import Popup from '../components/Popup';
+import ViewPayroll from '../components/modals/ViewPayroll';
+import EditPayroll from '../components/modals/EditPayroll';
+import { CgDetailsMore } from 'react-icons/cg';
 
 const Payroll: React.FC = () => {
-    const { entitiesState, addPayroll, createPreviewPayrollPDF, loading, isSidebarOpen, setContentHeader } =
+    const { entitiesState, addPayroll, loading, isSidebarOpen, setContentHeader, setSelectedEntities, updatePayroll } =
         useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
+    const [isOpenViewPayroll, setIsOpenViewPayroll] = useState<boolean>(false);
+    const [isOpenEditPayroll, setIsOpenEditPayroll] = useState<boolean>(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
@@ -31,23 +35,11 @@ const Payroll: React.FC = () => {
         setTimeout(() => setShowSuccess(false), 3000);
     };
 
-    useEffect(() => {
-        setContentHeader(
-            <div className='flex w-full items-center justify-between px-4'>
-                <h1
-                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
-                    Listado de Nóminas
-                </h1>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<HiDocumentAdd size={17} />}
-                    onClick={() => setIsOpenCreatePayroll(true)}>
-                    Nueva nómina
-                </Button>
-            </div>
-        );
-    }, [isSidebarOpen]);
+    const handleUpdatePayroll = async (folio: number, updatedPayroll: Partial<PayrollInterface>) => {
+        const newSelectedPayroll = await updatePayroll(folio, updatedPayroll);
+        setSelectedEntities(prev => ({ ...prev, selectedPayroll: newSelectedPayroll }));
+        setIsOpenEditPayroll(false);
+    };
 
     useEffect(() => {
         setContentHeader(
@@ -184,6 +176,22 @@ const Payroll: React.FC = () => {
                     <Button
                         variant='details'
                         size='md'
+                        icon={<CgDetailsMore size={15} />}
+                        onClick={() => {
+                            setSelectedEntities(prev => ({ ...prev, selectedPayroll: row }));
+                            setIsOpenViewPayroll(true);
+                        }}>
+                        Detalles
+                    </Button>
+                ),
+            },
+            /*{
+                key: 'accion',
+                header: 'Acción',
+                render: (_, row) => (
+                    <Button
+                        variant='details'
+                        size='md'
                         icon={<FaFilePdf size={15} />}
                         onClick={() => createPreviewPayrollPDF(row.folio)}
                         isLoading={loading[row.folio]}
@@ -191,7 +199,7 @@ const Payroll: React.FC = () => {
                         PDF
                     </Button>
                 ),
-            },
+            },*/
         ],
         [entitiesState.payrolls]
     );
@@ -214,6 +222,19 @@ const Payroll: React.FC = () => {
                 isOpen={isOpenCreatePayroll}
                 onClose={() => setIsOpenCreatePayroll(false)}
                 onSubmit={handleCreatePayroll}
+            />
+            <ViewPayroll
+                isOpen={isOpenViewPayroll}
+                onClose={() => {
+                    setIsOpenViewPayroll(false);
+                }}
+                handleClickViewPayroll={() => setIsOpenViewPayroll(true)}
+                handleClickEditPayroll={() => setIsOpenEditPayroll(true)}
+            />
+            <EditPayroll
+                isOpen={isOpenEditPayroll}
+                onClose={() => setIsOpenEditPayroll(false)}
+                onSubmit={handleUpdatePayroll}
             />
         </section>
     );

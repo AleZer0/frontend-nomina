@@ -13,11 +13,16 @@ export interface GlobalContextInterface {
         loans: LoanInterface[];
         weeklyReports: WeeklyReportData[];
     };
-    selectedEntities: { selectedEmployee: EmployeeInterface | null; selectedLoan: LoanInterface | null };
+    selectedEntities: {
+        selectedEmployee: EmployeeInterface | null;
+        selectedLoan: LoanInterface | null;
+        selectedPayroll: PayrollInterface | null;
+    };
     setSelectedEntities: React.Dispatch<
         React.SetStateAction<{
             selectedEmployee: EmployeeInterface | null;
             selectedLoan: LoanInterface | null;
+            selectedPayroll: PayrollInterface | null;
         }>
     >;
     error: string | null;
@@ -49,6 +54,7 @@ export interface GlobalContextInterface {
     setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
     fetchSearchEmployees: (query: string, sortKey?: string, sortDirection?: 'asc' | 'desc') => Promise<void>;
+    updatePayroll: (folio: number, updatedData: Partial<PayrollInterface>) => Promise<PayrollInterface>;
 }
 
 export interface AuthContextType {
@@ -128,7 +134,7 @@ export interface LoanInterface {
 
 export interface PayrollInterface {
     folio: number;
-    fecha: string;
+    fecha: string | null;
     dias_trabajados: number;
     infonavit?: number;
     vacaciones?: number;

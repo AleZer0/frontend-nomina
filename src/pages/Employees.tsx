@@ -31,6 +31,7 @@ const Employees: React.FC = () => {
         loading,
         isSidebarOpen,
         setContentHeader,
+        fetchSearchEmployees,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);

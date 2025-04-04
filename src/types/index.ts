@@ -48,6 +48,7 @@ export interface GlobalContextInterface {
     contentHeader: ReactNode;
     setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
+    fetchSearchEmployees: (query: string, sortKey?: string, sortDirection?: 'asc' | 'desc') => Promise<void>;
 }
 
 export interface AuthContextType {
@@ -181,7 +182,7 @@ export interface MetaInterface {
     totalRecords: number;
     totalPages: number;
     currentPage: number;
-    recordsPerPage: number;
-    sortBy: string;
-    order: 'asc' | 'desc';
+    recordsPerPage?: number;
+    sortBy?: string;
+    order?: 'asc' | 'desc';
 }

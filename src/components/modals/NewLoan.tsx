@@ -2,13 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { MdAttachMoney } from 'react-icons/md';
 
-import Modal from '../components/Modal';
-import Form from '../components/Form';
+import Modal from '../Modal';
+import Form from '../Form';
 
-import { useGlobalContext } from '../context/GlobalContext';
-import { EmployeeInterface, LoanInterface } from '../types';
-import { FormField } from '../types/extras';
-import EmployeeServices from '../services/employees.service';
+import { useGlobalContext } from '../../context/GlobalContext';
+import { EmployeeInterface, LoanInterface } from '../../types';
+import { FormField } from '../../types/extras';
+import EmployeeServices from '../../services/employees.service';
 
 interface CreateLoanModalProps {
     isOpen: boolean;

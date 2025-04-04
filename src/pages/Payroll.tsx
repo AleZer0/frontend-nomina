@@ -105,7 +105,11 @@ const Payroll: React.FC = () => {
                 header: 'Empleado',
                 render: (_, row) => (row.empleado ? `${row.empleado.nombre} ${row.empleado.apellido}` : ''),
             },
-            { key: 'fecha', header: 'Fecha', render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha) },
+            {
+                key: 'fecha',
+                header: 'Fecha',
+                render: (_, row) => (row.created_at ? Utils.formatDateDDMMYYYY(row.created_at) : 'Sin fecha'),
+            },
             {
                 key: 'sueldo',
                 header: 'Sueldo',

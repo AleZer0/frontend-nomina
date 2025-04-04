@@ -4,17 +4,17 @@ import { HiDocumentAdd } from 'react-icons/hi';
 import { FaUserEdit } from 'react-icons/fa';
 import { FaUserMinus } from 'react-icons/fa';
 
-import Modal from '../components/Modal';
-import Form from '../components/Form';
-import Table from '../components/Table';
-import Button from '../components/Button';
+import Modal from '../Modal';
+import Form from '../Form';
+import Table from '../Table';
+import Button from '../Button';
 
-import { PayrollInterface } from '../types';
-import { Column, FormField } from '../types/extras';
-import { ButtonProps } from '../types/componentes';
+import { PayrollInterface } from '../../types/index';
+import { Column, FormField } from '../../types/extras';
+import { ButtonProps } from '../../types/componentes';
 
-import { useGlobalContext } from '../context/GlobalContext';
-import Utils from '../utils';
+import { useGlobalContext } from '../../context/GlobalContext';
+import Utils from '../../utils';
 
 interface ViewEmployeeProps {
     isOpen: boolean;
@@ -96,7 +96,11 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
         () => [
             { key: 'folio', header: 'Folio', render: (_, row) => `NOM${row.folio.toString().padStart(4, '0')}` },
             { key: 'dias_trabajados', header: 'Días Laborados' },
-            { key: 'fecha', header: 'Fecha', render: (_, row) => Utils.formatDateDDMMYYYY(row.fecha) },
+            {
+                key: 'fecha',
+                header: 'Fecha',
+                render: (_, row) => (row.created_at ? Utils.formatDateDDMMYYYY(row.created_at) : 'Sin fecha'),
+            },
             { key: 'prestamos', header: 'Prestamos', render: (_, row) => `$${(row.prestamos ?? 0).toFixed(2)}` },
             { key: 'sueldo', header: 'Sueldo', render: (_, row) => `$${row.sueldo.toFixed(2)}` },
         ],

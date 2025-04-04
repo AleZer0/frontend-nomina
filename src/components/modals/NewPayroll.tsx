@@ -3,16 +3,16 @@ import { useState, useMemo, useEffect } from 'react';
 import { HiDocumentAdd } from 'react-icons/hi';
 import { MdPayments } from 'react-icons/md';
 
-import Modal from '../components/Modal';
-import Form from '../components/Form';
-import Input from '../components/Input';
-import Table from '../components/Table';
+import Modal from '../Modal';
+import Form from '../Form';
+import Input from '../Input';
+import Table from '../Table';
 
-import { useGlobalContext } from '../context/GlobalContext';
+import { useGlobalContext } from '../../context/GlobalContext';
 
-import { Column, FormField } from '../types/extras';
-import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../types';
-import EmployeeServices from '../services/employees.service';
+import { Column, FormField } from '../../types/extras';
+import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../../types/';
+import EmployeeServices from '../../services/employees.service';
 
 interface CreatePayrollModalProps {
     isOpen: boolean;

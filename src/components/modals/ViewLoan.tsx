@@ -2,15 +2,15 @@ import { useMemo } from 'react';
 
 import { MdPayments } from 'react-icons/md';
 
-import Modal from '../components/Modal';
-import Table from '../components/Table';
-import Form from '../components/Form';
-import Button from '../components/Button';
+import Modal from '../Modal';
+import Table from '../Table';
+import Form from '../Form';
+import Button from '../Button';
 
-import { Column, FormField } from '../types/extras';
-import { PaymentInterface } from '../types';
-import { useGlobalContext } from '../context/GlobalContext';
-import Utils from '../utils';
+import { Column, FormField } from '../../types/extras';
+import { PaymentInterface } from '../../types/index';
+import { useGlobalContext } from '../../context/GlobalContext';
+import Utils from '../../utils';
 
 interface ViewLoanProps {
     isOpen: boolean;

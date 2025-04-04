@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { FaUserEdit } from 'react-icons/fa';
 
-import Modal from '../components/Modal';
-import Form from '../components/Form';
+import Modal from '../Modal';
+import Form from '../Form';
 
-import { EmployeeInterface } from '../types';
-import { FormField } from '../types/extras';
-import { useGlobalContext } from '../context/GlobalContext';
+import { EmployeeInterface } from '../../types';
+import { FormField } from '../../types/extras';
+import { useGlobalContext } from '../../context/GlobalContext';
 
 interface EditEmployeeModalProps {
     isOpen: boolean;

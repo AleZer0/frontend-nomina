@@ -64,6 +64,20 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const fetchEmployees = () => fetchData(EmployeeServices.getEmployees, 'employees');
+    const fetchOperators = () => fetchData(EmployeeServices.getEmployees, 'operators');
+    const fetchPayrolls = () => fetchData(PayrollServices.getPayrolls, 'payrolls');
+    const fetchLoans = () => fetchData(LoanServices.getLoans, 'loans');
+    const fetchWeeklyReports = () => fetchData(WeeklyReports.getReportsList, 'weeklyReports');
+
+    useEffect(() => {
+        fetchEmployees();
+        fetchOperators();
+        fetchPayrolls();
+        fetchLoans();
+        fetchWeeklyReports();
+    }, []);
+
     const fetchSearchEmployees = async (query: string, sortKey?: string, sortDirection?: 'asc' | 'desc') => {
         try {
             const params = {
@@ -81,20 +95,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             setError('Error al buscar empleados');
         }
     };
-
-    const fetchEmployees = () => fetchData(EmployeeServices.getEmployees, 'employees');
-    const fetchOperators = () => fetchData(EmployeeServices.getEmployees, 'operators');
-    const fetchPayrolls = () => fetchData(PayrollServices.getPayrolls, 'payrolls');
-    const fetchLoans = () => fetchData(LoanServices.getLoans, 'loans');
-    const fetchWeeklyReports = () => fetchData(WeeklyReports.getReportsList, 'weeklyReports');
-
-    useEffect(() => {
-        fetchEmployees();
-        fetchOperators();
-        fetchPayrolls();
-        fetchLoans();
-        fetchWeeklyReports();
-    }, []);
 
     const addEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         setLoading(prev => ({ ...prev, addEmployee: true }));

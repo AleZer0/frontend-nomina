@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 
 import { MdPayments } from 'react-icons/md';
 
-import Modal from '../components/Modal';
-import Form from '../components/Form';
+import Modal from '../Modal';
+import Form from '../Form';
 
-import { FormField } from '../types/extras';
-import { PaymentInterface } from '../types';
-import { useGlobalContext } from '../context/GlobalContext';
+import { FormField } from '../../types/extras';
+import { PaymentInterface } from '../../types/index';
+import { useGlobalContext } from '../../context/GlobalContext';
 
 interface PayloanProps {
     isOpen: boolean;

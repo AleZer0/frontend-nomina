@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 
 import { AiOutlineUserAdd } from 'react-icons/ai';
 
-import Modal from '../components/Modal';
-import Form from '../components/Form';
+import Modal from '../Modal';
+import Form from '../Form';
 
-import { EmployeeInterface } from '../types';
-import { FormField } from '../types/extras';
-import { useGlobalContext } from '../context/GlobalContext';
+import { EmployeeInterface } from '../../types';
+import { FormField } from '../../types/extras';
+import { useGlobalContext } from '../../context/GlobalContext';
 
 interface CreateEmployeeModalProps {
     isOpen: boolean;

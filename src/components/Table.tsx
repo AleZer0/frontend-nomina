@@ -1,14 +1,14 @@
 import { TableProps } from '../types/componentes';
-import Loader from '../components/Loader'; // Asegúrate de importar Loader
+import Loader from '../components/Loader';
 
 const Table = <T extends object>({ columns, data = [], onRowClick, loading }: TableProps<T>) => {
     return (
         <div className='relative overflow-x-auto shadow-2xl sm:rounded-2xl'>
-            <table className='w-full text-base text-black'>
+            <table className='w-full table-auto text-base text-black'>
                 <thead className='bg-gray-300 text-center uppercase'>
-                    <tr className='flex flex-row items-center justify-between'>
+                    <tr>
                         {columns.map(col => (
-                            <th scope='col' key={String(col.key)} className='flex-1 p-3'>
+                            <th key={String(col.key)} className='p-3'>
                                 {col.header}
                             </th>
                         ))}
@@ -17,19 +17,21 @@ const Table = <T extends object>({ columns, data = [], onRowClick, loading }: Ta
 
                 <tbody className='text-center'>
                     {loading ? (
-                        <td colSpan={columns.length} className='bg-white p-4'>
-                            <div className='flex justify-center'>
-                                <Loader />
-                            </div>
-                        </td>
+                        <tr>
+                            <td colSpan={columns.length} className='bg-white p-4'>
+                                <div className='flex justify-center'>
+                                    <Loader />
+                                </div>
+                            </td>
+                        </tr>
                     ) : Array.isArray(data) && data.length > 0 ? (
                         data.map((row, rowIndex) => (
                             <tr
                                 key={rowIndex}
-                                className='flex flex-row items-center justify-between border-b border-gray-200 odd:bg-white even:bg-gray-50'
+                                className='cursor-pointer border-b border-gray-200 transition-all odd:bg-white even:bg-gray-50 hover:bg-gray-100'
                                 onClick={() => onRowClick && onRowClick(row)}>
                                 {columns.map(col => (
-                                    <td key={String(col.key)} className='flex flex-1 justify-center p-3'>
+                                    <td key={String(col.key)} className='p-3'>
                                         {col.render
                                             ? col.render(col.key in row ? row[col.key as keyof T] : undefined, row)
                                             : col.key in row

@@ -45,6 +45,28 @@ class Utils {
         }
         return data;
     };
+
+    /**
+     * Ordena un array de objetos por un campo de tipo fecha.
+     * @param array Array de objetos
+     * @param campo Campo de fecha a ordenar (por ejemplo: 'fecha', 'created_at', etc.)
+     * @param orden 'asc' (ascendente) o 'desc' (descendente)
+     * @returns Array ordenado
+     */
+    static orderForDate = <T extends Record<string, any>>(
+        array: T[],
+        campo: keyof T,
+        orden: 'asc' | 'desc' = 'asc'
+    ): T[] => {
+        return [...array].sort((a, b) => {
+            const fechaA = new Date(a[campo] ?? '').getTime();
+            const fechaB = new Date(b[campo] ?? '').getTime();
+
+            if (isNaN(fechaA) || isNaN(fechaB)) return 0;
+
+            return orden === 'asc' ? fechaA - fechaB : fechaB - fechaA;
+        });
+    };
 }
 
 export default Utils;

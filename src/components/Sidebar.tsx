@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// import logotransportes from '../assets/logotransportes.png';
-
 import { IoDocuments, IoMenu } from 'react-icons/io5';
 import { BiSolidReport } from 'react-icons/bi';
 import { PiUsersThreeFill } from 'react-icons/pi';
@@ -60,10 +58,9 @@ const Sidebar: React.FC = () => {
                 }`}>
                 <ul className='flex flex-col'>
                     {routes.map((route, index) => (
-                        <>
+                        <li key={route.name}>
                             {index !== 0 && <hr className='mx-4 border-t border-gray-300' />}
-                            <li
-                                key={index}
+                            <div
                                 onClick={() => handleClickPage(route)}
                                 className={`m-3 flex cursor-pointer items-center gap-3 bg-gradient-to-r px-4 py-2 transition-all hover:border-l-8 hover:border-blue-500 ${
                                     route.name === selectedPage?.name ? 'border-l-8 border-blue-500 to-blue-200' : ''
@@ -87,8 +84,8 @@ const Sidebar: React.FC = () => {
                                         {route.name}
                                     </span>
                                 )}
-                            </li>
-                        </>
+                            </div>
+                        </li>
                     ))}
                 </ul>
 

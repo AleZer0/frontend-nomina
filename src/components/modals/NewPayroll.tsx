@@ -176,7 +176,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
             },
             {
                 name: 'horas_extras',
-                label: 'Horas extras',
+                label: 'Cantidad de horas extras',
                 type: 'number',
                 placeholder: 'Ingrese la cantidad a horas extras',
                 variant: 'default',

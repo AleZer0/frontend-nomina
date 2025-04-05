@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { HiDocumentAdd } from 'react-icons/hi';
+import { FaSortAmountDown } from 'react-icons/fa';
 
 import Button from '../components/Button';
 import Table from '../components/Table';
@@ -27,6 +28,8 @@ const Payroll: React.FC = () => {
     const [isOpenViewPayroll, setIsOpenViewPayroll] = useState<boolean>(false);
     const [isOpenEditPayroll, setIsOpenEditPayroll] = useState<boolean>(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [sortKey, setSortKey] = useState<string>('folio');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
@@ -40,24 +43,6 @@ const Payroll: React.FC = () => {
         setSelectedEntities(prev => ({ ...prev, selectedPayroll: newSelectedPayroll }));
         setIsOpenEditPayroll(false);
     };
-
-    useEffect(() => {
-        setContentHeader(
-            <div className='flex w-full items-center justify-between px-4'>
-                <h1
-                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
-                    Listado de Nóminas
-                </h1>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<HiDocumentAdd size={17} />}
-                    onClick={() => setIsOpenCreatePayroll(true)}>
-                    Nueva nómina
-                </Button>
-            </div>
-        );
-    }, [isSidebarOpen]);
 
     const totalPagar = (total: number) => {
         return (
@@ -85,7 +70,24 @@ const Payroll: React.FC = () => {
         () => [
             {
                 key: 'folio',
-                header: 'Folio',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                const newDirection = sortKey === 'folio' && sortDirection === 'asc' ? 'desc' : 'asc';
+                                setSortKey('folio');
+                                setSortDirection(newDirection);
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    sortKey === 'folio' && sortDirection === 'desc' ? 'rotate-180' : ''
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Folio</span>
+                    </div>
+                ),
                 render: (_, row) => (
                     <span className='inline-block rounded-full border border-gray-300 bg-gray-100 px-3 py-1 font-semibold text-gray-500'>
                         {`NOM${row.folio.toString().padStart(4, '0')}`}
@@ -100,7 +102,7 @@ const Payroll: React.FC = () => {
             {
                 key: 'fecha',
                 header: 'Fecha',
-                render: (_, row) => (row.created_at ? Utils.formatDateDDMMYYYY(row.created_at) : 'Sin fecha'),
+                render: (_, row) => (row.fecha ? Utils.formatDateDDMMYYYY(row.fecha) : 'Sin fecha'),
             },
             {
                 key: 'sueldo',
@@ -185,24 +187,27 @@ const Payroll: React.FC = () => {
                     </Button>
                 ),
             },
-            /*{
-                key: 'accion',
-                header: 'Acción',
-                render: (_, row) => (
-                    <Button
-                        variant='details'
-                        size='md'
-                        icon={<FaFilePdf size={15} />}
-                        onClick={() => createPreviewPayrollPDF(row.folio)}
-                        isLoading={loading[row.folio]}
-                        disabled={loading[row.folio]}>
-                        PDF
-                    </Button>
-                ),
-            },*/
         ],
         [entitiesState.payrolls]
     );
+
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Nóminas
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<HiDocumentAdd size={17} />}
+                    onClick={() => setIsOpenCreatePayroll(true)}>
+                    Nueva nómina
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
 
     return (
         <section
@@ -214,7 +219,11 @@ const Payroll: React.FC = () => {
                     <Popup>¡Nómina registrada con éxito!</Popup>
                 </div>
             )}
-            <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
+            <Table
+                columns={columns}
+                data={Utils.orderForDate(entitiesState.payrolls, 'fecha', 'desc')}
+                loading={loading['payrolls']}
+            />
 
             <Pagination />
 

@@ -141,11 +141,11 @@ export interface PayrollInterface {
     aguinaldo?: number;
     finiquito?: number;
     sueldo: number;
-    pension_alimenticia: number;
-    horas_extras: number;
-    pago_horas_extras: number;
-    maniobras: number;
-    otros: number;
+    pension_alimenticia?: number;
+    horas_extras?: number;
+    pago_horas_extras?: number;
+    maniobras?: number;
+    otros?: number;
     id_empleado: number;
     created_at?: string;
     updated_at?: string;

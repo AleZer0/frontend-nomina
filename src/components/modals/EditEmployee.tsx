@@ -20,31 +20,28 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
     const handleSubmit = (values: Partial<EmployeeInterface>) => {
         let newValues = { ...values };
 
-        if (!values.nombre && !selectedEntities['selectedEmployee']?.nombre) {
+        if (!values.nombre && !selectedEntities.selectedEmployee?.nombre) {
             alert('El campo Nombre es obligatorio.');
             return;
         }
-        if (!values.apellido && !selectedEntities['selectedEmployee']?.apellido) {
+        if (!values.apellido && !selectedEntities.selectedEmployee?.apellido) {
             alert('El campo Apellido es obligatorio.');
             return;
         }
-        if (!values.puesto && !selectedEntities['selectedEmployee']?.puesto) {
+        if (!values.puesto && !selectedEntities.selectedEmployee?.puesto) {
             alert('El campo Puesto es obligatorio.');
             return;
         }
-        if (!values.sueldo && !selectedEntities['selectedEmployee']?.sueldo) {
-            newValues = {
-                ...values,
-                sueldo: 0,
-            };
+        if (!values.sueldo && !selectedEntities.selectedEmployee?.sueldo) {
+            newValues = { ...values, sueldo: 0 };
         }
 
         const updatedEmployee: Partial<EmployeeInterface> = {
-            ...selectedEntities['selectedEmployee'],
+            ...selectedEntities.selectedEmployee,
             ...newValues,
         };
 
-        onSubmit(selectedEntities['selectedEmployee']?.id_empleado ?? 0, updatedEmployee);
+        onSubmit(selectedEntities.selectedEmployee?.id_empleado ?? 0, updatedEmployee);
     };
 
     const fields: FormField[] = useMemo(
@@ -111,7 +108,7 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
             <Form
                 fields={fields}
                 data={
-                    selectedEntities['selectedEmployee'] ?? {
+                    selectedEntities.selectedEmployee ?? {
                         nombre: '',
                         apellido: '',
                         fecha_incorporacion: '',

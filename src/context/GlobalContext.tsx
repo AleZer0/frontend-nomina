@@ -116,6 +116,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     ): Promise<EmployeeInterface> => {
         setLoading(prev => ({ ...prev, updateEmployee: true }));
         try {
+            console.log(updatedData);
             let updatedEmployee = await EmployeeServices.updateEmployee(id_empleado, updatedData);
             const fecha_incorporacion = updatedEmployee.fecha_incorporacion
                 ? updatedEmployee.fecha_incorporacion.split('T')[0]
@@ -142,7 +143,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             updatedPayroll = { ...updatedPayroll, fecha };
             setEntitiesState(prev => ({
                 ...prev,
-                Payrolls: prev.payrolls.map(item => (item.folio === folio ? updatedPayroll : item)),
+                payrolls: prev.payrolls.map(item => (item.folio === folio ? updatedPayroll : item)),
             }));
             return updatedPayroll;
         } catch (error: any) {

@@ -77,7 +77,7 @@ const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickE
             },
             {
                 name: 'horas_extras',
-                label: 'Horas extras',
+                label: 'Cantidad de horas extras',
                 type: 'number',
                 placeholder: 'No cuenta con horas extras',
                 variant: 'filled',

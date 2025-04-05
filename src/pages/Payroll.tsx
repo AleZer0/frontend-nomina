@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { HiDocumentAdd } from 'react-icons/hi';
-import { FaSortAmountDown } from 'react-icons/fa';
 
 import Button from '../components/Button';
 import Table from '../components/Table';
@@ -28,8 +27,6 @@ const Payroll: React.FC = () => {
     const [isOpenViewPayroll, setIsOpenViewPayroll] = useState<boolean>(false);
     const [isOpenEditPayroll, setIsOpenEditPayroll] = useState<boolean>(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [sortKey, setSortKey] = useState<string>('folio');
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
@@ -70,24 +67,7 @@ const Payroll: React.FC = () => {
         () => [
             {
                 key: 'folio',
-                header: (
-                    <div className='flex items-center justify-center gap-2'>
-                        <button
-                            onClick={() => {
-                                const newDirection = sortKey === 'folio' && sortDirection === 'asc' ? 'desc' : 'asc';
-                                setSortKey('folio');
-                                setSortDirection(newDirection);
-                            }}>
-                            <FaSortAmountDown
-                                size={17}
-                                className={`transition-transform duration-200 ${
-                                    sortKey === 'folio' && sortDirection === 'desc' ? 'rotate-180' : ''
-                                } text-gray-500 hover:text-gray-700`}
-                            />
-                        </button>
-                        <span>Folio</span>
-                    </div>
-                ),
+                header: 'Folio',
                 render: (_, row) => (
                     <span className='inline-block rounded-full border border-gray-300 bg-gray-100 px-3 py-1 font-semibold text-gray-500'>
                         {`NOM${row.folio.toString().padStart(4, '0')}`}

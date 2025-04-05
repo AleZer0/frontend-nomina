@@ -20,7 +20,6 @@ interface ViewPayrollProps {
 
 const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickEditPayroll }) => {
     const { selectedEntities, createPreviewPayrollPDF } = useGlobalContext();
-
     const payroll = selectedEntities.selectedPayroll;
 
     const fields: FormField[] = useMemo(

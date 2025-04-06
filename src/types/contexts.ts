@@ -64,4 +64,14 @@ export interface GlobalContextInterface {
     contentHeader: ReactNode;
     setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
+    sortData: <T extends 'employees' | 'payrolls' | 'loans' | 'weeklyReports'>(
+        entity: T,
+        column: keyof {
+            employees: EmployeeInterface[];
+            payrolls: PayrollInterface[];
+            loans: LoanInterface[];
+            weeklyReports: WeeklyReportData[];
+        }[T][number],
+        order?: 'desc' | 'asc'
+    ) => void;
 }

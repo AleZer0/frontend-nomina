@@ -111,11 +111,8 @@ const Payroll: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'folio' }
-                                        : { ...prev, order: 'asc', sort_by: 'folio' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'folio' });
                             }}>
                             <FaSortAmountDown
                                 size={17}
@@ -139,11 +136,8 @@ const Payroll: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'empleado' }
-                                        : { ...prev, order: 'asc', sort_by: 'empleado' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'empleado' });
                             }}>
                             <FaSortAmountDown
                                 size={17}
@@ -163,11 +157,8 @@ const Payroll: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'fecha' }
-                                        : { ...prev, order: 'asc', sort_by: 'fecha' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'fecha' });
                             }}>
                             <FaSortAmountDown
                                 size={17}

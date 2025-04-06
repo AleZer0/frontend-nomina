@@ -221,6 +221,17 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const sortData = <T extends keyof typeof entitiesState>(
+        entity: T,
+        column: keyof (typeof entitiesState)[T][number],
+        order?: 'desc' | 'asc'
+    ) => {
+        setEntitiesState(prev => ({
+            ...prev,
+            [entity]: Utils.orderData(prev[entity], column, order),
+        }));
+    };
+
     useEffect(() => {
         setLoading(prev => ({ ...prev, loadingAllData: true }));
 
@@ -234,7 +245,16 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         fetchData().finally(() => {
             setLoading(prev => ({ ...prev, loadingAllData: false }));
         });
-    }, [params, activeEntity]);
+    }, [
+        params.page,
+        params.limit,
+        params.order,
+        params.sort_by,
+        params.q,
+        params.start_date,
+        params.end_date,
+        activeEntity,
+    ]);
 
     return (
         <GlobalContext.Provider
@@ -269,6 +289,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 contentHeader,
                 setContentHeader,
                 toggleSidebar,
+                sortData,
             }}>
             {children}
         </GlobalContext.Provider>

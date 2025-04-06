@@ -121,11 +121,8 @@ const Loans: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'empleado' }
-                                        : { ...prev, order: 'asc', sort_by: 'empleado' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'empleado' });
                             }}>
                             <FaSortAmountDown
                                 size={17}
@@ -144,11 +141,8 @@ const Loans: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'created_at' }
-                                        : { ...prev, order: 'asc', sort_by: 'created_at' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'created_at' });
                             }}>
                             <FaSortAmountDown
                                 size={17}

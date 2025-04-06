@@ -112,11 +112,8 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'id_empleado' }
-                                        : { ...prev, order: 'asc', sort_by: 'id_empleado' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'id_empleado' });
                             }}>
                             <FaSortAmountDown
                                 size={17}
@@ -135,11 +132,8 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'nombre' }
-                                        : { ...prev, order: 'asc', sort_by: 'nombre' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'nombre' });
                             }}>
                             <FaSortAmountDown
                                 size={17}
@@ -158,11 +152,8 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'apellido' }
-                                        : { ...prev, order: 'asc', sort_by: 'apellido' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'apellido' });
                             }}>
                             <FaSortAmountDown
                                 size={17}
@@ -181,11 +172,8 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                setParams(prev =>
-                                    prev.order === 'asc'
-                                        ? { ...prev, order: 'desc', sort_by: 'puesto' }
-                                        : { ...prev, order: 'asc', sort_by: 'puesto' }
-                                );
+                                const newOrder = params.order === 'asc' ? 'desc' : 'asc';
+                                setParams({ ...params, order: newOrder, sort_by: 'puesto' });
                             }}>
                             <FaSortAmountDown
                                 size={17}

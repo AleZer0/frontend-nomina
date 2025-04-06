@@ -47,24 +47,39 @@ class Utils {
     };
 
     /**
-     * Ordena un array de objetos por un campo de tipo fecha.
-     * @param array Array de objetos
-     * @param campo Campo de fecha a ordenar (por ejemplo: 'fecha', 'created_at', etc.)
-     * @param orden 'asc' (ascendente) o 'desc' (descendente)
+     * Ordena un array de objetos por un campo, que puede ser string, number o Date.
+     * @param array Array de objetos a ordenar
+     * @param campo Clave del objeto por la que se quiere ordenar
+     * @param orden 'asc' o 'desc'
      * @returns Array ordenado
      */
-    static orderForDate = <T extends Record<string, any>>(
+    static orderData = <T extends Record<string, any>>(
         array: T[],
         campo: keyof T,
         orden: 'asc' | 'desc' = 'asc'
     ): T[] => {
         return [...array].sort((a, b) => {
-            const fechaA = new Date(a[campo] ?? '').getTime();
-            const fechaB = new Date(b[campo] ?? '').getTime();
+            const valA = a[campo];
+            const valB = b[campo];
 
-            if (isNaN(fechaA) || isNaN(fechaB)) return 0;
+            // Comparación por string
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return orden === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
 
-            return orden === 'asc' ? fechaA - fechaB : fechaB - fechaA;
+            // Comparación por número
+            if (typeof valA === 'number' && typeof valB === 'number') {
+                return orden === 'asc' ? valA - valB : valB - valA;
+            }
+
+            // Comparación por fechas (convertir strings válidos a Date)
+            const fechaA = Date.parse(valA as any);
+            const fechaB = Date.parse(valB as any);
+            if (!isNaN(fechaA) && !isNaN(fechaB)) {
+                return orden === 'asc' ? fechaA - fechaB : fechaB - fechaA;
+            }
+
+            return 0; // Si no se puede comparar, mantener orden original
         });
     };
 }

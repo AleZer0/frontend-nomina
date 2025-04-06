@@ -1,5 +1,5 @@
 import axiosInstance from '.';
-import { AuthResponse } from '../types';
+import { AuthResponse } from '../types/extras';
 
 export class Autenticacion {
     static usuarioVerify = async (): Promise<AuthResponse> => {

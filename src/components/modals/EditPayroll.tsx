@@ -5,7 +5,7 @@ import Modal from '../Modal';
 import Form from '../Form';
 import { useGlobalContext } from '../../context/GlobalContext';
 
-import { PayrollInterface } from '../../types';
+import { PayrollInterface } from '../../types/entities';
 import { FormField } from '../../types/extras';
 
 interface EditPayrollModalProps {

@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { CgDetailsMore } from 'react-icons/cg';
-import { MdAttachMoney } from 'react-icons/md';
+import { MdAttachMoney, MdOutlineManageSearch } from 'react-icons/md';
+import { TbUserSearch } from 'react-icons/tb';
+import { BsFillEraserFill } from 'react-icons/bs';
 
 import Table from '../components/Table';
 import Button from '../components/Button';
@@ -13,20 +15,25 @@ import PayLoan from '../components/modals/Payloan';
 
 import { useGlobalContext } from '../context/GlobalContext';
 
-import { LoanInterface, PaymentInterface } from '../types';
+import { LoanInterface, PaymentInterface } from '../types/entities';
 import { Column } from '../types/extras';
 
 import Utils from '../utils';
 import Popup from '../components/Popup';
+import { FaSortAmountDown } from 'react-icons/fa';
+import Search from '../components/Search';
+import Input from '../components/Input';
 
 const Loans: React.FC = () => {
     const {
         entitiesState,
         selectedEntities,
         setSelectedEntities,
+        loading,
+        params,
+        setParams,
         addLoan,
         updateLoan,
-        loading,
         isSidebarOpen,
         setContentHeader,
     } = useGlobalContext();
@@ -35,6 +42,8 @@ const Loans: React.FC = () => {
     const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
     const [isOpenPayLoan, setIsOpenPayLoan] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+
+    const [query, setQuery] = useState({ empleado: '', start_date: '', end_date: '' });
 
     const handleCreateLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         await addLoan(newLoan);
@@ -52,6 +61,29 @@ const Loans: React.FC = () => {
         setSelectedEntities(prev => ({ ...prev, selectedLoan: newSelectedLoan }));
         setIsOpenPayLoan(false);
         if (newSelectedLoan.saldo_pendiente === 0) setIsOpenViewLoan(false);
+    };
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setParams(prev => ({
+            ...prev,
+            q: query.empleado || undefined,
+            start_date: query.start_date || undefined,
+            end_date: query.end_date || undefined,
+            page: 1,
+        }));
+    };
+
+    const handleClear = () => {
+        setQuery({ empleado: '', start_date: '', end_date: '' });
+        setParams(prev => {
+            const newParams = { ...prev };
+            delete newParams.q;
+            delete newParams.start_date;
+            delete newParams.end_date;
+            newParams.page = 1;
+            return newParams;
+        });
     };
 
     const styleMoney = (cantidad: number) => {
@@ -85,12 +117,49 @@ const Loans: React.FC = () => {
         () => [
             {
                 key: 'empleado',
-                header: 'Empleado',
-                render: (_, row) => row.empleado ?? '',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'empleado' }
+                                        : { ...prev, order: 'asc', sort_by: 'empleado' }
+                                );
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'empleado' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Empleado</span>
+                    </div>
+                ),
             },
             {
                 key: 'created_at',
-                header: 'Fecha',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'created_at' }
+                                        : { ...prev, order: 'asc', sort_by: 'created_at' }
+                                );
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'created_at' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Fecha</span>
+                    </div>
+                ),
                 render: (_, row) => (row.created_at ? Utils.formatDateDDMMYYYY(row.created_at) : 'Sin fecha'),
             },
             {
@@ -138,6 +207,50 @@ const Loans: React.FC = () => {
                     <Popup>¡Prestamo registrado con éxito!</Popup>
                 </div>
             )}
+
+            <Search handleSubmit={handleSearch}>
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    placeholder='Buscar empleado...'
+                    value={query.empleado}
+                    onChange={e => setQuery(prev => ({ ...prev, empleado: e.target.value }))}
+                    leftIcon={<TbUserSearch size={20} />}
+                />
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    type='date'
+                    placeholder='Fecha inicio'
+                    value={query.start_date}
+                    onChange={e => setQuery(prev => ({ ...prev, start_date: e.target.value }))}
+                />
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    type='date'
+                    placeholder='Fecha fin'
+                    value={query.end_date}
+                    onChange={e => setQuery(prev => ({ ...prev, end_date: e.target.value }))}
+                />
+                <Button
+                    variant='details'
+                    size='md'
+                    icon={<MdOutlineManageSearch size={20} />}
+                    type='submit'
+                    disabled={!query.empleado && !query.start_date && !query.end_date}>
+                    Buscar
+                </Button>
+                <Button
+                    variant='details'
+                    size='md'
+                    icon={<BsFillEraserFill size={15} />}
+                    onClick={handleClear}
+                    type='button'>
+                    Limpiar
+                </Button>
+            </Search>
+
             <Table
                 columns={columns}
                 data={entitiesState.loans.filter(prev => prev.saldo_pendiente !== 0)}

@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import Form from '../Form';
 
 import { FormField } from '../../types/extras';
-import { PaymentInterface } from '../../types/index';
+import { PaymentInterface } from '../../types/entities';
 import { useGlobalContext } from '../../context/GlobalContext';
 
 interface PayloanProps {

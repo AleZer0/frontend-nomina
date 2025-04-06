@@ -1,5 +1,5 @@
 import axiosInstance from '.';
-import { ParamsInterface, PayrollInterface } from '../types';
+import { ParamsInterface, PayrollInterface } from '../types/entities';
 
 class PayrollServices {
     static getPayrolls = async (params: ParamsInterface) => {

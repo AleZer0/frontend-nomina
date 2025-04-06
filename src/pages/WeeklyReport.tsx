@@ -5,7 +5,7 @@ import { FaFilePdf } from 'react-icons/fa6';
 import Button from '../components/Button';
 import Table from '../components/Table';
 
-import { WeeklyReportData } from '../types';
+import { WeeklyReportData } from '../types/entities';
 
 import { Column } from '../types/extras';
 

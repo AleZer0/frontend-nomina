@@ -59,13 +59,13 @@ const Login: React.FC = () => {
     );
 
     return (
-        <div className='flex h-screen items-center justify-center bg-gradient-to-r from-blue-800 to-blue-400'>
+        <div className='flex h-screen items-center justify-center bg-gradient-to-r from-sky-500 to-indigo-500'>
             <div className='flex w-[300px] flex-col items-center rounded-2xl bg-blue-50 p-10 shadow-2xl shadow-blue-900 md:w-[400px]'>
                 <div className='flex h-20 w-64 items-center justify-center'>
                     <img src={logotransportes} alt='Logo' className='h-12 object-contain md:h-20' />
                 </div>
                 <br />
-                <h1 className='mb-8 text-3xl font-bold tracking-tight text-blue-950'>Iniciar Sesión</h1>
+                <h1 className='mb-8 text-3xl font-bold tracking-tight text-indigo-950'>Iniciar Sesión</h1>
 
                 {error && <div className='mb-4 text-center text-sm text-red-500'>{error}</div>}
 

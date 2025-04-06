@@ -13,7 +13,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = () => {
     const { contentHeader, isSidebarOpen } = useGlobalContext();
     return (
-        <header className='fixed top-0 left-0 z-40 flex min-h-20 w-full items-center text-black shadow-xl'>
+        <header className='fixed top-0 left-0 z-10 flex min-h-20 w-full items-center text-black shadow-xl'>
             <div className='flex h-16 w-32 items-center justify-center pl-10 md:h-20 md:w-64'>
                 <img
                     src={logotransportes}

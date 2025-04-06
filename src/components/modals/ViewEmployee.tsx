@@ -9,7 +9,7 @@ import Form from '../Form';
 import Table from '../Table';
 import Button from '../Button';
 
-import { PayrollInterface } from '../../types/index';
+import { PayrollInterface } from '../../types/entities';
 import { Column, FormField } from '../../types/extras';
 import { ButtonProps } from '../../types/componentes';
 

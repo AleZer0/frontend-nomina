@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { CgDetailsMore } from 'react-icons/cg';
 import { FaSortAmountDown, FaUserPlus } from 'react-icons/fa';
+import { TbUserSearch } from 'react-icons/tb';
+import { MdOutlineManageSearch } from 'react-icons/md';
+import { BsFillEraserFill } from 'react-icons/bs';
 
 import Table from '../components/Table';
 import Button from '../components/Button';
@@ -14,11 +17,11 @@ import NewPayroll from '../components/modals/NewPayroll';
 import Search from '../components/Search';
 import Popup from '../components/Popup';
 
-import { EmployeeInterface, PayrollInterface } from '../types';
+import { EmployeeInterface, PayrollInterface } from '../types/entities';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
-import Utils from '../utils';
+import Input from '../components/Input';
 
 const Employees: React.FC = () => {
     const {
@@ -30,19 +33,20 @@ const Employees: React.FC = () => {
         statusEmployee,
         addPayroll,
         loading,
+        params,
+        setParams,
         isSidebarOpen,
         setContentHeader,
-        fetchSearchEmployees,
     } = useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
     const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
+
     const [showSuccess, setShowSuccess] = useState(false);
+
     const [query, setQuery] = useState('');
-    const [sortKey, setSortKey] = useState<string>('nombre');
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
@@ -69,6 +73,21 @@ const Employees: React.FC = () => {
         setIsOpenCreatePayroll(false);
     };
 
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setParams({ ...params, q: query });
+    };
+
+    const handleClear = () => {
+        setQuery('');
+        setParams(prev => {
+            const newParams = { ...prev };
+            delete newParams.q;
+            newParams.page = 1;
+            return newParams;
+        });
+    };
+
     const total_sueldo = (sueldo: number | undefined | null | '') => {
         if (sueldo === undefined || sueldo === null || sueldo === '') {
             return (
@@ -89,7 +108,26 @@ const Employees: React.FC = () => {
         () => [
             {
                 key: 'id_empleado',
-                header: 'No. Empleado',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'id_empleado' }
+                                        : { ...prev, order: 'asc', sort_by: 'id_empleado' }
+                                );
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'id_empleado' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>No. Empleado</span>
+                    </div>
+                ),
             },
             {
                 key: 'nombre',
@@ -97,15 +135,16 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                const newDirection = sortKey === 'nombre' && sortDirection === 'asc' ? 'desc' : 'asc';
-                                setSortKey('nombre');
-                                setSortDirection(newDirection);
-                                fetchSearchEmployees(query, 'nombre', newDirection);
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'nombre' }
+                                        : { ...prev, order: 'asc', sort_by: 'nombre' }
+                                );
                             }}>
                             <FaSortAmountDown
                                 size={17}
                                 className={`transition-transform duration-200 ${
-                                    sortKey === 'nombre' && sortDirection === 'desc' ? 'rotate-180' : ''
+                                    params.sort_by === 'nombre' && params.order === 'desc' && 'rotate-180'
                                 } text-gray-500 hover:text-gray-700`}
                             />
                         </button>
@@ -119,14 +158,17 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                const newDirection = sortKey === 'apellido' && sortDirection === 'asc' ? 'desc' : 'asc';
-                                setSortKey('apellido');
-                                setSortDirection(newDirection);
-                                fetchSearchEmployees(query, 'apellido', newDirection);
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'apellido' }
+                                        : { ...prev, order: 'asc', sort_by: 'apellido' }
+                                );
                             }}>
                             <FaSortAmountDown
                                 size={17}
-                                className={`transition-transform duration-200 ${sortKey === 'apellido' && sortDirection === 'desc' ? 'rotate-180' : ''} text-gray-500 hover:text-gray-700`}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'apellido' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
                             />
                         </button>
                         <span>Apellido</span>
@@ -139,14 +181,17 @@ const Employees: React.FC = () => {
                     <div className='flex items-center justify-center gap-2'>
                         <button
                             onClick={() => {
-                                const newDirection = sortKey === 'puesto' && sortDirection === 'asc' ? 'desc' : 'asc';
-                                setSortKey('puesto');
-                                setSortDirection(newDirection);
-                                fetchSearchEmployees(query, 'puesto', newDirection);
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'puesto' }
+                                        : { ...prev, order: 'asc', sort_by: 'puesto' }
+                                );
                             }}>
                             <FaSortAmountDown
                                 size={17}
-                                className={`transition-transform duration-200 ${sortKey === 'puesto' && sortDirection === 'desc' ? 'rotate-180' : ''} text-gray-500 hover:text-gray-700`}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'puesto' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
                             />
                         </button>
                         <span>Puesto</span>
@@ -218,25 +263,42 @@ const Employees: React.FC = () => {
     return (
         <section
             className={`mb-20 flex-auto p-6 transition-all duration-600 ease-in-out ${
-                isSidebarOpen ? 'ml-64' : 'ml-16'
+                isSidebarOpen ? 'ml-64' : 'ml-20'
             }`}>
             {showSuccess && (
                 <div className='mb-4 flex justify-center'>
                     <Popup>¡Empleado registrado con éxito!</Popup>
                 </div>
             )}
-            <Search
-                query={query}
-                onChangeQuery={setQuery}
-                onSearch={() => fetchSearchEmployees(query, sortKey, sortDirection)}
-                onClear={() => fetchSearchEmployees('', sortKey, sortDirection)}
-            />
 
-            <Table
-                columns={columns}
-                data={Utils.orderForDate(entitiesState.employees, 'nombre', 'desc')}
-                loading={loading['employees']}
-            />
+            <Search handleSubmit={handleSearch}>
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    placeholder='Buscar empleado...'
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    leftIcon={<TbUserSearch size={20} />}
+                />
+                <Button
+                    variant='details'
+                    size='md'
+                    icon={<MdOutlineManageSearch size={20} />}
+                    type='submit'
+                    disabled={query === ''}>
+                    Buscar
+                </Button>
+                <Button
+                    variant='details'
+                    size='md'
+                    icon={<BsFillEraserFill size={15} />}
+                    onClick={handleClear}
+                    type='button'>
+                    Limpiar
+                </Button>
+            </Search>
+
+            <Table columns={columns} data={entitiesState.employees} loading={loading['employees']} />
 
             <Pagination />
 

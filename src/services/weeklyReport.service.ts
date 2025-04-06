@@ -1,5 +1,5 @@
 import axiosInstance from '.';
-import { ParamsInterface } from '../types';
+import { ParamsInterface } from '../types/entities';
 
 export class WeeklyReports {
     static getReportsList = async (params: Omit<ParamsInterface, 'estado'>) => {

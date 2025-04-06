@@ -1,48 +1,37 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import {
-    GlobalContextInterface,
     EmployeeInterface,
-    OperatorInterface,
     PayrollInterface,
     LoanInterface,
     WeeklyReportData,
     MetaInterface,
-} from '../types';
+    ParamsInterface,
+} from '../types/entities';
+import { GlobalContextInterface } from '../types/contexts';
 import EmployeeServices from '../services/employees.service';
 import PayrollServices from '../services/payroll.service';
 import LoanServices from '../services/loan.service';
 import WeeklyReports from '../services/weeklyReport.service';
-import Utils from '../utils';
 import PDF from '../services/pdf.service';
+import {
+    defaultEntitiesState,
+    defaultMetaData,
+    defaultParams,
+    defaultSelectedEntities,
+} from '../constants/globalContext';
+import Utils from '../utils';
 
 const GlobalContext = createContext<GlobalContextInterface | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
-    const [entitiesState, setEntitiesState] = useState({
-        employees: [] as EmployeeInterface[],
-        operators: [] as OperatorInterface[],
-        payrolls: [] as PayrollInterface[],
-        loans: [] as LoanInterface[],
-        weeklyReports: [] as WeeklyReportData[],
-    });
-    const [selectedEntities, setSelectedEntities] = useState({
-        selectedEmployee: null as EmployeeInterface | null,
-        selectedLoan: null as LoanInterface | null,
-        selectedPayroll: null as PayrollInterface | null,
-    });
+    const [entitiesState, setEntitiesState] = useState(defaultEntitiesState);
+    const [selectedEntities, setSelectedEntities] = useState(defaultSelectedEntities);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
-    const [pagination, setPagination] = useState({ page: 1, limit: 10 });
-    const [activeEntity, setActiveEntity] = useState<
-        'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports'
-    >('employees');
-    const [metaData, setMetaData] = useState<Record<string, MetaInterface>>({
-        employees: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
-        operators: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
-        payrolls: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
-        loans: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
-        weeklyReports: { totalRecords: 0, totalPages: 1, currentPage: 1, recordsPerPage: 10 },
-    });
+    const [params, setParams] = useState<ParamsInterface>(defaultParams);
+    const [activeEntity, setActiveEntity] = useState<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>('employees');
+    const [metaData, setMetaData] = useState<Record<string, MetaInterface>>(defaultMetaData);
+
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
     const [contentHeader, setContentHeader] = useState<ReactNode | null>(null);
     const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
@@ -53,9 +42,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     ) => {
         setLoading(prev => ({ ...prev, [entity]: true }));
         try {
-            const { data, meta } = await service(
-                entity === 'weeklyReports' ? { estado: 1, ...pagination, year: 2025 } : { estado: 1, ...pagination }
-            );
+            const { data, meta } = await service(entity === 'weeklyReports' ? { ...params, year: 2025 } : params);
             setEntitiesState(prev => ({ ...prev, [entity]: Utils.formatDates(data) }));
             setMetaData(prev => ({ ...prev, [entity]: meta }));
         } catch (error: any) {
@@ -66,36 +53,9 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const fetchEmployees = () => fetchData(EmployeeServices.getEmployees, 'employees');
-    const fetchOperators = () => fetchData(EmployeeServices.getEmployees, 'operators');
     const fetchPayrolls = () => fetchData(PayrollServices.getPayrolls, 'payrolls');
     const fetchLoans = () => fetchData(LoanServices.getLoans, 'loans');
     const fetchWeeklyReports = () => fetchData(WeeklyReports.getReportsList, 'weeklyReports');
-
-    useEffect(() => {
-        fetchEmployees();
-        fetchOperators();
-        fetchPayrolls();
-        fetchLoans();
-        fetchWeeklyReports();
-    }, []);
-
-    const fetchSearchEmployees = async (query: string, sortKey?: string, sortDirection?: 'asc' | 'desc') => {
-        try {
-            const params = {
-                estado: 1,
-                page: 1,
-                limit: 10,
-                q: query,
-                sort: sortKey,
-                order: sortDirection,
-            };
-
-            const { data } = await EmployeeServices.getEmployees(params);
-            setEntitiesState(prev => ({ ...prev, employees: Utils.formatDates(data) }));
-        } catch (err) {
-            setError('Error al buscar empleados');
-        }
-    };
 
     const addEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         setLoading(prev => ({ ...prev, addEmployee: true }));
@@ -266,7 +226,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
         const fetchData = async () => {
             if (activeEntity === 'employees') await fetchEmployees();
-            if (activeEntity === 'operators') await fetchOperators();
             if (activeEntity === 'payrolls') await fetchPayrolls();
             if (activeEntity === 'loans') await fetchLoans();
             if (activeEntity === 'weeklyReports') await fetchWeeklyReports();
@@ -275,7 +234,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         fetchData().finally(() => {
             setLoading(prev => ({ ...prev, loadingAllData: false }));
         });
-    }, [pagination, activeEntity]);
+    }, [params, activeEntity]);
 
     return (
         <GlobalContext.Provider
@@ -287,8 +246,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 setError,
                 loading,
                 setLoading,
-                pagination,
-                setPagination,
+                params,
+                setParams,
                 activeEntity,
                 setActiveEntity,
                 metaData,
@@ -297,6 +256,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 updateEmployee,
                 statusEmployee,
                 addPayroll,
+                updatePayroll,
                 addLoan,
                 updateLoan,
                 createPreviewPayrollPDF,
@@ -309,8 +269,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 contentHeader,
                 setContentHeader,
                 toggleSidebar,
-                fetchSearchEmployees,
-                updatePayroll,
             }}>
             {children}
         </GlobalContext.Provider>

@@ -28,7 +28,7 @@ const Table = <T extends object>({ columns, data = [], onRowClick, loading }: Ta
                         data.map((row, rowIndex) => (
                             <tr
                                 key={rowIndex}
-                                className='cursor-pointer border-b border-gray-200 transition-all odd:bg-white even:bg-gray-50 hover:bg-gray-100'
+                                className='border-b border-gray-200 transition-all odd:bg-white even:bg-gray-50 hover:bg-gray-100'
                                 onClick={() => onRowClick && onRowClick(row)}>
                                 {columns.map(col => (
                                     <td key={String(col.key)} className='p-3'>

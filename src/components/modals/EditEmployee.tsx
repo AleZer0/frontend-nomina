@@ -4,7 +4,7 @@ import { FaUserEdit } from 'react-icons/fa';
 import Modal from '../Modal';
 import Form from '../Form';
 
-import { EmployeeInterface } from '../../types';
+import { EmployeeInterface } from '../../types/entities';
 import { FormField } from '../../types/extras';
 import { useGlobalContext } from '../../context/GlobalContext';
 

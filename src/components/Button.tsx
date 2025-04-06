@@ -25,23 +25,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             <Comp
                 ref={ref}
                 className={clsx(
-                    'inline-flex items-center gap-2 rounded-2xl font-semibold transition-all duration-300',
+                    'inline-flex items-center gap-2 rounded-2xl font-semibold transition-all duration-500',
                     {
-                        'cursor-pointer bg-green-400 text-black hover:bg-green-500 hover:shadow-2xl hover:shadow-green-500':
+                        'bg cursor-pointer bg-green-400 bg-linear-to-r to-emerald-500 text-black hover:scale-110 hover:bg-green-500 hover:shadow-2xl hover:shadow-green-500':
                             variant === 'add' && !isLoading && !disabled,
-                        'cursor-pointer bg-green-400 text-white hover:bg-green-500 hover:shadow-2xl hover:shadow-green-500':
+                        'bg cursor-pointer bg-green-400 bg-linear-to-r to-emerald-500 text-white hover:scale-110 hover:bg-green-500 hover:shadow-2xl hover:shadow-green-500':
                             variant === 'save' && !isLoading && !disabled,
-                        'cursor-pointer bg-orange-400 text-white hover:bg-orange-500 hover:shadow-2xl hover:shadow-orange-500':
+                        'cursor-pointer bg-amber-500 bg-linear-to-r to-orange-500 text-white hover:scale-110 hover:bg-amber-500 hover:shadow-2xl hover:shadow-orange-500':
                             variant === 'edit' && !isLoading && !disabled,
-                        'cursor-pointer bg-red-500 text-white hover:bg-red-600 hover:shadow-2xl hover:shadow-red-600':
+                        'cursor-pointer bg-red-400 bg-linear-to-r to-red-600 text-white hover:scale-110 hover:bg-red-500 hover:shadow-2xl hover:shadow-red-600':
                             variant === 'delete' && !isLoading && !disabled,
-                        'cursor-pointer bg-blue-500 text-white hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-600':
+                        'cursor-pointer bg-sky-500 bg-linear-to-r to-indigo-500 text-white hover:scale-110 hover:bg-sky-600 hover:shadow-2xl hover:shadow-indigo-600':
                             variant === 'details' && !isLoading && !disabled,
-                        'cursor-pointer bg-yellow-500 text-black hover:bg-yellow-600 hover:shadow-2xl hover:shadow-yellow-600':
+                        'cursor-pointer bg-yellow-500 text-black hover:scale-110 hover:bg-yellow-600 hover:shadow-2xl hover:shadow-yellow-600':
                             variant === 'generate' && !isLoading && !disabled,
-                        'cursor-not-allowed bg-gray-300 text-black': isLoading || disabled,
-                        'cursor-pointer font-medium hover:bg-slate-100 hover:shadow-xl':
-                            variant === 'ghost' && !isLoading && !disabled,
+                        'cursor-not-allowed bg-gray-300 text-black disabled:opacity-50': isLoading || disabled,
+                        'cursor-pointer font-medium hover:shadow-xl': variant === 'ghost' && !isLoading && !disabled,
                     },
                     {
                         'px-3 py-1 text-sm': size === 'sm',

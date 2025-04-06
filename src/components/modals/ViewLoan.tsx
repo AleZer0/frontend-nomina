@@ -8,7 +8,7 @@ import Form from '../Form';
 import Button from '../Button';
 
 import { Column, FormField } from '../../types/extras';
-import { PaymentInterface } from '../../types/index';
+import { PaymentInterface } from '../../types/entities';
 import { useGlobalContext } from '../../context/GlobalContext';
 import Utils from '../../utils';
 

@@ -11,7 +11,7 @@ import Table from '../Table';
 import { useGlobalContext } from '../../context/GlobalContext';
 
 import { Column, FormField } from '../../types/extras';
-import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../../types/';
+import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../../types/entities';
 import EmployeeServices from '../../services/employees.service';
 
 interface CreatePayrollModalProps {

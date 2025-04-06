@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { HiDocumentAdd } from 'react-icons/hi';
+import { FaSortAmountDown } from 'react-icons/fa';
+import { CgDetailsMore } from 'react-icons/cg';
 
 import Button from '../components/Button';
 import Table from '../components/Table';
@@ -8,7 +10,7 @@ import Pagination from '../components/Pagination';
 
 import NewPayroll from '../components/modals/NewPayroll';
 
-import { PayrollInterface } from '../types';
+import { PayrollInterface } from '../types/entities';
 import { Column } from '../types/extras';
 
 import { useGlobalContext } from '../context/GlobalContext';
@@ -17,16 +19,31 @@ import Utils from '../utils';
 import Popup from '../components/Popup';
 import ViewPayroll from '../components/modals/ViewPayroll';
 import EditPayroll from '../components/modals/EditPayroll';
-import { CgDetailsMore } from 'react-icons/cg';
+import Search from '../components/Search';
+import Input from '../components/Input';
+import { TbUserSearch } from 'react-icons/tb';
+import { MdOutlineManageSearch } from 'react-icons/md';
+import { BsFillEraserFill } from 'react-icons/bs';
 
 const Payroll: React.FC = () => {
-    const { entitiesState, addPayroll, loading, isSidebarOpen, setContentHeader, setSelectedEntities, updatePayroll } =
-        useGlobalContext();
+    const {
+        entitiesState,
+        setSelectedEntities,
+        loading,
+        params,
+        setParams,
+        addPayroll,
+        updatePayroll,
+        isSidebarOpen,
+        setContentHeader,
+    } = useGlobalContext();
 
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [isOpenViewPayroll, setIsOpenViewPayroll] = useState<boolean>(false);
     const [isOpenEditPayroll, setIsOpenEditPayroll] = useState<boolean>(false);
     const [showSuccess, setShowSuccess] = useState(false);
+
+    const [query, setQuery] = useState({ empleado: '', start_date: '', end_date: '' });
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
@@ -39,6 +56,29 @@ const Payroll: React.FC = () => {
         const newSelectedPayroll = await updatePayroll(folio, updatedPayroll);
         setSelectedEntities(prev => ({ ...prev, selectedPayroll: newSelectedPayroll }));
         setIsOpenEditPayroll(false);
+    };
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setParams(prev => ({
+            ...prev,
+            q: query.empleado || undefined,
+            start_date: query.start_date || undefined,
+            end_date: query.end_date || undefined,
+            page: 1,
+        }));
+    };
+
+    const handleClear = () => {
+        setQuery({ empleado: '', start_date: '', end_date: '' });
+        setParams(prev => {
+            const newParams = { ...prev };
+            delete newParams.q;
+            delete newParams.start_date;
+            delete newParams.end_date;
+            newParams.page = 1;
+            return newParams;
+        });
     };
 
     const totalPagar = (total: number) => {
@@ -67,7 +107,26 @@ const Payroll: React.FC = () => {
         () => [
             {
                 key: 'folio',
-                header: 'Folio',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'folio' }
+                                        : { ...prev, order: 'asc', sort_by: 'folio' }
+                                );
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'folio' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Folio</span>
+                    </div>
+                ),
                 render: (_, row) => (
                     <span className='inline-block rounded-full border border-gray-300 bg-gray-100 px-3 py-1 font-semibold text-gray-500'>
                         {`NOM${row.folio.toString().padStart(4, '0')}`}
@@ -76,12 +135,50 @@ const Payroll: React.FC = () => {
             },
             {
                 key: 'empleado',
-                header: 'Empleado',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'empleado' }
+                                        : { ...prev, order: 'asc', sort_by: 'empleado' }
+                                );
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'empleado' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Empleado</span>
+                    </div>
+                ),
                 render: (_, row) => (row.empleado ? `${row.empleado.nombre} ${row.empleado.apellido}` : ''),
             },
             {
                 key: 'fecha',
-                header: 'Fecha',
+                header: (
+                    <div className='flex items-center justify-center gap-2'>
+                        <button
+                            onClick={() => {
+                                setParams(prev =>
+                                    prev.order === 'asc'
+                                        ? { ...prev, order: 'desc', sort_by: 'fecha' }
+                                        : { ...prev, order: 'asc', sort_by: 'fecha' }
+                                );
+                            }}>
+                            <FaSortAmountDown
+                                size={17}
+                                className={`transition-transform duration-200 ${
+                                    params.sort_by === 'fecha' && params.order === 'desc' && 'rotate-180'
+                                } text-gray-500 hover:text-gray-700`}
+                            />
+                        </button>
+                        <span>Fecha</span>
+                    </div>
+                ),
                 render: (_, row) => (row.fecha ? Utils.formatDateDDMMYYYY(row.fecha) : 'Sin fecha'),
             },
             {
@@ -192,18 +289,58 @@ const Payroll: React.FC = () => {
     return (
         <section
             className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
-                isSidebarOpen ? 'ml-64' : 'ml-16'
+                isSidebarOpen ? 'ml-64' : 'ml-20'
             }`}>
             {showSuccess && (
                 <div className='mb-4 flex justify-center'>
                     <Popup>¡Nómina registrada con éxito!</Popup>
                 </div>
             )}
-            <Table
-                columns={columns}
-                data={Utils.orderForDate(entitiesState.payrolls, 'fecha', 'desc')}
-                loading={loading['payrolls']}
-            />
+
+            <Search handleSubmit={handleSearch}>
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    placeholder='Buscar empleado...'
+                    value={query.empleado}
+                    onChange={e => setQuery(prev => ({ ...prev, empleado: e.target.value }))}
+                    leftIcon={<TbUserSearch size={20} />}
+                />
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    type='date'
+                    placeholder='Fecha inicio'
+                    value={query.start_date}
+                    onChange={e => setQuery(prev => ({ ...prev, start_date: e.target.value }))}
+                />
+                <Input
+                    variant='default'
+                    inputSize='md'
+                    type='date'
+                    placeholder='Fecha fin'
+                    value={query.end_date}
+                    onChange={e => setQuery(prev => ({ ...prev, end_date: e.target.value }))}
+                />
+                <Button
+                    variant='details'
+                    size='md'
+                    icon={<MdOutlineManageSearch size={20} />}
+                    type='submit'
+                    disabled={!query.empleado && !query.start_date && !query.end_date}>
+                    Buscar
+                </Button>
+                <Button
+                    variant='details'
+                    size='md'
+                    icon={<BsFillEraserFill size={15} />}
+                    onClick={handleClear}
+                    type='button'>
+                    Limpiar
+                </Button>
+            </Search>
+
+            <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
 
             <Pagination />
 

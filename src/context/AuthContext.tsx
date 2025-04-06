@@ -1,13 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import Autenticacion from '../services/autenticacion.service';
-import { AuthContextType, UsuarioType } from '../types';
+import { UserInterface } from '../types/entities';
+import { AuthContextInterface } from '../types/contexts';
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextInterface | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [usuario, setUsuario] = useState<UsuarioType | null>(null);
+    const [usuario, setUsuario] = useState<UserInterface | null>(null);
     const [error, setError] = useState<string | null>(null); // Estado para errores
 
     const checkAuthStatus = async () => {

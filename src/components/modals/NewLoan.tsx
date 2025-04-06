@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import Form from '../Form';
 
 import { useGlobalContext } from '../../context/GlobalContext';
-import { EmployeeInterface, LoanInterface } from '../../types';
+import { EmployeeInterface, LoanInterface } from '../../types/entities';
 import { FormField } from '../../types/extras';
 import EmployeeServices from '../../services/employees.service';
 

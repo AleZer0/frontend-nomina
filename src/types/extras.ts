@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
+import { UserInterface } from './entities';
 
 export interface Route {
-    path: 'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports';
+    path: 'employees' | 'payrolls' | 'loans' | 'weeklyReports';
     element: ReactNode;
     name?: string;
     entity?: string;
@@ -26,4 +27,10 @@ export interface FormField {
     isPassword?: boolean;
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
+}
+
+export interface AuthResponse {
+    success: boolean;
+    mensaje: string;
+    usuario: UserInterface;
 }

@@ -5,7 +5,6 @@ import { IoDocuments, IoMenu } from 'react-icons/io5';
 import { BiSolidReport } from 'react-icons/bi';
 import { PiUsersThreeFill } from 'react-icons/pi';
 import { BsCash } from 'react-icons/bs';
-import { FaTruck } from 'react-icons/fa';
 import { CiLogout } from 'react-icons/ci';
 
 import Button from './Button';
@@ -21,12 +20,12 @@ const Sidebar: React.FC = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [showText, setShowText] = useState(false);
-    const { setPagination, setActiveEntity, isSidebarOpen, toggleSidebar } = useGlobalContext();
+    const { params, setParams, setActiveEntity, isSidebarOpen, toggleSidebar } = useGlobalContext();
 
     const handleClickPage = (page: Route) => {
         if (!page) return;
         setSelectedPage(page);
-        setPagination({ page: 1, limit: 10 });
+        setParams({ ...params, page: 1, limit: 10 });
         setActiveEntity(page.path);
         navigate('/' + page.path);
     };
@@ -48,12 +47,12 @@ const Sidebar: React.FC = () => {
     return (
         <>
             <button
-                className='fixed top-2 left-2 z-50 m-3 cursor-pointer p-2 text-black hover:text-gray-400'
+                className='fixed top-2 left-2 z-20 m-3 cursor-pointer p-2 text-black hover:text-gray-400'
                 onClick={toggleSidebar}>
                 <IoMenu size={22} />
             </button>
             <nav
-                className={`fixed z-40 flex h-screen flex-col bg-white pt-20 text-black inset-shadow-xs shadow-current transition-all duration-500 ease-in-out ${
+                className={`fixed z-10 flex h-screen flex-col bg-white pt-20 text-black inset-shadow-xs shadow-current transition-all duration-500 ease-in-out ${
                     isSidebarOpen ? 'w-64' : 'w-20'
                 }`}>
                 <ul className='flex flex-col'>
@@ -67,8 +66,6 @@ const Sidebar: React.FC = () => {
                                 } hover:to-blue-300`}>
                                 {route.name === 'Empleados' ? (
                                     <PiUsersThreeFill size={20} />
-                                ) : route.name === 'Operadores' ? (
-                                    <FaTruck size={20} />
                                 ) : route.name === 'Nóminas' ? (
                                     <IoDocuments size={20} />
                                 ) : route.name === 'Préstamos' ? (

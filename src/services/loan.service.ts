@@ -1,5 +1,5 @@
 import axiosInstance from '.';
-import { LoanInterface, ParamsInterface, PrestamoAbono } from '../types';
+import { LoanInterface, ParamsInterface, PrestamoAbono } from '../types/entities';
 
 export class LoanServices {
     static getLoans = async (params: ParamsInterface) => {

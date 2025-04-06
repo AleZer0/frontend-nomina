@@ -1,4 +1,4 @@
-import { WeeklyReportData } from '../types';
+import { WeeklyReportData } from '../types/entities';
 export class PDF {
     static previewPayrollPDF = (folio: number) => {
         const backendURL = 'https://transportesgodoy-nomina.xrom.cc/api';

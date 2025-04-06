@@ -56,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({
             <div
                 className={`relative max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white shadow-lg transition-transform duration-300 sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 ${containerClassName || ''}`}
                 style={{ zIndex: zIndex + 1 }}>
-                <div className='sticky top-0 z-10 flex items-center justify-between bg-white px-10 pt-6 pb-2'>
+                <div className='sticky top-0 z-50 flex items-center justify-between bg-white px-10 pt-6 pb-2'>
                     <h2 className='text-xl font-bold'>{title}</h2>
                     <AiOutlineClose
                         className='cursor-pointer rounded-2xl bg-gray-100 p-0.5 text-2xl hover:bg-gray-200'

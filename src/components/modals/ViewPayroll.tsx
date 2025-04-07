@@ -116,9 +116,8 @@ const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickE
 
         return [
             {
-                variant: 'generate',
+                variant: 'delete',
                 children: 'PDF',
-                size: 'md',
                 icon: <FaFilePdf size={15} />,
                 onClick: () => createPreviewPayrollPDF(payroll.folio),
             },

@@ -3,3 +3,9 @@
     --sidebar-width: 256px; /* Ancho del Sidebar */
     --header-height: 80px; /* Altura del Header */
 }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-style: normal;
+}

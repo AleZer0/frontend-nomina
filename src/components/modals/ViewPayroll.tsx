@@ -10,15 +10,17 @@ import { ButtonProps } from '../../types/componentes';
 
 import { useGlobalContext } from '../../context/GlobalContext';
 import Utils from '../../utils';
+import Popup from '../Popup';
 
 interface ViewPayrollProps {
     isOpen: boolean;
     onClose: () => void;
     handleClickEditPayroll: () => void;
     handleClickViewPayroll: () => void;
+    showSuccess: boolean;
 }
 
-const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickEditPayroll }) => {
+const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickEditPayroll, showSuccess }) => {
     const { selectedEntities, createPreviewPayrollPDF } = useGlobalContext();
     const payroll = selectedEntities.selectedPayroll;
 
@@ -27,6 +29,14 @@ const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickE
             { name: 'folio', label: 'Folio', type: 'number', variant: 'filled', inputSize: 'md' },
             { name: 'fecha', label: 'Fecha', type: 'text', variant: 'filled', inputSize: 'md' },
             { name: 'dias_trabajados', label: 'Días trabajados', type: 'number', variant: 'filled', inputSize: 'md' },
+            {
+                name: 'faltas',
+                label: 'Faltas',
+                type: 'number',
+                placeholder: 'No cuenta con faltas',
+                variant: 'filled',
+                inputSize: 'md',
+            },
             {
                 name: 'sueldo',
                 label: 'Sueldo',
@@ -133,7 +143,11 @@ const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickE
     if (!isOpen || !payroll) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title='Detalle de Nómina'>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title='Detalle de Nómina'
+            popup={showSuccess && <Popup>¡Nómina actualizada con éxito!</Popup>}>
             <div className='flex flex-col space-y-8'>
                 <Form
                     fields={fields}

@@ -145,6 +145,14 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
                 inputSize: 'md',
             },
             {
+                name: 'faltas',
+                label: 'Días no laborados',
+                type: 'number',
+                placeholder: 'Ingresa Días laborados',
+                variant: 'filled',
+                inputSize: 'md',
+            },
+            {
                 name: 'otros',
                 label: 'Otros',
                 type: 'number',

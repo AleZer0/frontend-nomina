@@ -44,27 +44,32 @@ const Employees: React.FC = () => {
     const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
 
-    const [showSuccess, setShowSuccess] = useState(false);
-
+    const [showSuccessCreate, setShowSuccessCreate] = useState(false);
+    const [showSuccessEdit, setShowSuccessEdit] = useState(false);
+    const [showSuccessDelete, setShowSuccessDelete] = useState(false);
     const [query, setQuery] = useState('');
 
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
         setIsOpenCreateEmployee(false);
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
+        setShowSuccessCreate(true);
+        setTimeout(() => setShowSuccessCreate(false), 3000);
     };
 
     const handleUpdateEmployee = async (id_empleado: number, updatedEmployee: Partial<EmployeeInterface>) => {
         const newSelectedEmployee = await updateEmployee(id_empleado, updatedEmployee);
         setSelectedEntities(prev => ({ ...prev, selectedEmployee: newSelectedEmployee }));
         setIsOpenEditEmployee(false);
+        setShowSuccessEdit(true);
+        setTimeout(() => setShowSuccessEdit(false), 3000);
     };
 
     const handleDeleteEmployee = async (id_empleado: number) => {
         await statusEmployee(id_empleado, 0);
         setSelectedEntities(prev => ({ ...prev, selectedEmployee: null }));
         setIsOpenViewEmployee(false);
+        setShowSuccessDelete(true);
+        setTimeout(() => setShowSuccessDelete(false), 3000);
     };
 
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
@@ -253,9 +258,14 @@ const Employees: React.FC = () => {
             className={`mb-20 flex-auto p-6 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-20'
             }`}>
-            {showSuccess && (
+            {showSuccessCreate && (
                 <div className='mb-4 flex justify-center'>
                     <Popup>¡Empleado registrado con éxito!</Popup>
+                </div>
+            )}
+            {showSuccessDelete && (
+                <div className='mb-4 flex justify-center'>
+                    <Popup>¡Empleado eliminado con éxito!</Popup>
                 </div>
             )}
 
@@ -299,6 +309,7 @@ const Employees: React.FC = () => {
                 handleClickCreatePayroll={() => setIsOpenCreatePayroll(true)}
                 handleClickEdit={() => setIsOpenEditEmployee(true)}
                 handleClickDelate={handleDeleteEmployee}
+                showSuccess={showSuccessEdit}
             />
 
             <NewEmployee

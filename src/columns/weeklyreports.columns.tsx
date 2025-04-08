@@ -1,35 +1,15 @@
-import { FaFilePdf, FaSortAmountDown } from 'react-icons/fa';
+import { FaFilePdf } from 'react-icons/fa';
 import { Column } from '../types/extras';
-import { ParamsInterface, WeeklyReportData } from '../types/entities';
+import { WeeklyReportData } from '../types/entities';
 import Button from '../components/Button';
 
 export const getWeeklyReportColumns = (
-    params: ParamsInterface,
-    setParams: React.Dispatch<React.SetStateAction<ParamsInterface>>,
     loading: {
         [key: string]: boolean;
         [key: number]: boolean;
     },
     createPreviewWeeklyReportPDF: (year: number, row: WeeklyReportData) => void
 ): Column<WeeklyReportData>[] => {
-    const createSortableHeader = (label: string, field: keyof WeeklyReportData) => (
-        <div className='flex items-center justify-center gap-2'>
-            <button
-                onClick={() => {
-                    const newOrder = params.order === 'asc' ? 'desc' : 'asc';
-                    setParams({ ...params, order: newOrder, sort_by: field });
-                }}>
-                <FaSortAmountDown
-                    size={17}
-                    className={`transition-transform duration-200 ${
-                        params.sort_by === field && params.order === 'desc' ? 'rotate-180' : ''
-                    } text-gray-500 hover:text-gray-700`}
-                />
-            </button>
-            <span>{label}</span>
-        </div>
-    );
-
     const formatMoney = (cantidad: number, tipo: 'normal' | 'total' = 'normal') => {
         const classes = {
             normal: !cantidad

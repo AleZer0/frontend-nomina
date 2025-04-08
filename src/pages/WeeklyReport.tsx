@@ -7,17 +7,14 @@ import Pagination from '../components/Pagination';
 import WeeklyReportHeader from '../components/WeeklyReport/WeeklyReportHeader';
 
 const WeeklyReport: React.FC = () => {
-    const { entitiesState, setParams, params, isSidebarOpen, loading, setContentHeader, createPreviewWeeklyReportPDF } =
+    const { entitiesState, params, isSidebarOpen, loading, setContentHeader, createPreviewWeeklyReportPDF } =
         useGlobalContext();
 
     useEffect(() => {
         setContentHeader(<WeeklyReportHeader />);
     }, [isSidebarOpen]);
 
-    const columns = useMemo(
-        () => getWeeklyReportColumns(params, setParams, loading, createPreviewWeeklyReportPDF),
-        [params]
-    );
+    const columns = useMemo(() => getWeeklyReportColumns(loading, createPreviewWeeklyReportPDF), [params]);
 
     return (
         <section className={`mb-20 flex-auto p-6 transition-all ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>

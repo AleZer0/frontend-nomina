@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { MdPayments } from 'react-icons/md';
+import { MdMoneyOffCsred, MdOutlineAttachMoney } from 'react-icons/md';
 
 import Modal from '../Modal';
 import Table from '../Table';
@@ -9,16 +9,19 @@ import Button from '../Button';
 
 import { Column, FormField } from '../../types/extras';
 import { PaymentInterface } from '../../types/entities';
+import { ButtonProps } from '../../types/componentes';
 import { useGlobalContext } from '../../context/GlobalContext';
 import Utils from '../../utils';
 
 interface ViewLoanProps {
     isOpen: boolean;
     onClose: () => void;
-    handleClickPayLoan: () => void;
+    handleClickEdit: () => void;
+    handleClickDelete: (id_prestamo: number) => void;
+    showSuccess: boolean;
 }
 
-const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan }) => {
+const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickEdit, handleClickDelete }) => {
     const { selectedEntities, loading } = useGlobalContext();
 
     const fields: FormField[] = useMemo(
@@ -72,6 +75,25 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan
         []
     );
 
+    const buttons: ButtonProps[] = useMemo(() => {
+        if (!selectedEntities.selectedLoan) return [];
+
+        return [
+            {
+                variant: 'delete',
+                children: 'Eliminar',
+                icon: <MdMoneyOffCsred size={17} />,
+                onClick: () => handleClickDelete(selectedEntities.selectedLoan?.id_prestamo ?? 0),
+            },
+            {
+                variant: 'edit',
+                children: 'Abonar',
+                icon: <MdOutlineAttachMoney size={17} />,
+                onClick: handleClickEdit,
+            },
+        ];
+    }, [selectedEntities.selectedLoan]);
+
     const columns: Column<PaymentInterface>[] = useMemo(
         () => [
             {
@@ -105,9 +127,17 @@ const ViewLoan: React.FC<ViewLoanProps> = ({ isOpen, onClose, handleClickPayLoan
                     loading={loading['abonos']}
                 />
                 <div className='mt-4 flex justify-end gap-2'>
-                    <Button variant='add' icon={<MdPayments size={17} />} onClick={() => handleClickPayLoan()}>
-                        Abonar
-                    </Button>
+                    {buttons.map(({ variant, children, icon, onClick, className }) => (
+                        <Button
+                            key={variant}
+                            variant={variant}
+                            size='md'
+                            icon={icon}
+                            onClick={onClick}
+                            className={className}>
+                            {children}
+                        </Button>
+                    ))}
                 </div>
             </div>
         </Modal>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { IoDocuments, IoMenu } from 'react-icons/io5';
 import { BiSolidReport } from 'react-icons/bi';
@@ -20,12 +20,11 @@ const Sidebar: React.FC = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [showText, setShowText] = useState(false);
-    const { params, setParams, isSidebarOpen, toggleSidebar } = useGlobalContext();
+    const { setParams, isSidebarOpen, toggleSidebar } = useGlobalContext();
 
     const handleClickPage = (page: Route) => {
         if (!page) return;
-        setParams({ ...params, page: 1, limit: 10 });
-        setActiveEntity(page.path);
+        setParams(prev => ({ ...prev, page: 1, limit: 10 }));
         navigate('/' + page.path);
     };
 
@@ -61,7 +60,7 @@ const Sidebar: React.FC = () => {
                             <div
                                 onClick={() => handleClickPage(route)}
                                 className={`m-3 flex cursor-pointer items-center gap-3 bg-gradient-to-r px-4 py-2 transition-all hover:border-l-8 hover:border-blue-500 ${
-                                    route.path === activeEntity ? 'border-l-8 border-blue-500 to-blue-200' : ''
+                                    pathname.includes(route.path) ? 'border-l-8 border-blue-500 to-blue-200' : ''
                                 } hover:to-blue-300`}>
                                 {route.name === 'Empleados' ? (
                                     <PiUsersThreeFill size={20} />

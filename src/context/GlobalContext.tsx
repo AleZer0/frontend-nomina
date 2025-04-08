@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
     EmployeeInterface,
     PayrollInterface,
@@ -20,10 +21,14 @@ import {
     defaultSelectedEntities,
 } from '../constants/globalContext';
 import Utils from '../utils';
+import { getActiveEntityFromPath } from '../utils/router';
 
 const GlobalContext = createContext<GlobalContextInterface | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
+    const { pathname } = useLocation();
+    const activeEntity = getActiveEntityFromPath(pathname);
+
     const [entitiesState, setEntitiesState] = useState(defaultEntitiesState);
     const [selectedEntities, setSelectedEntities] = useState(defaultSelectedEntities);
     const [error, setError] = useState<string | null>(null);
@@ -35,11 +40,21 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [contentHeader, setContentHeader] = useState<ReactNode | null>(null);
     const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
 
+    useEffect(() => {
+        if (activeEntity === 'employees') fetchEmployees();
+        else if (activeEntity === 'payrolls') fetchPayrolls();
+        else if (activeEntity === 'loans') fetchLoans();
+        else if (activeEntity === 'weeklyReports') fetchWeeklyReports();
+    }, [params, activeEntity]);
+
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
     const fetchData = async (
         service: (params: any) => Promise<{ data: any; meta: MetaInterface }>,
         entity: keyof typeof entitiesState
     ) => {
         setLoading(prev => ({ ...prev, [entity]: true }));
+        const start = performance.now();
         try {
             const { data, meta } = await service(entity === 'weeklyReports' ? { ...params, year: 2025 } : params);
             setEntitiesState(prev => ({ ...prev, [entity]: Utils.formatDates(data) }));
@@ -47,6 +62,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         } catch (error: any) {
             setError(error.message);
         } finally {
+            const elapsed = performance.now() - start;
+            const minDuration = 400;
+            const extraWait = Math.max(0, minDuration - elapsed);
+            await delay(extraWait);
             setLoading(prev => ({ ...prev, [entity]: false }));
         }
     };
@@ -86,25 +105,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 employees: prev.employees.map(item => (item.id_empleado === id_empleado ? updatedEmployee : item)),
             }));
             return updatedEmployee;
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
-        } finally {
-            setLoading(prev => ({ ...prev, updateEmployee: false }));
-        }
-    };
-
-    const updatePayroll = async (folio: number, updatedData: Partial<PayrollInterface>): Promise<PayrollInterface> => {
-        setLoading(prev => ({ ...prev, updatePayroll: true }));
-        try {
-            let updatedPayroll = await PayrollServices.updatePayroll(folio, updatedData);
-            const fecha = updatedPayroll.fecha ? updatedPayroll.fecha.split('T')[0] : null;
-            updatedPayroll = { ...updatedPayroll, fecha };
-            setEntitiesState(prev => ({
-                ...prev,
-                payrolls: prev.payrolls.map(item => (item.folio === folio ? updatedPayroll : item)),
-            }));
-            return updatedPayroll;
         } catch (error: any) {
             setError(error.message);
             throw error;
@@ -168,6 +168,40 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updatePayroll = async (folio: number, updatedData: Partial<PayrollInterface>): Promise<PayrollInterface> => {
+        setLoading(prev => ({ ...prev, updatePayroll: true }));
+        try {
+            let updatedPayroll = await PayrollServices.updatePayroll(folio, updatedData);
+            const fecha = updatedPayroll.fecha ? updatedPayroll.fecha.split('T')[0] : null;
+            updatedPayroll = { ...updatedPayroll, fecha };
+            setEntitiesState(prev => ({
+                ...prev,
+                payrolls: prev.payrolls.map(item => (item.folio === folio ? updatedPayroll : item)),
+            }));
+            return updatedPayroll;
+        } catch (error: any) {
+            setError(error.message);
+            throw error;
+        } finally {
+            setLoading(prev => ({ ...prev, updateEmployee: false }));
+        }
+    };
+
+    const statusPayroll = async (folio: number, status: 0 | 1) => {
+        setLoading(prev => ({ ...prev, statusPayroll: true }));
+        try {
+            await PayrollServices.changeStatusPayroll(folio, status);
+            setEntitiesState(prev => ({
+                ...prev,
+                payrolls: prev.payrolls.map(item => (item.folio === folio ? { ...item, estado: status } : item)),
+            }));
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, statusPayroll: false }));
+        }
+    };
+
     const addLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         setLoading(prev => ({ ...prev, addLoan: true }));
         try {
@@ -198,6 +232,21 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const statusLoan = async (id_prestamo: number, status: 0 | 1) => {
+        setLoading(prev => ({ ...prev, statusLoans: true }));
+        try {
+            await LoanServices.changeStatusLoan(id_prestamo, status);
+            setEntitiesState(prev => ({
+                ...prev,
+                loans: prev.loans.map(item => (item.id_prestamo === id_prestamo ? { ...item, estado: status } : item)),
+            }));
+        } catch (error: any) {
+            setError(error.message);
+        } finally {
+            setLoading(prev => ({ ...prev, statusLoans: false }));
+        }
+    };
+
     const createPreviewPayrollPDF = (folio: number) => {
         setLoading(prev => ({ ...prev, [folio]: true }));
         try {
@@ -220,17 +269,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const sortData = <T extends keyof typeof entitiesState>(
-        entity: T,
-        column: keyof (typeof entitiesState)[T][number],
-        order?: 'desc' | 'asc'
-    ) => {
-        setEntitiesState(prev => ({
-            ...prev,
-            [entity]: Utils.orderData(prev[entity], column, order),
-        }));
-    };
-
     return (
         <GlobalContext.Provider
             value={{
@@ -250,8 +288,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 statusEmployee,
                 addPayroll,
                 updatePayroll,
+                statusPayroll,
                 addLoan,
                 updateLoan,
+                statusLoan,
                 createPreviewPayrollPDF,
                 createPreviewWeeklyReportPDF,
                 fetchEmployees,
@@ -262,7 +302,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 contentHeader,
                 setContentHeader,
                 toggleSidebar,
-                sortData,
             }}>
             {children}
         </GlobalContext.Provider>

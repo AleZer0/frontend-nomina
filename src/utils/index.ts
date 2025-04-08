@@ -45,43 +45,6 @@ class Utils {
         }
         return data;
     };
-
-    /**
-     * Ordena un array de objetos por un campo, que puede ser string, number o Date.
-     * @param array Array de objetos a ordenar
-     * @param campo Clave del objeto por la que se quiere ordenar
-     * @param orden 'asc' o 'desc'
-     * @returns Array ordenado
-     */
-    static orderData = <T extends Record<string, any>>(
-        array: T[],
-        campo: keyof T,
-        orden: 'asc' | 'desc' = 'asc'
-    ): T[] => {
-        return [...array].sort((a, b) => {
-            const valA = a[campo];
-            const valB = b[campo];
-
-            // Comparación por string
-            if (typeof valA === 'string' && typeof valB === 'string') {
-                return orden === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-            }
-
-            // Comparación por número
-            if (typeof valA === 'number' && typeof valB === 'number') {
-                return orden === 'asc' ? valA - valB : valB - valA;
-            }
-
-            // Comparación por fechas (convertir strings válidos a Date)
-            const fechaA = Date.parse(valA as any);
-            const fechaB = Date.parse(valB as any);
-            if (!isNaN(fechaA) && !isNaN(fechaB)) {
-                return orden === 'asc' ? fechaA - fechaB : fechaB - fechaA;
-            }
-
-            return 0; // Si no se puede comparar, mantener orden original
-        });
-    };
 }
 
 export default Utils;

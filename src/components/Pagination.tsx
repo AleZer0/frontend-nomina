@@ -46,8 +46,7 @@ const Pagination: React.FC = () => {
     };
 
     return (
-        <div className='mt-6 flex flex-wrap items-center justify-center gap-4 rounded-xl bg-white p-4 shadow-md'>
-            {/* Primera Página */}
+        <div className='mt-6 flex flex-wrap items-center justify-center gap-4 rounded-xl bg-white p-4 shadow-2xl'>
             <Button
                 variant='details'
                 size='md'
@@ -56,7 +55,6 @@ const Pagination: React.FC = () => {
                 disabled={page === 1}
             />
 
-            {/* Página Anterior */}
             <Button
                 variant='details'
                 size='md'
@@ -65,7 +63,6 @@ const Pagination: React.FC = () => {
                 disabled={page === 1}
             />
 
-            {/* Input de Página */}
             <form onSubmit={handleInputSubmit} className='flex items-center gap-2 text-base font-medium text-gray-600'>
                 <span className='text-sm text-gray-500'>Ir a</span>
                 <input
@@ -79,7 +76,6 @@ const Pagination: React.FC = () => {
                 <span className='text-sm text-gray-500'>de {totalPages}</span>
             </form>
 
-            {/* Página Siguiente */}
             <Button
                 variant='details'
                 size='md'
@@ -88,7 +84,6 @@ const Pagination: React.FC = () => {
                 disabled={page >= totalPages}
             />
 
-            {/* Última Página */}
             <Button
                 variant='details'
                 size='md'

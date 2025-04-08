@@ -12,11 +12,11 @@ import { useGlobalContext } from '../../context/GlobalContext';
 interface PayloanProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (updatedLoan: Partial<PaymentInterface>) => void;
+    onSubmit: (id_prestamo: number, monto_abonado: number) => void;
 }
 
 const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { loading } = useGlobalContext();
+    const { selectedEntities, loading } = useGlobalContext();
 
     const emptyPayment = {
         id_prestamo: 0,
@@ -34,7 +34,8 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
             ...values,
         };
 
-        onSubmit(updatedLoan);
+        onSubmit(selectedEntities.selectedLoan?.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
+        onClose();
     };
 
     const fields: FormField[] = useMemo(

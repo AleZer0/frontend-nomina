@@ -44,7 +44,23 @@ export class LoanServices {
             throw new Error(error.response?.data?.message || 'Error al abonar.');
         }
     };
-    static services: any;
+
+    static changeStatusLoan = async (id_prestamo: number, estado: 0 | 1) => {
+        if (!Number.isInteger(id_prestamo) || id_prestamo <= 0) {
+            throw new Error('El ID debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.put(`/prestamos/estado/${id_prestamo}`, { estado });
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al eliminar un prestamo:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al eliminar un prestamo.');
+        }
+    };
 }
 
 export default LoanServices;

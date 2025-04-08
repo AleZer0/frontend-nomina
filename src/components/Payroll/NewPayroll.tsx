@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { HiDocumentAdd } from 'react-icons/hi';
 import { MdPayments } from 'react-icons/md';
@@ -13,6 +14,7 @@ import { useGlobalContext } from '../../context/GlobalContext';
 import { Column, FormField } from '../../types/extras';
 import { EmployeeInterface, LoanInterface, PayrollInterface, PrestamoAbono } from '../../types/entities';
 import EmployeeServices from '../../services/employees.service';
+import { getActiveEntityFromPath } from '../../utils/router';
 
 interface CreatePayrollModalProps {
     isOpen: boolean;
@@ -21,7 +23,10 @@ interface CreatePayrollModalProps {
 }
 
 const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
-    const { selectedEntities, setSelectedEntities, loading, activeEntity } = useGlobalContext();
+    const { pathname } = useLocation();
+    const activeEntity = getActiveEntityFromPath(pathname);
+
+    const { selectedEntities, setSelectedEntities, loading } = useGlobalContext();
 
     const emptyPayroll: Omit<PayrollInterface, 'folio'> = {
         fecha: '',

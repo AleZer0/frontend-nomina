@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { FaFilePdf, FaUserEdit } from 'react-icons/fa';
+import { FaFileCircleMinus, FaFilePdf, FaFilePen } from 'react-icons/fa6';
 
 import Modal from '../Modal';
 import Form from '../Form';
@@ -15,14 +15,19 @@ import Popup from '../Popup';
 interface ViewPayrollProps {
     isOpen: boolean;
     onClose: () => void;
-    handleClickEditPayroll: () => void;
-    handleClickViewPayroll: () => void;
+    handleClickEdit: () => void;
+    handleClickDelete: (folio: number) => void;
     showSuccess: boolean;
 }
 
-const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickEditPayroll, showSuccess }) => {
+const ViewPayroll: React.FC<ViewPayrollProps> = ({
+    isOpen,
+    onClose,
+    handleClickEdit,
+    handleClickDelete,
+    showSuccess,
+}) => {
     const { selectedEntities, createPreviewPayrollPDF } = useGlobalContext();
-    const payroll = selectedEntities.selectedPayroll;
 
     const fields: FormField[] = useMemo(
         () => [
@@ -122,25 +127,31 @@ const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickE
     );
 
     const buttons: ButtonProps[] = useMemo(() => {
-        if (!payroll) return [];
+        if (!selectedEntities.selectedPayroll) return [];
 
         return [
             {
-                variant: 'delete',
+                variant: 'details',
                 children: 'PDF',
-                icon: <FaFilePdf size={15} />,
-                onClick: () => createPreviewPayrollPDF(payroll.folio),
+                icon: <FaFilePdf size={17} />,
+                onClick: () => createPreviewPayrollPDF(selectedEntities.selectedPayroll?.folio ?? 0),
+            },
+            {
+                variant: 'delete',
+                children: 'Eliminar',
+                icon: <FaFileCircleMinus size={17} />,
+                onClick: () => handleClickDelete(selectedEntities.selectedPayroll?.folio ?? 0),
             },
             {
                 variant: 'edit',
                 children: 'Editar',
-                icon: <FaUserEdit size={17} />,
-                onClick: handleClickEditPayroll,
+                icon: <FaFilePen size={17} />,
+                onClick: handleClickEdit,
             },
         ];
-    }, [payroll]);
+    }, [selectedEntities.selectedPayroll]);
 
-    if (!isOpen || !payroll) return null;
+    if (!isOpen || !selectedEntities.selectedPayroll) return null;
 
     return (
         <Modal
@@ -152,8 +163,8 @@ const ViewPayroll: React.FC<ViewPayrollProps> = ({ isOpen, onClose, handleClickE
                 <Form
                     fields={fields}
                     data={{
-                        ...payroll,
-                        fecha: Utils.formatDateDDMMYYYY(payroll.created_at || ''),
+                        ...selectedEntities.selectedPayroll,
+                        fecha: Utils.formatDateDDMMYYYY(selectedEntities.selectedPayroll.created_at || ''),
                     }}
                     disabled={true}
                     columns={3}

@@ -1,50 +1,71 @@
-# React + TypeScript + Vite
+# 📊 App-Nómina - Transportes Godoy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema integral de control de nóminas para la empresa **Transportes Godoy**, desarrollado para facilitar la gestión de empleados, pagos, préstamos, reportes semanales y más.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Frontend
 
-## Expanding the ESLint configuration
+- ⚡️ **Vite** – Entorno rápido de desarrollo.
+- ⚛ **React** + **TypeScript** – Interfaz modular, escalable y tipada.
+- 🎨 **TailwindCSS** – Estilos rápidos y responsivos.
+- 🌐 **react-router-dom** – Manejo de rutas dinámicas.
+- 🧹 **Prettier** – Formateo de código.
+- 🧪 **ESLint** – Buenas prácticas y detección de errores.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Backend
 
-- Configure the top-level `parserOptions` property like this:
+- 🟢 **Node.js** – Entorno de ejecución JavaScript.
+- 🧬 **Hono** – Microframework moderno y rápido.
+- 🐬 **MySQL** – Base de datos relacional.
+- 🔄 **Prisma** – ORM moderno, tipado y potente.
 
-```js
-export default tseslint.config({
-    languageOptions: {
-        // other options...
-        parserOptions: {
-            project: ['./tsconfig.node.json', './tsconfig.app.json'],
-            tsconfigRootDir: import.meta.dirname,
-        },
-    },
-});
+### DevOps / Deploy
+
+- 🐳 **Docker** – Contenedorización completa.
+- 🐧 **Ubuntu Server** – Entorno de producción.
+- 🌐 **Nginx** (implícito para HTTPS) – Proxy reverso.
+- 🔐 **SSL** – Certificados ubicados en `/certs`:
+- `_.xrom.cc.crt`
+- `_.xrom.cc.key`
+
+## 🌍 Dominio
+
+El proyecto se encuentra desplegado en:
+
+```
+https://transportesgodoy-nomina.xrom.cc
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 📦 Docker
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react';
+La aplicación se ejecuta en un contenedor llamado:
 
-export default tseslint.config({
-    // Set the react version
-    settings: { react: { version: '18.3' } },
-    plugins: {
-        // Add the react plugin
-        react,
-    },
-    rules: {
-        // other rules...
-        // Enable its recommended rules
-        ...react.configs.recommended.rules,
-        ...react.configs['jsx-runtime'].rules,
-    },
-});
 ```
+nomina-transportes-godpy
+```
+
+Construido desde la imagen:
+
+```
+app-nomina
+```
+
+Expone únicamente el **puerto 443** para conexiones HTTPS seguras.
+
+## ✅ Funcionalidades
+
+- Gestión de empleados y sueldos.
+- Registro y visualización de nóminas.
+- Administración de préstamos.
+- Reportes semanales detallados.
+- Paginación, ordenamiento y búsqueda por campos.
+- Interfaz responsiva y amigable.
+- Sistema de modales para crear, editar y ver detalles.
+- Splash screen inicial con carga de datos.
+
+## 🛡️ Seguridad
+
+- Conexión segura HTTPS mediante certificados SSL.
+- Validación y sanitización en backend.
+- Navegación protegida por autenticación.

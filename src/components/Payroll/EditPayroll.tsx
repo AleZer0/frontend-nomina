@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FaUserEdit } from 'react-icons/fa';
+import { FaFilePen } from 'react-icons/fa6';
 
 import Modal from '../Modal';
 import Form from '../Form';
@@ -186,7 +186,7 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
                         otros: 0,
                     }
                 }
-                submitIcon={<FaUserEdit size={17} />}
+                submitIcon={<FaFilePen size={17} />}
                 submitLabel='Guardar cambios'
                 variant='edit'
                 direction='end'

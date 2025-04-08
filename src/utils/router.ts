@@ -2,6 +2,6 @@ export const getActiveEntityFromPath = (pathname: string): 'employees' | 'payrol
     if (pathname.includes('/employees')) return 'employees';
     if (pathname.includes('/payrolls')) return 'payrolls';
     if (pathname.includes('/loans')) return 'loans';
-    if (pathname.includes('/weekly-reports')) return 'weeklyReports';
-    return 'employees'; // default
+    if (pathname.includes('/weeklyReports')) return 'weeklyReports';
+    return 'employees';
 };

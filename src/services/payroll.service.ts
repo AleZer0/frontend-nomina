@@ -52,6 +52,23 @@ class PayrollServices {
             throw new Error(error.response?.data?.message || 'Error al actualizar una nómina.');
         }
     };
+
+    static changeStatusPayroll = async (folio: number, estado: 0 | 1) => {
+        if (!Number.isInteger(folio) || folio <= 0) {
+            throw new Error('El ID debe ser un número válido.');
+        }
+
+        try {
+            const response = await axiosInstance.put(`/nomina/estado/${folio}`, { estado });
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Error desconocido.');
+            }
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error al eliminar una nómina:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'Error al eliminar una nómina.');
+        }
+    };
 }
 
 export default PayrollServices;

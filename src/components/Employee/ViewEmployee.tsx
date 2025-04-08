@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { HiDocumentAdd } from 'react-icons/hi';
 import { FaUserEdit } from 'react-icons/fa';
 import { FaUserMinus } from 'react-icons/fa';
 
@@ -20,25 +19,23 @@ import Popup from '../Popup';
 interface ViewEmployeeProps {
     isOpen: boolean;
     onClose: () => void;
-    handleClickCreatePayroll: () => void;
     handleClickEdit: () => void;
-    handleClickDelate: (id_empleado: number) => void;
+    handleClickDelete: (id_empleado: number) => void;
     showSuccess: boolean;
 }
 
 const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     isOpen,
     onClose,
-    handleClickCreatePayroll,
     handleClickEdit,
-    handleClickDelate,
+    handleClickDelete,
     showSuccess,
 }) => {
     const { selectedEntities, loading } = useGlobalContext();
 
     const handleClickDelateButton = () => {
         if (!selectedEntities.selectedEmployee) return;
-        handleClickDelate(selectedEntities.selectedEmployee.id_empleado);
+        handleClickDelete(selectedEntities.selectedEmployee.id_empleado);
     };
 
     const fields: FormField[] = useMemo(
@@ -113,23 +110,16 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     const buttons: ButtonProps[] = useMemo(
         () => [
             {
-                variant: 'add',
-                children: 'Generar nómina',
-                icon: <HiDocumentAdd size={17} />,
-                onClick: () => handleClickCreatePayroll(),
-                className: 'text-white',
+                variant: 'delete',
+                children: 'Eliminar',
+                icon: <FaUserMinus size={17} />,
+                onClick: () => handleClickDelateButton(),
             },
             {
                 variant: 'edit',
                 children: 'Editar',
                 icon: <FaUserEdit size={17} />,
                 onClick: () => handleClickEdit(),
-            },
-            {
-                variant: 'delete',
-                children: 'Eliminar',
-                icon: <FaUserMinus size={17} />,
-                onClick: () => handleClickDelateButton(),
             },
         ],
         [selectedEntities.selectedEmployee]

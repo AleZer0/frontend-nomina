@@ -17,7 +17,7 @@ const AppContent: React.FC = () => {
     const [isSplashVisible, setIsSplashVisible] = useState(true);
 
     useEffect(() => {
-        const minSplashTime = 1500; // mínimo 1.5 segundos
+        const minSplashTime = 1500;
         const timer = setTimeout(() => {
             if (!loading.loadingAllData) {
                 setIsSplashVisible(false);

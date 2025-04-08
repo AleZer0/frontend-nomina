@@ -50,8 +50,10 @@ export interface GlobalContextInterface {
     statusEmployee: (id_empleado: number, status: 0 | 1) => Promise<void>;
     addPayroll: (newPayroll: Omit<PayrollInterface, 'folio'>) => Promise<void>;
     updatePayroll: (folio: number, updatedData: Partial<PayrollInterface>) => Promise<PayrollInterface>;
+    statusPayroll: (folio: number, status: 0 | 1) => Promise<void>;
     addLoan: (newLoan: Omit<LoanInterface, 'id_prestamo'>) => Promise<void>;
     updateLoan: (id_prestamo: number, monto_abonado: number) => Promise<LoanInterface>;
+    statusLoan: (id_prestamo: number, status: 0 | 1) => Promise<void>;
     createPreviewPayrollPDF: (folio: number) => void;
     createPreviewWeeklyReportPDF: (year: number, row: WeeklyReportData) => void;
     fetchEmployees: () => Promise<void>;
@@ -62,14 +64,4 @@ export interface GlobalContextInterface {
     contentHeader: ReactNode;
     setContentHeader: React.Dispatch<React.SetStateAction<ReactNode>>;
     toggleSidebar: () => void;
-    sortData: <T extends 'employees' | 'payrolls' | 'loans' | 'weeklyReports'>(
-        entity: T,
-        column: keyof {
-            employees: EmployeeInterface[];
-            payrolls: PayrollInterface[];
-            loans: LoanInterface[];
-            weeklyReports: WeeklyReportData[];
-        }[T][number],
-        order?: 'desc' | 'asc'
-    ) => void;
 }

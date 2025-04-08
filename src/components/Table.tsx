@@ -1,54 +1,13 @@
+import TableHeader from './TableHeader';
+import TableBody from './TableBody';
 import { TableProps } from '../types/componentes';
-import Loader from '../components/Loader';
 
 const Table = <T extends object>({ columns, data = [], onRowClick, loading }: TableProps<T>) => {
     return (
         <div className='relative overflow-x-auto shadow-2xl sm:rounded-2xl'>
-            <table className='w-full table-auto text-base text-black'>
-                <thead className='bg-gray-300 text-center uppercase'>
-                    <tr>
-                        {columns.map(col => (
-                            <th key={String(col.key)} className='p-3'>
-                                {col.header}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-
-                <tbody className='text-center'>
-                    {loading ? (
-                        <tr>
-                            <td colSpan={columns.length} className='bg-white p-4'>
-                                <div className='flex justify-center'>
-                                    <Loader />
-                                </div>
-                            </td>
-                        </tr>
-                    ) : Array.isArray(data) && data.length > 0 ? (
-                        data.map((row, rowIndex) => (
-                            <tr
-                                key={rowIndex}
-                                className='border-b border-gray-200 transition-all odd:bg-white even:bg-gray-50 hover:bg-gray-100'
-                                onClick={() => onRowClick && onRowClick(row)}>
-                                {columns.map(col => (
-                                    <td key={String(col.key)} className='p-3'>
-                                        {col.render
-                                            ? col.render(col.key in row ? row[col.key as keyof T] : undefined, row)
-                                            : col.key in row
-                                              ? String(row[col.key as keyof T])
-                                              : null}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={columns.length} className='bg-white p-4'>
-                                No hay registros disponibles
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
+            <table className='w-full table-fixed text-base text-black'>
+                <TableHeader columns={columns} />
+                <TableBody columns={columns} data={data} loading={loading} onRowClick={onRowClick} />
             </table>
         </div>
     );

@@ -7,11 +7,11 @@ interface SearchProps {
 
 const Search: React.FC<SearchProps> = ({ children, handleSubmit }) => {
     return (
-        <div className='mb-4 flex-col gap-2 md:flex-row md:items-center md:justify-between'>
-            <form className='flex items-center gap-2 rounded-2xl bg-white px-4 py-3 shadow' onSubmit={handleSubmit}>
-                {children}
-            </form>
-        </div>
+        <form
+            className='mb-4 flex flex-col items-center gap-4 rounded-2xl bg-white px-4 py-3 shadow md:flex-row md:items-center md:justify-between'
+            onSubmit={handleSubmit}>
+            {children}
+        </form>
     );
 };
 

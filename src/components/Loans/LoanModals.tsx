@@ -40,11 +40,12 @@ const LoanModals: React.FC<TLoanModals> = ({
                     setSelectedEntities(prev => ({ ...prev, selectedLoan: null }));
                 }}
                 handleClickEdit={() => setOpenEdit(true)}
-                handleClickDelete={() =>
-                    selectedEntities.selectedLoan &&
-                    onDelete(selectedEntities.selectedLoan.id_prestamo) &&
-                    setOpenView(false)
-                }
+                handleClickDelete={async () => {
+                    if (selectedEntities.selectedLoan) {
+                        await onDelete(selectedEntities.selectedLoan.id_prestamo);
+                        setOpenView(false);
+                    }
+                }}
                 showSuccess={showSuccessEdit}
             />
 

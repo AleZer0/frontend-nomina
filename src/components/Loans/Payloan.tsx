@@ -23,7 +23,7 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
         monto_abonado: 0,
     };
 
-    const handleSubmit = (values: Partial<PaymentInterface>) => {
+    const handleSubmit = async (values: Partial<PaymentInterface>) => {
         if (!values.monto_abonado) {
             alert('Por favor, completa todos los campos.');
             return;
@@ -34,8 +34,12 @@ const PayLoan: React.FC<PayloanProps> = ({ isOpen, onClose, onSubmit }) => {
             ...values,
         };
 
-        onSubmit(selectedEntities.selectedLoan?.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
-        onClose();
+        try {
+            await onSubmit(selectedEntities.selectedLoan?.id_prestamo ?? 0, updatedLoan.monto_abonado ?? 0);
+            onClose();
+        } catch (err) {
+            console.error('Error al actualizar el préstamo:', err);
+        }
     };
 
     const fields: FormField[] = useMemo(

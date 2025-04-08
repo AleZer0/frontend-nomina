@@ -17,7 +17,7 @@ interface EditEmployeeModalProps {
 const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const { selectedEntities, loading } = useGlobalContext();
 
-    const handleSubmit = (values: Partial<EmployeeInterface>) => {
+    const handleSubmit = async (values: Partial<EmployeeInterface>) => {
         let newValues = { ...values };
 
         if (!values.nombre && !selectedEntities.selectedEmployee?.nombre) {
@@ -41,8 +41,12 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
             ...newValues,
         };
 
-        onSubmit(selectedEntities.selectedEmployee?.id_empleado ?? 0, updatedEmployee);
-        onClose();
+        try {
+            await onSubmit(selectedEntities.selectedEmployee?.id_empleado ?? 0, updatedEmployee);
+            onClose();
+        } catch (err) {
+            console.error('Error al actualizar el empleado:', err);
+        }
     };
 
     const fields: FormField[] = useMemo(

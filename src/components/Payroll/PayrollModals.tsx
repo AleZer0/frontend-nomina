@@ -40,9 +40,12 @@ const PayrollModals: React.FC<TPayrollModals> = ({
                     setSelectedEntities(prev => ({ ...prev, selectedPayroll: null }));
                 }}
                 handleClickEdit={() => setOpenEdit(true)}
-                handleClickDelete={() =>
-                    selectedEntities.selectedPayroll && onDelete(selectedEntities.selectedPayroll.folio)
-                }
+                handleClickDelete={async () => {
+                    if (selectedEntities.selectedPayroll) {
+                        await onDelete(selectedEntities.selectedPayroll.folio);
+                        setOpenView(false);
+                    }
+                }}
                 showSuccess={showSuccessEdit}
             />
 

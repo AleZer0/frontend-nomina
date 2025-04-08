@@ -40,11 +40,12 @@ const EmployeeModals: React.FC<TEmployeeModals> = ({
                     setSelectedEntities(prev => ({ ...prev, selectedEmployee: null }));
                 }}
                 handleClickEdit={() => setOpenEdit(true)}
-                handleClickDelete={() =>
-                    selectedEntities.selectedEmployee &&
-                    onDelete(selectedEntities.selectedEmployee.id_empleado) &&
-                    setOpenView(false)
-                }
+                handleClickDelete={async () => {
+                    if (selectedEntities.selectedEmployee) {
+                        await onDelete(selectedEntities.selectedEmployee.id_empleado);
+                        setOpenView(false);
+                    }
+                }}
                 showSuccess={showSuccessEdit}
             />
 

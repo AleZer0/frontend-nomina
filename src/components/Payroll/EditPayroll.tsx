@@ -17,7 +17,7 @@ interface EditPayrollModalProps {
 const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const { selectedEntities, loading } = useGlobalContext();
 
-    const handleSubmit = (values: Partial<PayrollInterface>) => {
+    const handleSubmit = async (values: Partial<PayrollInterface>) => {
         if (!selectedEntities.selectedPayroll) return;
 
         const numericFields: (keyof PayrollInterface)[] = [
@@ -57,8 +57,12 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
             fecha: values.fecha || selectedEntities.selectedPayroll.fecha,
         };
 
-        onSubmit(selectedEntities.selectedPayroll.folio, updatedPayroll);
-        onClose();
+        try {
+            await onSubmit(selectedEntities.selectedPayroll.folio, updatedPayroll);
+            onClose();
+        } catch (err) {
+            console.error('Error al actualizar la nómina:', err);
+        }
     };
 
     const fields: FormField[] = useMemo(

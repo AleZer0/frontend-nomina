@@ -52,6 +52,7 @@ const NewLoan: React.FC<CreateLoanModalProps> = ({ isOpen, onClose, onSubmit }) 
 
         onSubmit(newLoan);
         setSelectedEntities(prev => ({ ...prev, ['selectedEmployee']: null }));
+        onClose();
     };
 
     useEffect(() => {

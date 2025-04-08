@@ -99,6 +99,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
         setIdsPrestamos([]);
         setInputValues({});
         onSubmit(newPayroll);
+        onClose();
     };
 
     useEffect(() => {
@@ -136,6 +137,15 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 label: 'Días laborados',
                 type: 'number',
                 placeholder: 'Ingrese los días laborados',
+                required: true,
+                variant: 'default',
+                inputSize: 'md',
+            },
+            {
+                name: 'sueldo',
+                label: 'Sueldo',
+                type: 'number',
+                placeholder: 'Ingrese la cantidad a sueldo',
                 required: true,
                 variant: 'default',
                 inputSize: 'md',
@@ -217,15 +227,6 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 label: 'Otros',
                 type: 'number',
                 placeholder: 'Ingrese la cantidad a otros',
-                variant: 'default',
-                inputSize: 'md',
-            },
-            {
-                name: 'sueldo',
-                label: 'Sueldo',
-                type: 'number',
-                placeholder: 'Ingrese la cantidad a sueldo',
-                required: true,
                 variant: 'default',
                 inputSize: 'md',
             },

@@ -117,12 +117,27 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(prev => ({ ...prev, statusEmployee: true }));
         try {
             await EmployeeServices.changeStatusEmployee(id_empleado, status);
-            setEntitiesState(prev => ({
-                ...prev,
-                employees: prev.employees.map(item =>
-                    item.id_empleado === id_empleado ? { ...item, estado: status } : item
-                ),
-            }));
+
+            setEntitiesState(prev => {
+                const updatedEmployees =
+                    status === 0
+                        ? prev.employees.filter(item => item.id_empleado !== id_empleado)
+                        : prev.employees.map(item =>
+                              item.id_empleado === id_empleado ? { ...item, estado: status } : item
+                          );
+
+                const shouldGoBack =
+                    status === 0 && updatedEmployees.length === 0 && metaData.employees.currentPage > 1;
+
+                if (shouldGoBack) {
+                    setParams(prev => ({ ...prev, page: prev.page - 1 }));
+                }
+
+                return {
+                    ...prev,
+                    employees: updatedEmployees,
+                };
+            });
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -191,10 +206,24 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(prev => ({ ...prev, statusPayroll: true }));
         try {
             await PayrollServices.changeStatusPayroll(folio, status);
-            setEntitiesState(prev => ({
-                ...prev,
-                payrolls: prev.payrolls.map(item => (item.folio === folio ? { ...item, estado: status } : item)),
-            }));
+
+            setEntitiesState(prev => {
+                const updatedPayrolls =
+                    status === 0
+                        ? prev.payrolls.filter(item => item.folio !== folio)
+                        : prev.payrolls.map(item => (item.folio === folio ? { ...item, estado: status } : item));
+
+                const shouldGoBack = status === 0 && updatedPayrolls.length === 0 && metaData.payrolls.currentPage > 1;
+
+                if (shouldGoBack) {
+                    setParams(prev => ({ ...prev, page: prev.page - 1 }));
+                }
+
+                return {
+                    ...prev,
+                    payrolls: updatedPayrolls,
+                };
+            });
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -236,10 +265,26 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         setLoading(prev => ({ ...prev, statusLoans: true }));
         try {
             await LoanServices.changeStatusLoan(id_prestamo, status);
-            setEntitiesState(prev => ({
-                ...prev,
-                loans: prev.loans.map(item => (item.id_prestamo === id_prestamo ? { ...item, estado: status } : item)),
-            }));
+
+            setEntitiesState(prev => {
+                const updatedLoans =
+                    status === 0
+                        ? prev.loans.filter(item => item.id_prestamo !== id_prestamo)
+                        : prev.loans.map(item =>
+                              item.id_prestamo === id_prestamo ? { ...item, estado: status } : item
+                          );
+
+                const shouldGoBack = status === 0 && updatedLoans.length === 0 && metaData.loans.currentPage > 1;
+
+                if (shouldGoBack) {
+                    setParams(prev => ({ ...prev, page: prev.page - 1 }));
+                }
+
+                return {
+                    ...prev,
+                    loans: updatedLoans,
+                };
+            });
         } catch (error: any) {
             setError(error.message);
         } finally {

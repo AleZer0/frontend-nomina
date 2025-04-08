@@ -15,6 +15,8 @@ const Payroll: React.FC = () => {
         useGlobalContext();
 
     const [isOpenViewPayroll, setIsOpenViewPayroll] = useState(false);
+    const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
+    const [isOpenEditPayroll, setIsOpenEditPayroll] = useState(false);
 
     const {
         handleCreatePayroll,
@@ -26,7 +28,7 @@ const Payroll: React.FC = () => {
     } = usePayrollsHandlers();
 
     useEffect(() => {
-        setContentHeader(<PayrollHeader onAdd={() => setIsOpenViewPayroll(true)} />);
+        setContentHeader(<PayrollHeader onAdd={() => setIsOpenCreatePayroll(true)} />);
     }, [isSidebarOpen]);
 
     const columns = useMemo(
@@ -49,6 +51,10 @@ const Payroll: React.FC = () => {
                 showSuccessEdit={showSuccessEdit}
                 openView={isOpenViewPayroll}
                 setOpenView={setIsOpenViewPayroll}
+                openCreate={isOpenCreatePayroll}
+                setOpenCreate={setIsOpenCreatePayroll}
+                openEdit={isOpenEditPayroll}
+                setOpenEdit={setIsOpenEditPayroll}
             />
         </section>
     );

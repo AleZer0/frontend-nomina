@@ -42,6 +42,7 @@ const EditEmployee: React.FC<EditEmployeeModalProps> = ({ isOpen, onClose, onSub
         };
 
         onSubmit(selectedEntities.selectedEmployee?.id_empleado ?? 0, updatedEmployee);
+        onClose();
     };
 
     const fields: FormField[] = useMemo(

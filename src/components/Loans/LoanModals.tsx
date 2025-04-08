@@ -2,7 +2,6 @@ import ViewLoan from './ViewLoan';
 import NewLoan from './NewLoan';
 import Payloan from './Payloan';
 import { useGlobalContext } from '../../context/GlobalContext';
-import { useState } from 'react';
 import { LoanInterface } from '../../types/entities';
 
 type TLoanModals = {
@@ -11,7 +10,11 @@ type TLoanModals = {
     onCreate: (data: Omit<LoanInterface, 'id_prestamo'>) => void;
     showSuccessEdit: boolean;
     openView: boolean;
-    setOpenView: (val: boolean) => void;
+    setOpenView: React.Dispatch<React.SetStateAction<boolean>>;
+    openCreate: boolean;
+    setOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
+    openEdit: boolean;
+    setOpenEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const LoanModals: React.FC<TLoanModals> = ({
@@ -21,10 +24,12 @@ const LoanModals: React.FC<TLoanModals> = ({
     showSuccessEdit,
     openView,
     setOpenView,
+    openCreate,
+    setOpenCreate,
+    openEdit,
+    setOpenEdit,
 }) => {
     const { selectedEntities, setSelectedEntities } = useGlobalContext();
-    const [openCreate, setOpenCreate] = useState(false);
-    const [openEdit, setOpenEdit] = useState(false);
 
     return (
         <>
@@ -36,7 +41,9 @@ const LoanModals: React.FC<TLoanModals> = ({
                 }}
                 handleClickEdit={() => setOpenEdit(true)}
                 handleClickDelete={() =>
-                    selectedEntities.selectedLoan && onDelete(selectedEntities.selectedLoan.id_prestamo)
+                    selectedEntities.selectedLoan &&
+                    onDelete(selectedEntities.selectedLoan.id_prestamo) &&
+                    setOpenView(false)
                 }
                 showSuccess={showSuccessEdit}
             />

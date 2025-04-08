@@ -15,6 +15,8 @@ const Loans: React.FC = () => {
         useGlobalContext();
 
     const [isOpenViewLoan, setIsOpenViewLoan] = useState(false);
+    const [isOpenCreateLoan, setIsOpenCreateLoan] = useState(false);
+    const [isOpenPayLoan, setIsOpenPayLoan] = useState(false);
 
     const {
         handleCreateLoan,
@@ -26,7 +28,7 @@ const Loans: React.FC = () => {
     } = useLoansHandlers();
 
     useEffect(() => {
-        setContentHeader(<LoanHeader onAdd={() => setIsOpenViewLoan(true)} />);
+        setContentHeader(<LoanHeader onAdd={() => setIsOpenCreateLoan(true)} />);
     }, [isSidebarOpen]);
 
     const columns = useMemo(() => getLoanColumns(params, setParams, setSelectedEntities, setIsOpenViewLoan), [params]);
@@ -46,6 +48,10 @@ const Loans: React.FC = () => {
                 showSuccessEdit={showSuccessEdit}
                 openView={isOpenViewLoan}
                 setOpenView={setIsOpenViewLoan}
+                openCreate={isOpenCreateLoan}
+                setOpenCreate={setIsOpenCreateLoan}
+                openEdit={isOpenPayLoan}
+                setOpenEdit={setIsOpenPayLoan}
             />
         </section>
     );

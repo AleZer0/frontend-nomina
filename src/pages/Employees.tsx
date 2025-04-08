@@ -15,6 +15,8 @@ const Employees: React.FC = () => {
         useGlobalContext();
 
     const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
+    const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
+    const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
 
     const {
         handleCreateEmployee,
@@ -26,7 +28,7 @@ const Employees: React.FC = () => {
     } = useEmployeeHandlers();
 
     useEffect(() => {
-        setContentHeader(<EmployeeHeader onAdd={() => setIsOpenViewEmployee(true)} />);
+        setContentHeader(<EmployeeHeader onAdd={() => setIsOpenCreateEmployee(true)} />);
     }, [isSidebarOpen]);
 
     const columns = useMemo(
@@ -49,6 +51,10 @@ const Employees: React.FC = () => {
                 showSuccessEdit={showSuccessEdit}
                 openView={isOpenViewEmployee}
                 setOpenView={setIsOpenViewEmployee}
+                openCreate={isOpenCreateEmployee}
+                setOpenCreate={setIsOpenCreateEmployee}
+                openEdit={isOpenEditEmployee}
+                setOpenEdit={setIsOpenEditEmployee}
             />
         </section>
     );

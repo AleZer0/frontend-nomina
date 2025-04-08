@@ -2,7 +2,6 @@ import ViewPayroll from './ViewPayroll';
 import NewPayroll from './NewPayroll';
 import EditPayroll from './EditPayroll';
 import { useGlobalContext } from '../../context/GlobalContext';
-import { useState } from 'react';
 import { PayrollInterface } from '../../types/entities';
 
 type TPayrollModals = {
@@ -11,7 +10,11 @@ type TPayrollModals = {
     onCreate: (data: Omit<PayrollInterface, 'folio'>) => void;
     showSuccessEdit: boolean;
     openView: boolean;
-    setOpenView: (val: boolean) => void;
+    setOpenView: React.Dispatch<React.SetStateAction<boolean>>;
+    openCreate: boolean;
+    setOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
+    openEdit: boolean;
+    setOpenEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const PayrollModals: React.FC<TPayrollModals> = ({
@@ -21,10 +24,12 @@ const PayrollModals: React.FC<TPayrollModals> = ({
     showSuccessEdit,
     openView,
     setOpenView,
+    openCreate,
+    setOpenCreate,
+    openEdit,
+    setOpenEdit,
 }) => {
     const { selectedEntities, setSelectedEntities } = useGlobalContext();
-    const [openCreate, setOpenCreate] = useState(false);
-    const [openEdit, setOpenEdit] = useState(false);
 
     return (
         <>

@@ -2,7 +2,6 @@ import ViewEmployee from './ViewEmployee';
 import NewEmployee from './NewEmployee';
 import EditEmployee from './EditEmployee';
 import { useGlobalContext } from '../../context/GlobalContext';
-import { useState } from 'react';
 import { EmployeeInterface } from '../../types/entities';
 
 type TEmployeeModals = {
@@ -11,7 +10,11 @@ type TEmployeeModals = {
     onCreate: (data: Omit<EmployeeInterface, 'id_empleado'>) => void;
     showSuccessEdit: boolean;
     openView: boolean;
-    setOpenView: (val: boolean) => void;
+    setOpenView: React.Dispatch<React.SetStateAction<boolean>>;
+    openCreate: boolean;
+    setOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
+    openEdit: boolean;
+    setOpenEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const EmployeeModals: React.FC<TEmployeeModals> = ({
@@ -21,10 +24,12 @@ const EmployeeModals: React.FC<TEmployeeModals> = ({
     showSuccessEdit,
     openView,
     setOpenView,
+    openCreate,
+    setOpenCreate,
+    openEdit,
+    setOpenEdit,
 }) => {
     const { selectedEntities, setSelectedEntities } = useGlobalContext();
-    const [openCreate, setOpenCreate] = useState(false);
-    const [openEdit, setOpenEdit] = useState(false);
 
     return (
         <>
@@ -36,7 +41,9 @@ const EmployeeModals: React.FC<TEmployeeModals> = ({
                 }}
                 handleClickEdit={() => setOpenEdit(true)}
                 handleClickDelete={() =>
-                    selectedEntities.selectedEmployee && onDelete(selectedEntities.selectedEmployee.id_empleado)
+                    selectedEntities.selectedEmployee &&
+                    onDelete(selectedEntities.selectedEmployee.id_empleado) &&
+                    setOpenView(false)
                 }
                 showSuccess={showSuccessEdit}
             />

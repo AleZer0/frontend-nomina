@@ -42,7 +42,8 @@ const Payroll: React.FC = () => {
     const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState<boolean>(false);
     const [isOpenViewPayroll, setIsOpenViewPayroll] = useState<boolean>(false);
     const [isOpenEditPayroll, setIsOpenEditPayroll] = useState<boolean>(false);
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [showSuccessCreate, setShowSuccessCreate] = useState(false);
+    const [showSuccessEdit, setShowSuccessEdit] = useState(false);
 
     const [query, setQuery] = useState({ empleado: '', start_date: '', end_date: '' });
 
@@ -71,14 +72,16 @@ const Payroll: React.FC = () => {
     const handleCreatePayroll = async (newPayroll: Omit<PayrollInterface, 'folio'>) => {
         await addPayroll(newPayroll);
         setIsOpenCreatePayroll(false);
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
+        setShowSuccessCreate(true);
+        setTimeout(() => setShowSuccessCreate(false), 3000);
     };
 
     const handleUpdatePayroll = async (folio: number, updatedPayroll: Partial<PayrollInterface>) => {
         const newSelectedPayroll = await updatePayroll(folio, updatedPayroll);
         setSelectedEntities(prev => ({ ...prev, selectedPayroll: newSelectedPayroll }));
         setIsOpenEditPayroll(false);
+        setShowSuccessEdit(true);
+        setTimeout(() => setShowSuccessEdit(false), 3000);
     };
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -201,35 +204,11 @@ const Payroll: React.FC = () => {
                 render: (_, row) => styleMoney(row.sueldo ?? 0),
             },
             {
-                key: 'vacaciones',
-                header: 'Vacaciones',
-                render: (_, row) => styleMoney(row.vacaciones ?? 0),
-            },
-            {
-                key: 'aguinaldo',
-                header: 'Aguinaldo',
-                render: (_, row) => styleMoney(row.aguinaldo ?? 0),
-            },
-            {
                 key: 'pago_horas_extras',
                 header: 'H. Extras',
                 render: (_, row) => styleMoney(row.pago_horas_extras ?? 0),
             },
-            {
-                key: 'maniobras',
-                header: 'Maniobras',
-                render: (_, row) => styleMoney(row.maniobras ?? 0),
-            },
-            {
-                key: 'finiquito',
-                header: 'Finiquito',
-                render: (_, row) => styleMoney(row.finiquito ?? 0),
-            },
-            {
-                key: 'otros',
-                header: 'Otros',
-                render: (_, row) => styleMoney(row.otros ?? 0),
-            },
+
             {
                 key: 'pension_alimenticia',
                 header: 'Pensión A.',
@@ -246,6 +225,11 @@ const Payroll: React.FC = () => {
                 render: (_, row) => styleMoney(row.prestamos ?? 0),
             },
             {
+                key: 'faltas',
+                header: 'Faltas',
+                render: (_, row) => styleMoney(((row.sueldo ?? 0) / 7) * (row.faltas ?? 0)),
+            },
+            {
                 key: 'total_pagar',
                 header: 'Total',
                 render: (_, row) =>
@@ -258,7 +242,8 @@ const Payroll: React.FC = () => {
                             (row.aguinaldo ?? 0) -
                             (row.pension_alimenticia ?? 0) +
                             (row.pago_horas_extras ?? 0) +
-                            (row.maniobras ?? 0) +
+                            (row.maniobras ?? 0) -
+                            ((row.sueldo ?? 0) / 7) * (row.faltas ?? 0) +
                             (row.otros ?? 0)
                     ),
             },
@@ -287,7 +272,7 @@ const Payroll: React.FC = () => {
             className={`mb-20 flex-auto p-8 transition-all duration-600 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-20'
             }`}>
-            {showSuccess && (
+            {showSuccessCreate && (
                 <div className='mb-4 flex justify-center'>
                     <Popup>¡Nómina registrada con éxito!</Popup>
                 </div>
@@ -352,6 +337,7 @@ const Payroll: React.FC = () => {
                 }}
                 handleClickViewPayroll={() => setIsOpenViewPayroll(true)}
                 handleClickEditPayroll={() => setIsOpenEditPayroll(true)}
+                showSuccess={showSuccessEdit}
             />
             <EditPayroll
                 isOpen={isOpenEditPayroll}

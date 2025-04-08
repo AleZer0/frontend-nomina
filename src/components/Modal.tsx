@@ -12,6 +12,7 @@ export interface ModalProps {
     containerClassName?: string;
     overlayClassName?: string;
     zIndex?: number;
+    popup?: ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -24,6 +25,7 @@ const Modal: React.FC<ModalProps> = ({
     containerClassName,
     overlayClassName,
     zIndex = 50,
+    popup,
 }) => {
     const overlayRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -66,6 +68,7 @@ const Modal: React.FC<ModalProps> = ({
                 isVisible ? 'opacity-100' : 'opacity-0'
             } ${overlayClassName || ''}`}
             style={{ zIndex }}>
+            <div className='px-10 pt-2 pb-6'>{popup && <div className='mb-4 flex justify-center'>{popup}</div>}</div>
             <div
                 className={`relative max-h-[80vh] w-full max-w-4xl transform overflow-y-auto rounded-lg bg-white shadow-lg transition-all duration-300 ease-in-out ${
                     isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'

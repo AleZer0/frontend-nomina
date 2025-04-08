@@ -15,6 +15,7 @@ import { ButtonProps } from '../../types/componentes';
 
 import { useGlobalContext } from '../../context/GlobalContext';
 import Utils from '../../utils';
+import Popup from '../Popup';
 
 interface ViewEmployeeProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ interface ViewEmployeeProps {
     handleClickCreatePayroll: () => void;
     handleClickEdit: () => void;
     handleClickDelate: (id_empleado: number) => void;
+    showSuccess: boolean;
 }
 
 const ViewEmployee: React.FC<ViewEmployeeProps> = ({
@@ -30,6 +32,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     handleClickCreatePayroll,
     handleClickEdit,
     handleClickDelate,
+    showSuccess,
 }) => {
     const { selectedEntities, loading } = useGlobalContext();
 
@@ -135,7 +138,11 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title='Detalles del Empleado'>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title='Detalles del Empleado'
+            popup={showSuccess && <Popup>¡Empleado actualizado con éxito!</Popup>}>
             <div className='flex flex-col space-y-8'>
                 <Form fields={fields} data={selectedEntities.selectedEmployee ?? {}} disabled={true} columns={2} />
 

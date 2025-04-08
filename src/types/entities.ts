@@ -44,6 +44,7 @@ export interface PayrollInterface {
     folio: number;
     fecha: string | null;
     dias_trabajados: number;
+    faltas?: number;
     infonavit?: number;
     vacaciones?: number;
     aguinaldo?: number;

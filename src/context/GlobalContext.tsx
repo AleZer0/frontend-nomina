@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 import {
     EmployeeInterface,
     PayrollInterface,
@@ -29,7 +29,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
     const [params, setParams] = useState<ParamsInterface>(defaultParams);
-    const [activeEntity, setActiveEntity] = useState<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>('employees');
     const [metaData, setMetaData] = useState<Record<string, MetaInterface>>(defaultMetaData);
 
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -232,30 +231,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }));
     };
 
-    useEffect(() => {
-        setLoading(prev => ({ ...prev, loadingAllData: true }));
-
-        const fetchData = async () => {
-            if (activeEntity === 'employees') await fetchEmployees();
-            if (activeEntity === 'payrolls') await fetchPayrolls();
-            if (activeEntity === 'loans') await fetchLoans();
-            if (activeEntity === 'weeklyReports') await fetchWeeklyReports();
-        };
-
-        fetchData().finally(() => {
-            setLoading(prev => ({ ...prev, loadingAllData: false }));
-        });
-    }, [
-        params.page,
-        params.limit,
-        params.order,
-        params.sort_by,
-        params.q,
-        params.start_date,
-        params.end_date,
-        activeEntity,
-    ]);
-
     return (
         <GlobalContext.Provider
             value={{
@@ -268,8 +243,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 setLoading,
                 params,
                 setParams,
-                activeEntity,
-                setActiveEntity,
                 metaData,
                 setMetaData,
                 addEmployee,

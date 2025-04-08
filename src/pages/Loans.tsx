@@ -45,6 +45,24 @@ const Loans: React.FC = () => {
 
     const [query, setQuery] = useState({ empleado: '', start_date: '', end_date: '' });
 
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Préstamos
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<MdAttachMoney size={17} />}
+                    onClick={() => setIsOpenCreateLoan(true)}>
+                    Nuevo préstamo
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
+
     const handleCreateLoan = async (newLoan: Omit<LoanInterface, 'id_prestamo'>) => {
         await addLoan(newLoan);
         setIsOpenCreateLoan(false);
@@ -94,24 +112,6 @@ const Loans: React.FC = () => {
             </span>
         );
     };
-
-    useEffect(() => {
-        setContentHeader(
-            <div className='flex w-full items-center justify-between px-4'>
-                <h1
-                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
-                    Listado de Préstamos
-                </h1>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<MdAttachMoney size={17} />}
-                    onClick={() => setIsOpenCreateLoan(true)}>
-                    Nuevo préstamo
-                </Button>
-            </div>
-        );
-    }, [isSidebarOpen]);
 
     const columns: Column<LoanInterface>[] = useMemo(
         () => [

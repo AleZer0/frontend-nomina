@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 
 import { routes } from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
+import LastLocationTracker from './routes/LastLocationTracker';
 
 import Login from './pages/Login';
-import Layout from './layouts/LayoutGeneral';
+import SplashScreen from './pages/SplashScreen';
+import LayoutGeneral from './layouts/LayoutGeneral';
 
 import { GlobalProvider, useGlobalContext } from './context/GlobalContext';
 import { AuthProvider } from './context/AuthContext';
-
-import SplashScreen from './components/SplashScreen';
 
 const AppContent: React.FC = () => {
     const { loading } = useGlobalContext();
@@ -37,14 +37,19 @@ const AppContent: React.FC = () => {
     return (
         <Routes>
             <Route path='/login' element={<Login />} />
-            <Route path='/' element={<Navigate to='/employees' replace />} />
+            <Route path='/' element={<Navigate to={localStorage.getItem('lastRoute') || '/employees'} replace />} />
             <Route
                 path='/*'
                 element={
                     <ProtectedRoute>
+                        <LastLocationTracker />
                         <Routes>
                             {routes.map((route, index) => (
-                                <Route key={index} path={`/${route.path}`} element={<Layout>{route.element}</Layout>} />
+                                <Route
+                                    key={index}
+                                    path={`/${route.path}`}
+                                    element={<LayoutGeneral>{route.element}</LayoutGeneral>}
+                                />
                             ))}
                         </Routes>
                     </ProtectedRoute>

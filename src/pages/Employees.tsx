@@ -26,6 +26,7 @@ import Input from '../components/Input';
 const Employees: React.FC = () => {
     const {
         entitiesState,
+        fetchEmployees,
         selectedEntities,
         setSelectedEntities,
         addEmployee,
@@ -47,6 +48,28 @@ const Employees: React.FC = () => {
     const [showSuccess, setShowSuccess] = useState(false);
 
     const [query, setQuery] = useState('');
+
+    useEffect(() => {
+        fetchEmployees();
+    }, [params]);
+
+    useEffect(() => {
+        setContentHeader(
+            <div className='flex w-full items-center justify-between px-4'>
+                <h1
+                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
+                    Listado de Empleados
+                </h1>
+                <Button
+                    variant='add'
+                    size='md'
+                    icon={<FaUserPlus size={17} />}
+                    onClick={() => setIsOpenCreateEmployee(true)}>
+                    Nuevo empleado
+                </Button>
+            </div>
+        );
+    }, [isSidebarOpen]);
 
     const handleCreateEmployee = async (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => {
         await addEmployee(newEmployee);
@@ -229,24 +252,6 @@ const Employees: React.FC = () => {
         ],
         [entitiesState.employees]
     );
-
-    useEffect(() => {
-        setContentHeader(
-            <div className='flex w-full items-center justify-between px-4'>
-                <h1
-                    className={`text-start text-3xl font-bold tracking-wider duration-900 ${isSidebarOpen ? 'ml-0' : '-ml-40'}`}>
-                    Listado de Empleados
-                </h1>
-                <Button
-                    variant='add'
-                    size='md'
-                    icon={<FaUserPlus size={17} />}
-                    onClick={() => setIsOpenCreateEmployee(true)}>
-                    Nuevo empleado
-                </Button>
-            </div>
-        );
-    }, [isSidebarOpen]);
 
     return (
         <section

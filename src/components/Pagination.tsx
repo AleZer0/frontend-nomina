@@ -1,10 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa';
 import { useGlobalContext } from '../context/GlobalContext';
 import Button from './Button';
-import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa';
+import { getActiveEntityFromPath } from '../utils/router';
 
 const Pagination: React.FC = () => {
-    const { params, setParams, activeEntity, metaData } = useGlobalContext();
+    const { pathname } = useLocation();
+    const activeEntity = getActiveEntityFromPath(pathname);
+
+    const { params, setParams, metaData } = useGlobalContext();
     const { page } = params;
     const totalPages = metaData[activeEntity].totalPages;
     const [inputPage, setInputPage] = useState(page);

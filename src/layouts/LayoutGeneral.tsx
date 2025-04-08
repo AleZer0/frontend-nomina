@@ -6,7 +6,7 @@ interface LayoutType {
     children: ReactNode;
 }
 
-const Layout: React.FC<LayoutType> = ({ children }) => {
+const LayoutGeneral: React.FC<LayoutType> = ({ children }) => {
     return (
         <div className='flex h-screen w-screen flex-col overflow-hidden transition-all duration-300'>
             <Sidebar />
@@ -18,4 +18,4 @@ const Layout: React.FC<LayoutType> = ({ children }) => {
     );
 };
 
-export default Layout;
+export default LayoutGeneral;

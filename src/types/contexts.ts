@@ -43,8 +43,6 @@ export interface GlobalContextInterface {
     setLoading: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>;
     params: ParamsInterface;
     setParams: React.Dispatch<React.SetStateAction<ParamsInterface>>;
-    activeEntity: 'employees' | 'operators' | 'payrolls' | 'loans' | 'weeklyReports';
-    setActiveEntity: React.Dispatch<React.SetStateAction<'employees' | 'payrolls' | 'loans' | 'weeklyReports'>>;
     metaData: Record<string, MetaInterface>;
     setMetaData: React.Dispatch<React.SetStateAction<Record<string, MetaInterface>>>;
     addEmployee: (newEmployee: Omit<EmployeeInterface, 'id_empleado'>) => Promise<void>;

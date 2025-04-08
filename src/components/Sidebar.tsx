@@ -16,15 +16,14 @@ import { useGlobalContext } from '../context/GlobalContext';
 import { Route } from '../types/extras';
 
 const Sidebar: React.FC = () => {
-    const [selectedPage, setSelectedPage] = useState<Route>(routes[0]);
+    const { pathname } = useLocation();
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [showText, setShowText] = useState(false);
-    const { params, setParams, setActiveEntity, isSidebarOpen, toggleSidebar } = useGlobalContext();
+    const { params, setParams, isSidebarOpen, toggleSidebar } = useGlobalContext();
 
     const handleClickPage = (page: Route) => {
         if (!page) return;
-        setSelectedPage(page);
         setParams({ ...params, page: 1, limit: 10 });
         setActiveEntity(page.path);
         navigate('/' + page.path);
@@ -62,7 +61,7 @@ const Sidebar: React.FC = () => {
                             <div
                                 onClick={() => handleClickPage(route)}
                                 className={`m-3 flex cursor-pointer items-center gap-3 bg-gradient-to-r px-4 py-2 transition-all hover:border-l-8 hover:border-blue-500 ${
-                                    route.name === selectedPage?.name ? 'border-l-8 border-blue-500 to-blue-200' : ''
+                                    route.path === activeEntity ? 'border-l-8 border-blue-500 to-blue-200' : ''
                                 } hover:to-blue-300`}>
                                 {route.name === 'Empleados' ? (
                                     <PiUsersThreeFill size={20} />

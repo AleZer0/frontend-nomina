@@ -22,6 +22,7 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
 
         const numericFields: (keyof PayrollInterface)[] = [
             'dias_trabajados',
+            'faltas',
             'sueldo',
             'infonavit',
             'vacaciones',
@@ -73,6 +74,14 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
                 label: 'Días trabajados',
                 type: 'number',
                 placeholder: 'Ingresar días trabajados',
+                variant: 'filled',
+                inputSize: 'md',
+            },
+            {
+                name: 'faltas',
+                label: 'Días no laborados',
+                type: 'number',
+                placeholder: 'Ingresa Días laborados',
                 variant: 'filled',
                 inputSize: 'md',
             },
@@ -149,14 +158,6 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
                 inputSize: 'md',
             },
             {
-                name: 'faltas',
-                label: 'Días no laborados',
-                type: 'number',
-                placeholder: 'Ingresa Días laborados',
-                variant: 'filled',
-                inputSize: 'md',
-            },
-            {
                 name: 'otros',
                 label: 'Otros',
                 type: 'number',
@@ -178,6 +179,7 @@ const EditPayroll: React.FC<EditPayrollModalProps> = ({ isOpen, onClose, onSubmi
                     selectedEntities.selectedPayroll ?? {
                         fecha: '',
                         dias_trabajados: 0,
+                        faltas: 0,
                         infonavit: 0,
                         vacaciones: 0,
                         aguinaldo: 0,

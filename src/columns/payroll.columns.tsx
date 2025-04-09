@@ -90,7 +90,7 @@ export const getPayrollColumns = (
         },
         {
             key: 'sueldo',
-            header: 'Sueldo',
+            header: 'Sueldo Base',
             render: (_, row) => formatMoney(row.sueldo ?? 0),
         },
         {

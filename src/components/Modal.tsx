@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({
         <div
             ref={overlayRef}
             onClick={handleOverlayClick}
-            className={`fixed inset-0 flex items-center justify-center backdrop-blur-xs transition-opacity duration-500 ${
+            className={`fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-500 ${
                 isVisible ? 'opacity-100' : 'opacity-0'
             } ${overlayClassName || ''}`}
             style={{ zIndex }}>

@@ -223,7 +223,7 @@ const NewPayroll: React.FC<CreatePayrollModalProps> = ({ isOpen, onClose, onSubm
                 inputSize: 'md',
             },
             {
-                name: 'Otros',
+                name: 'otros',
                 label: 'Otros',
                 type: 'number',
                 placeholder: 'Ingrese la cantidad a otros',

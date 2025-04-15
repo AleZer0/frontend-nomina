@@ -3,7 +3,6 @@ import NewEmployee from './NewEmployee';
 import EditEmployee from './EditEmployee';
 import { useGlobalContext } from '../../context/GlobalContext';
 import { EmployeeInterface } from '../../types/entities';
-import EmployeeForm from './EmployeeForm';
 
 type TEmployeeModals = {
     onDelete: (id: number) => void;
@@ -50,8 +49,7 @@ const EmployeeModals: React.FC<TEmployeeModals> = ({
                 showSuccess={showSuccessEdit}
             />
 
-            <EmployeeForm isOpen={openCreate} onClose={() => setOpenCreate(false)} />
-            {/* <NewEmployee isOpen={openCreate} onClose={() => setOpenCreate(false)} onSubmit={onCreate} /> */}
+            <NewEmployee isOpen={openCreate} onClose={() => setOpenCreate(false)} onSubmit={onCreate} />
             <EditEmployee isOpen={openEdit} onClose={() => setOpenEdit(false)} onSubmit={onUpdate} />
         </>
     );

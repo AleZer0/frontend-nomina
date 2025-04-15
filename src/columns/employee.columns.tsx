@@ -1,20 +1,13 @@
 import { FaSortAmountDown } from 'react-icons/fa';
 import { CgDetailsMore } from 'react-icons/cg';
 import { Column } from '../types/extras';
-import { EmployeeInterface, PayrollInterface, LoanInterface, ParamsInterface } from '../types/entities';
+import { EmployeeInterface, ParamsInterface } from '../types/entities';
 import Button from '../components/Button';
 
 export const getEmployeeColumns = (
     params: ParamsInterface,
     setParams: React.Dispatch<React.SetStateAction<ParamsInterface>>,
-    setSelectedEntities: React.Dispatch<
-        React.SetStateAction<{
-            selectedEmployee: EmployeeInterface | null;
-            selectedLoan: LoanInterface | null;
-            selectedPayroll: PayrollInterface | null;
-        }>
-    >,
-    setIsOpenViewEmployee: React.Dispatch<React.SetStateAction<boolean>>
+    handleClickDetails: (selectedEmployee: EmployeeInterface) => void
 ): Column<EmployeeInterface>[] => {
     const createSortableHeader = (label: string, field: keyof EmployeeInterface) => (
         <div className='flex items-center justify-center gap-2'>
@@ -97,10 +90,7 @@ export const getEmployeeColumns = (
                     variant='details'
                     size='md'
                     icon={<CgDetailsMore size={15} />}
-                    onClick={() => {
-                        setSelectedEntities(prev => ({ ...prev, selectedEmployee: row }));
-                        setIsOpenViewEmployee(true);
-                    }}>
+                    onClick={() => handleClickDetails(row)}>
                     Detalles
                 </Button>
             ),

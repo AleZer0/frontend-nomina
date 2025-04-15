@@ -6,17 +6,18 @@ import { useEmployeeHandlers } from '../hooks/useEmployeeHandlers';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
 import EmployeeSearchBar from '../components/Employee/EmployeeSearchBar';
-import EmployeeModals from '../components/Employee/EmployeeModals';
 import EmployeeHeader from '../components/Employee/EmployeeHeader';
 import Popup from '../components/Popup';
+import EmployeeModal from '../components/Employee/EmployeeModal';
+
+import { EmployeeInterface } from '../types/entities';
 
 const Employees: React.FC = () => {
     const { entitiesState, setParams, params, isSidebarOpen, setSelectedEntities, loading, setContentHeader } =
         useGlobalContext();
 
-    const [isOpenViewEmployee, setIsOpenViewEmployee] = useState(false);
-    const [isOpenCreateEmployee, setIsOpenCreateEmployee] = useState(false);
-    const [isOpenEditEmployee, setIsOpenEditEmployee] = useState(false);
+    const [employeeModalOpen, setEmployeeModalOpen] = useState(false);
+    const [employeeModalMode, setEmployeeModalMode] = useState<'create' | 'view' | 'edit'>('create');
 
     const {
         handleCreateEmployee,
@@ -28,13 +29,23 @@ const Employees: React.FC = () => {
     } = useEmployeeHandlers();
 
     useEffect(() => {
-        setContentHeader(<EmployeeHeader onAdd={() => setIsOpenCreateEmployee(true)} />);
+        setContentHeader(
+            <EmployeeHeader
+                onAdd={() => {
+                    setEmployeeModalMode('create');
+                    setEmployeeModalOpen(true);
+                }}
+            />
+        );
     }, [isSidebarOpen]);
 
-    const columns = useMemo(
-        () => getEmployeeColumns(params, setParams, setSelectedEntities, setIsOpenViewEmployee),
-        [params]
-    );
+    const onClickDetails = (selectedEmployee: EmployeeInterface) => {
+        setSelectedEntities(prev => ({ ...prev, selectedEmployee: selectedEmployee }));
+        setEmployeeModalMode('view');
+        setEmployeeModalOpen(true);
+    };
+
+    const columns = useMemo(() => getEmployeeColumns(params, setParams, onClickDetails), [params]);
 
     return (
         <section className={`mb-20 flex-auto p-6 transition-all ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
@@ -44,7 +55,8 @@ const Employees: React.FC = () => {
             <EmployeeSearchBar />
             <Table columns={columns} data={entitiesState.employees} loading={loading['employees']} />
             <Pagination />
-            <EmployeeModals
+            <EmployeeModal isOpen={employeeModalOpen} setIsOpen={setEmployeeModalOpen} mode={employeeModalMode} />
+            {/* <EmployeeModals
                 onCreate={handleCreateEmployee}
                 onUpdate={handleUpdateEmployee}
                 onDelete={handleDeleteEmployee}
@@ -55,7 +67,7 @@ const Employees: React.FC = () => {
                 setOpenCreate={setIsOpenCreateEmployee}
                 openEdit={isOpenEditEmployee}
                 setOpenEdit={setIsOpenEditEmployee}
-            />
+            /> */}
         </section>
     );
 };

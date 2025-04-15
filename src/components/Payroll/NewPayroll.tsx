@@ -6,7 +6,7 @@ import { MdPayments } from 'react-icons/md';
 
 import Modal from '../Modal';
 import Form from '../Form';
-import Input from '../Input';
+import Input from '../Input-v1';
 import Table from '../Table';
 
 import { useGlobalContext } from '../../context/GlobalContext';

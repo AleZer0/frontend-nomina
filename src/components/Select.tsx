@@ -1,51 +1,58 @@
-import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import clsx from 'clsx';
 
-interface SelectProps<T> {
-    options: { value: T; label: string }[];
-    value?: T | T[];
-    onChange: (value: T | T[]) => void;
-    multiple?: boolean;
-    placeholder?: string;
-    className?: string;
+interface ISelect extends React.InputHTMLAttributes<HTMLSelectElement> {
+    name: string;
+    options: readonly { id: number; label: string }[];
+    label?: string;
+    variant?: 'default' | 'error' | 'filled';
+    selectSize?: 'sm' | 'md' | 'lg';
+    defaultMessage: string;
 }
 
-const Select = <T,>({
+const Select: React.FC<ISelect> = ({
+    name,
     options,
-    value,
-    onChange,
+    label,
+    variant,
+    selectSize,
+    defaultMessage,
     multiple = false,
-    placeholder = 'Selecciona...',
-    className = '',
-}: SelectProps<T>) => {
-    const [selectedValue, setSelectedValue] = useState<T | T[]>(
-        value !== undefined ? value : multiple ? [] : (null as unknown as T)
-    );
-
-    const handleChange = (selectedOption: T | T[]) => {
-        setSelectedValue(selectedOption);
-        onChange(selectedOption);
-    };
+    className,
+    ...props
+}) => {
+    const { register, formState, getFieldState } = useFormContext();
+    const { error } = getFieldState(name, formState);
 
     return (
-        <div className={`relative ${className}`}>
+        <div className={clsx('w-full', className)}>
             <select
-                className='w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-base text-gray-900 transition-all duration-300 hover:border-gray-400 hover:shadow focus:shadow-xl focus:ring-1 focus:ring-blue-400 focus:outline-none'
-                multiple={multiple}
-                value={Array.isArray(selectedValue) ? selectedValue.map(String) : String(selectedValue)}
-                onChange={e => {
-                    const selectedOptions = Array.from(
-                        e.target.selectedOptions,
-                        option => options.find(o => String(o.value) === option.value)?.value as T
-                    );
-                    handleChange(multiple ? selectedOptions : selectedOptions[0]);
-                }}>
-                {!multiple && <option value=''>{placeholder}</option>}
+                {...register(name)}
+                {...props}
+                className={clsx(
+                    'w-full rounded-lg border bg-gray-50 p-2 transition-all duration-300 hover:shadow focus:ring-1 focus:shadow-xl focus:outline-none',
+                    {
+                        'border-gray-300 text-gray-900 hover:border-gray-400 focus:ring-blue-400':
+                            variant === 'default',
+                        'border-none text-gray-500 focus:ring-gray-500': variant === 'filled',
+                        'border border-red-500 text-gray-900 hover:ring-red-600 focus:border-red-700': error,
+                    },
+                    {
+                        'p-1 text-sm': selectSize === 'sm',
+                        'p-2 text-base': selectSize === 'md',
+                        'p-4 text-lg': selectSize === 'lg',
+                    },
+                    className
+                )}
+                multiple={multiple}>
+                {defaultMessage && <option>{defaultMessage}</option>}
                 {options.map(option => (
-                    <option key={String(option.value)} value={String(option.value)}>
+                    <option key={option.id} value={String(option.id)}>
                         {option.label}
                     </option>
                 ))}
             </select>
+            {error?.message && <span className='text-xs text-red-500'>{error.message}</span>}
         </div>
     );
 };

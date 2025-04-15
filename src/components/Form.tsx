@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import clsx from 'clsx';
 
-import Input from './Input';
+import Input from './Input-v1';
 import Button from './Button';
-import Select from './Select';
+import Select from './Select-v1';
 
 import { FormProps } from '../types/componentes';
 

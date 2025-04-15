@@ -1,14 +1,22 @@
-import { forwardRef } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { Oval } from 'react-loader-spinner';
 import clsx from 'clsx';
-import { ButtonProps } from '../types/componentes';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: 'add' | 'save' | 'save' | 'edit' | 'delete' | 'details' | 'generate' | 'ghost' | 'disabled';
+    size?: 'sm' | 'md' | 'lg';
+    icon?: ReactNode;
+    asChild?: boolean;
+    isLoading?: boolean;
+    disabled?: boolean;
+}
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     (
         {
             children,
-            variant = 'primary',
+            variant = 'save',
             size = 'md',
             icon,
             className,

@@ -1,23 +1,53 @@
-import { forwardRef } from 'react';
+import { ReactNode } from 'react';
+import { useFormContext } from 'react-hook-form';
 import clsx from 'clsx';
-import { InputProps } from '../types/componentes';
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
-    ({ type, className, variant = 'default', inputSize = 'md', leftIcon, rightIcon, isPassword, ...props }, ref) => {
-        return (
-            <div className='relative w-full'>
+interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
+    name: string;
+    label?: string;
+    variant?: 'default' | 'error' | 'filled';
+    inputSize?: 'sm' | 'md' | 'lg';
+    leftIcon?: ReactNode;
+    rightIcon?: ReactNode;
+    isPassword?: boolean;
+}
+
+const Input: React.FC<IInput> = ({
+    name,
+    label,
+    variant = 'default',
+    inputSize = 'md',
+    leftIcon,
+    rightIcon,
+    isPassword,
+    type,
+    required,
+    className,
+    ...props
+}) => {
+    const { register, formState, getFieldState } = useFormContext();
+    const { error } = getFieldState(name, formState);
+
+    return (
+        <div>
+            {label && (
+                <label htmlFor={name} className='text-base font-medium capitalize'>
+                    {label} {required && <span className='text-red-500'>*</span>}
+                </label>
+            )}
+            <div className='relative mt-1.5 w-full'>
                 {leftIcon && <span className='absolute top-1/2 left-3 -translate-y-1/2'>{leftIcon}</span>}
                 <input
-                    ref={ref}
-                    type={type === 'password' ? (isPassword ? 'text' : 'password') : type}
+                    {...register(name)}
+                    {...props}
+                    type={isPassword ? 'password' : (type ?? 'text')}
                     className={clsx(
-                        'w-full rounded-lg transition-all duration-300 hover:shadow focus:ring-1 focus:shadow-xl focus:outline-none',
+                        'w-full rounded-lg bg-gray-50 transition-all duration-300 hover:shadow focus:ring-1 focus:shadow-xl focus:outline-none',
                         {
-                            'border border-gray-300 bg-gray-50 text-gray-900 hover:border-gray-400 focus:ring-blue-400':
+                            'border border-gray-300 text-gray-900 hover:border-gray-400 focus:ring-blue-400':
                                 variant === 'default',
-                            'border border-gray-400 bg-gray-50 text-gray-900 hover:border-gray-500 focus:ring-blue-500':
-                                variant === 'outline',
-                            'border-none bg-gray-100 text-gray-900 focus:ring-gray-500': variant === 'filled',
+                            'border-none text-gray-500 focus:ring-gray-500': variant === 'filled',
+                            'border border-red-500 text-gray-900 hover:ring-red-600 focus:border-red-700': error,
                         },
                         {
                             'p-1 text-sm': inputSize === 'sm',
@@ -28,17 +58,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                         (rightIcon || isPassword) && 'pr-10',
                         className
                     )}
-                    {...props}
                 />
                 {rightIcon && (
-                    <span className='absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700'>
-                        {rightIcon}
-                    </span>
+                    <span className='absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer'>{rightIcon}</span>
                 )}
             </div>
-        );
-    }
-);
+            {error?.message && <span className='text-xs text-red-500'>{error.message}</span>}
+        </div>
+    );
+};
 
 Input.displayName = 'Input';
 

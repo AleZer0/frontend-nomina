@@ -5,7 +5,7 @@ import { BsFillEraserFill } from 'react-icons/bs';
 
 import { useGlobalContext } from '../../context/GlobalContext';
 import Button from '../Button';
-import Input from '../Input';
+import Input from '../Input-v1';
 import Search from '../Search';
 
 const EmployeeSearchBar: React.FC = () => {

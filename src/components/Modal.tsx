@@ -75,7 +75,7 @@ const Modal: React.FC<ModalProps> = ({
                 } sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 ${containerClassName || ''}`}
                 style={{ zIndex: zIndex + 1 }}>
                 <div className='sticky top-0 z-50 flex items-center justify-between bg-white px-10 pt-6 pb-2'>
-                    <h2 className='text-xl font-bold'>{title}</h2>
+                    <h1 className='text-2xl font-bold'>{title}</h1>
                     <AiOutlineClose
                         className='cursor-pointer rounded-2xl bg-gray-100 p-0.5 text-2xl hover:bg-gray-200'
                         onClick={handleClose}

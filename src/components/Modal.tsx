@@ -77,7 +77,7 @@ const Modal: React.FC<ModalProps> = ({
                     <h1 className='text-2xl font-bold'>{title}</h1>
                     <button
                         onClick={handleClose}
-                        className='transition-transform duration-250 hover:scale-110 hover:rotate-90 focus:outline-none'
+                        className='cursor-pointer transition-transform duration-250 hover:scale-110 hover:rotate-90 focus:outline-none'
                         aria-label='Cerrar'>
                         <IconCircleX stroke={2} size={30} className='text-gray-400 hover:text-gray-600' />
                     </button>

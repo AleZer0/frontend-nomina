@@ -1,4 +1,5 @@
 import { useFormContext, FieldError, UseFormRegisterReturn } from 'react-hook-form';
+import { IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 
 interface ISelect extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -11,6 +12,7 @@ interface ISelect extends React.SelectHTMLAttributes<HTMLSelectElement> {
     required?: boolean;
     register?: UseFormRegisterReturn;
     error?: FieldError;
+    onRemove?: () => void;
 }
 
 const Select: React.FC<ISelect> = ({
@@ -25,6 +27,7 @@ const Select: React.FC<ISelect> = ({
     multiple = false,
     register,
     error: externalError,
+    onRemove,
     ...props
 }) => {
     let fieldRegister = register;
@@ -47,11 +50,22 @@ const Select: React.FC<ISelect> = ({
     return (
         <div className={clsx('w-full', className)}>
             {label && (
-                <label
-                    htmlFor={name}
-                    className={`text-base font-medium capitalize ${required && "after:ml-0.5 after:text-red-500 after:content-['*']"}`}>
-                    {label}
-                </label>
+                <div className='group mb-1.5 flex items-center justify-between'>
+                    <label
+                        htmlFor={name}
+                        className={`text-base font-medium ${required && "after:ml-0.5 after:text-red-500 after:content-['*']"}`}>
+                        {label}
+                    </label>
+
+                    {onRemove && (
+                        <button
+                            type='button'
+                            onClick={onRemove}
+                            className='invisible ml-2 cursor-pointer text-sm text-red-500 duration-250 group-hover:visible hover:scale-110 hover:rotate-90 hover:text-red-700 focus:outline-none'>
+                            <IconX stroke={2} />
+                        </button>
+                    )}
+                </div>
             )}
 
             <select

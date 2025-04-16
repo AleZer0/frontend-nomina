@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { useFormContext, FieldError, UseFormRegisterReturn } from 'react-hook-form';
+import { IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 
 interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -12,6 +13,7 @@ interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
     isPassword?: boolean;
     register?: UseFormRegisterReturn;
     error?: FieldError;
+    onRemove?: () => void;
 }
 
 const Input: React.FC<IInput> = ({
@@ -27,6 +29,7 @@ const Input: React.FC<IInput> = ({
     className,
     register,
     error: externalError,
+    onRemove,
     ...props
 }) => {
     let fieldRegister = register;
@@ -49,11 +52,22 @@ const Input: React.FC<IInput> = ({
     return (
         <div>
             {label && (
-                <label
-                    htmlFor={name}
-                    className={`text-base font-medium ${required && "after:ml-0.5 after:text-red-500 after:content-['*']"}`}>
-                    {label}
-                </label>
+                <div className='group mb-1.5 flex items-center justify-between'>
+                    <label
+                        htmlFor={name}
+                        className={`text-base font-medium ${required && "after:ml-0.5 after:text-red-500 after:content-['*']"}`}>
+                        {label}
+                    </label>
+
+                    {onRemove && (
+                        <button
+                            type='button'
+                            onClick={onRemove}
+                            className='invisible ml-2 cursor-pointer text-sm text-red-500 duration-250 group-hover:visible hover:scale-110 hover:rotate-90 hover:text-red-700 focus:outline-none'>
+                            <IconX stroke={2} />
+                        </button>
+                    )}
+                </div>
             )}
             <div className='relative mt-1.5 w-full'>
                 {leftIcon && <span className='absolute top-1/2 left-3 -translate-y-1/2'>{leftIcon}</span>}

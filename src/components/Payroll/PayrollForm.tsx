@@ -11,9 +11,10 @@ import Input from '../Input';
 import Button from '../Button';
 
 import { PayrollFormData, payrollSchema } from '../../schemas/payrollSchema';
-import { EmployeeInterface, PayrollInterface } from '../../types/entities';
+import { EmployeeInterface, PayrollInterface, PrestamoAbono } from '../../types/entities';
 
 import EmployeeServices from '../../services/employees.service';
+import { Deducciones, Ganancias, General, TOption } from '../../constants/payrollFormConst';
 
 type TPayrollForm = {
     mode: 'create' | 'edit' | 'view';
@@ -22,6 +23,13 @@ type TPayrollForm = {
     onUpdate: (id: number, data: Partial<PayrollInterface>) => void;
     onDelete: (id: number) => void;
     onClose: () => void;
+    idsPrestamos?: PrestamoAbono[];
+    setIdsPrestamos?: React.Dispatch<React.SetStateAction<PrestamoAbono[]>>;
+    setInputValues?: React.Dispatch<
+        React.SetStateAction<{
+            [key: number]: string;
+        }>
+    >;
     children?: ReactNode;
 };
 
@@ -32,9 +40,12 @@ const PayrollForm: React.FC<TPayrollForm> = ({
     onUpdate,
     onDelete,
     onClose,
+    idsPrestamos,
+    setIdsPrestamos,
+    setInputValues,
     children,
 }) => {
-    const { selectedEntities } = useGlobalContext();
+    const { selectedEntities, setSelectedEntities } = useGlobalContext();
 
     const defaultValues: Partial<PayrollFormData> = selectedEntities.selectedPayroll
         ? {
@@ -62,9 +73,9 @@ const PayrollForm: React.FC<TPayrollForm> = ({
     });
 
     const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
-    const [visibleGeneral, setVisibleGeneral] = useState<(keyof PayrollFormData)[]>([]);
-    const [visibleGanancias, setVisibleGanancias] = useState<(keyof PayrollFormData)[]>([]);
-    const [visibleDeducciones, setVisibleDeducciones] = useState<(keyof PayrollFormData)[]>([]);
+    const [visibleGeneral, setVisibleGeneral] = useState<TOption[]>([]);
+    const [visibleGanancias, setVisibleGanancias] = useState<TOption[]>([]);
+    const [visibleDeducciones, setVisibleDeducciones] = useState<TOption[]>([]);
 
     useEffect(() => {
         EmployeeServices.getEmployees({ estado: 1 })
@@ -75,46 +86,76 @@ const PayrollForm: React.FC<TPayrollForm> = ({
             });
     }, []);
 
-    const selectedEmployee = useMemo(() => {
+    useEffect(() => {
         const id = methods.watch('id_empleado');
-        return employees.find(e => e.id_empleado === Number(id));
+
+        if (!id) {
+            methods.setValue('sueldo', '');
+            setSelectedEntities(prev => ({ ...prev, selectedEmployee: null }));
+            setIdsPrestamos?.([]);
+            setInputValues?.({});
+            return;
+        }
+
+        const empleado = employees.find(e => e.id_empleado === Number(id));
+        if (empleado) {
+            setSelectedEntities(prev => ({ ...prev, selectedEmployee: empleado }));
+            if (empleado.sueldo) {
+                methods.setValue('sueldo', empleado.sueldo.toString());
+            }
+        }
     }, [methods.watch('id_empleado'), employees]);
 
-    const toggleConcepto = (type: 'ganancia' | 'deduccion' | 'general', key: keyof PayrollFormData) => {
-        let updater;
-        switch (type) {
-            case 'ganancia':
-                updater = setVisibleGanancias;
-                break;
-            case 'deduccion':
-                updater = setVisibleDeducciones;
-                break;
-            case 'general':
-                updater = setVisibleGeneral;
-                break;
+    useEffect(() => {
+        if (!selectedEntities.selectedPayroll) return;
+
+        const data = selectedEntities.selectedPayroll;
+
+        const addVisible = (source: TOption[], setter: React.Dispatch<React.SetStateAction<TOption[]>>) => {
+            const visibles = source.filter(
+                opt => data[opt.key] !== null && data[opt.key] !== undefined && data[opt.key] != 0
+            );
+            setter(visibles);
+        };
+
+        if (mode !== 'create') {
+            addVisible(General, setVisibleGeneral);
+            addVisible(Ganancias, setVisibleGanancias);
+            addVisible(Deducciones, setVisibleDeducciones);
         }
-        updater(prev => (prev.includes(key) ? prev.filter(i => i !== key) : [...prev, key]));
+    }, [mode, selectedEntities.selectedPayroll]);
+
+    const toggleConcepto = (type: 'ganancia' | 'deduccion' | 'general', key: keyof PayrollFormData) => {
+        const source = type === 'ganancia' ? Ganancias : type === 'deduccion' ? Deducciones : General;
+        const item: TOption | undefined = source.find(i => i.key === key);
+        if (!item) return;
+
+        const updater =
+            type === 'ganancia'
+                ? setVisibleGanancias
+                : type === 'deduccion'
+                  ? setVisibleDeducciones
+                  : setVisibleGeneral;
+
+        updater(prev => {
+            const exists = prev.find(p => p.key === key);
+            return exists ? prev.filter(p => p.key !== key) : [...prev, item];
+        });
     };
 
-    const general: (keyof PayrollFormData)[] = ['faltas', 'horas_extras'];
-    const ganancias: (keyof PayrollFormData)[] = [
-        'vacaciones',
-        'aguinaldo',
-        'finiquito',
-        'maniobras',
-        'otros',
-        'pago_horas_extras',
-    ];
-    const deducciones: (keyof PayrollFormData)[] = ['infonavit', 'pension_alimenticia'];
+    const totalGanancias = useMemo(() => {
+        const values = methods.watch();
+        const sueldoBase = Number(values.sueldo || 0);
+        const adicionales = visibleGanancias.reduce((sum, item) => sum + Number(values[item.key] || 0), 0);
+        return sueldoBase + adicionales;
+    }, [visibleGanancias, methods.watch()]);
 
-    const watchFields = methods.watch();
-
-    const sueldoNeto = useMemo(() => {
-        const base = Number(watchFields.sueldo || 0);
-        const totalGanancias = visibleGanancias.reduce((sum, key) => sum + Number(watchFields[key] || 0), 0);
-        const totalDeducciones = visibleDeducciones.reduce((sum, key) => sum + Number(watchFields[key] || 0), 0);
-        return base + totalGanancias - totalDeducciones;
-    }, [watchFields, visibleGanancias, visibleDeducciones]);
+    const totalDeducciones = useMemo(() => {
+        const values = methods.watch();
+        const prestamosTotal = idsPrestamos ? idsPrestamos.reduce((sum, p) => sum + (p.monto_abonado || 0), 0) : 0;
+        const subtotal = visibleDeducciones.reduce((sum, item) => sum + Number(values[item.key] || 0), 0);
+        return prestamosTotal + subtotal;
+    }, [visibleDeducciones, methods.watch()]);
 
     const handleSubmit = (data: PayrollFormData) => {
         const payload = {
@@ -153,46 +194,59 @@ const PayrollForm: React.FC<TPayrollForm> = ({
         }
     };
 
+    const renderConceptSelect = (type: 'ganancia' | 'deduccion' | 'general') => {
+        const source = type === 'ganancia' ? Ganancias : type === 'deduccion' ? Deducciones : General;
+        const visible =
+            type === 'ganancia' ? visibleGanancias : type === 'deduccion' ? visibleDeducciones : visibleGeneral;
+        const visibleKeys = visible.map(v => v.key);
+
+        return (
+            <select
+                onChange={e => {
+                    const value = e.target.value as keyof PayrollFormData;
+                    if (source.some(opt => opt.key === value)) {
+                        toggleConcepto(type, value);
+                    }
+                }}
+                className='mt-1.5 w-60 rounded-lg border border-gray-300 bg-gray-50 p-2 text-base text-gray-900 transition-all duration-300 placeholder:text-gray-400 placeholder:italic hover:border-gray-400 hover:shadow focus:border-sky-500 focus:shadow-xl focus:outline-none disabled:shadow-none'>
+                <option value=''>-- Agregar {type} --</option>
+                {source
+                    .filter(opt => !visibleKeys.includes(opt.key))
+                    .map(opt => (
+                        <option key={opt.key} value={opt.key}>
+                            {opt.label}
+                        </option>
+                    ))}
+            </select>
+        );
+    };
+
     const disabled = mode === 'view';
     const variant = mode === 'view' ? 'filled' : 'default';
 
     return (
         <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(handleSubmit)} className='space-y-8 text-gray-800'>
+            <form onSubmit={methods.handleSubmit(handleSubmit)} className='space-y-6 text-gray-800'>
+                {/* General */}
                 <div className='space-y-2 rounded-2xl'>
                     <div className='flex items-center justify-between'>
                         <h2 className='text-xl font-semibold tracking-wide subpixel-antialiased'>
                             Información General
                         </h2>
-                        <select
-                            onChange={e => {
-                                const value = e.target.value;
-                                if (general.includes(value as keyof PayrollFormData)) {
-                                    toggleConcepto('ganancia', value as keyof PayrollFormData);
-                                }
-                            }}
-                            className='rounded border px-2 py-1 text-sm'>
-                            <option value=''>Agregar información general</option>
-                            {general.map(
-                                key =>
-                                    !visibleGeneral.includes(key) && (
-                                        <option key={key} value={key}>
-                                            {key}
-                                        </option>
-                                    )
-                            )}
-                        </select>
+                        {!disabled && renderConceptSelect('general')}
                     </div>
                     <div className='grid grid-cols-2 gap-2'>
                         <Select
                             name='id_empleado'
+                            required={true}
                             label='Empleado'
+                            variant={variant}
+                            disabled={disabled}
                             options={employees.map(emp => ({
                                 id: emp.id_empleado,
                                 label: `${emp.nombre} ${emp.apellido}`,
                             }))}
                             defaultMessage='Seleccione un empleado'
-                            required
                         />
                         <Input
                             type='date'
@@ -209,9 +263,26 @@ const PayrollForm: React.FC<TPayrollForm> = ({
                             name='dias_trabajados'
                             label='Días laborados'
                             variant={variant}
-                            placeholder='Ingrese los días laborados'
+                            placeholder='Ingrese el campo días laborados'
                             disabled={disabled}
                         />
+                        {visibleGeneral.map(obj => (
+                            <Input
+                                key={obj.key}
+                                name={obj.key}
+                                type='number'
+                                label={obj.label}
+                                variant={variant}
+                                placeholder={`Ingrese el campo ${obj.label.toLowerCase()}`}
+                                disabled={disabled}
+                                {...(mode !== 'view' && {
+                                    onRemove: () => {
+                                        setVisibleGeneral(prev => prev.filter(p => p.key !== obj.key));
+                                        methods.setValue(obj.key, '');
+                                    },
+                                })}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -219,24 +290,7 @@ const PayrollForm: React.FC<TPayrollForm> = ({
                 <div className='space-y-2 rounded-2xl'>
                     <div className='flex items-center justify-between'>
                         <h2 className='text-xl font-semibold tracking-wide subpixel-antialiased'>Ganancías</h2>
-                        <select
-                            onChange={e => {
-                                const value = e.target.value;
-                                if (ganancias.includes(value as keyof PayrollFormData)) {
-                                    toggleConcepto('ganancia', value as keyof PayrollFormData);
-                                }
-                            }}
-                            className='rounded border px-2 py-1 text-sm'>
-                            <option value=''>Agregar ganancia</option>
-                            {ganancias.map(
-                                key =>
-                                    !visibleGanancias.includes(key) && (
-                                        <option key={key} value={key}>
-                                            {key}
-                                        </option>
-                                    )
-                            )}
-                        </select>
+                        {!disabled && renderConceptSelect('ganancia')}
                     </div>
                     <div className='grid grid-cols-2 gap-2'>
                         <Input
@@ -245,52 +299,71 @@ const PayrollForm: React.FC<TPayrollForm> = ({
                             name='sueldo'
                             label='Sueldo base'
                             variant={variant}
-                            placeholder='Ingrese el sueldo base'
+                            placeholder='Ingrese el campo sueldo base'
                             disabled={disabled}
                         />
-                        {visibleGanancias.map(key => (
-                            <Input key={key} name={key} type='number' label={key} />
+                        {visibleGanancias.map(obj => (
+                            <Input
+                                key={obj.key}
+                                name={obj.key}
+                                type='number'
+                                label={obj.label}
+                                variant={variant}
+                                placeholder={`Ingrese el campo ${obj.label.toLowerCase()}`}
+                                disabled={disabled}
+                                {...(mode !== 'view' && {
+                                    onRemove: () => {
+                                        setVisibleGanancias(prev => prev.filter(p => p.key !== obj.key));
+                                        methods.setValue(obj.key, '');
+                                    },
+                                })}
+                            />
                         ))}
                     </div>
+                </div>
+
+                <div className='rounded-2xl bg-gray-50 px-2 py-2 text-base font-medium'>
+                    Total Ganancias: <span className='text-green-500'>${totalGanancias.toFixed(2)}</span>
                 </div>
 
                 {/* Deducciones */}
                 <div>
                     <div className='flex items-center justify-between'>
                         <h2 className='text-xl font-semibold tracking-wide subpixel-antialiased'>Deducciones</h2>
-                        <select
-                            onChange={e => {
-                                const value = e.target.value;
-                                if (ganancias.includes(value as keyof PayrollFormData)) {
-                                    toggleConcepto('deduccion', value as keyof PayrollFormData);
-                                }
-                            }}
-                            className='rounded border px-2 py-1 text-sm'>
-                            <option value=''>Agregar deducción</option>
-                            {deducciones.map(
-                                key =>
-                                    !visibleDeducciones.includes(key) && (
-                                        <option key={key} value={key}>
-                                            {key}
-                                        </option>
-                                    )
-                            )}
-                        </select>
+                        {!disabled && renderConceptSelect('deduccion')}
                     </div>
                     <div className='mt-2 grid grid-cols-2 gap-4'>
-                        {visibleDeducciones.map(key => (
-                            <Input key={key} name={key} type='number' label={key} />
+                        {visibleDeducciones.map(obj => (
+                            <Input
+                                key={obj.key}
+                                name={obj.key}
+                                type='number'
+                                label={obj.label}
+                                variant={variant}
+                                placeholder={`Ingrese el campo ${obj.label.toLowerCase()}`}
+                                disabled={disabled}
+                                {...(mode !== 'view' && {
+                                    onRemove: () => {
+                                        setVisibleDeducciones(prev => prev.filter(p => p.key !== obj.key));
+                                        methods.setValue(obj.key, '');
+                                    },
+                                })}
+                            />
                         ))}
                     </div>
                 </div>
 
-                {/* Sueldo Neto */}
-                <div>
-                    <h2 className='text-xl font-semibold tracking-wide subpixel-antialiased'>Sueldo Neto</h2>
-                    <div className='text-xl font-semibold text-blue-600'>${sueldoNeto.toFixed(2)}</div>
+                {mode === 'create' && children}
+
+                <div className='rounded-2xl bg-gray-50 px-2 py-2 text-base font-medium'>
+                    Total Deducciones: <span className='text-red-500'>- ${totalDeducciones.toFixed(2)}</span>
                 </div>
 
-                {mode === 'view' && children}
+                {/* Sueldo Neto */}
+                <div className='rounded-2xl bg-gray-50 px-2 py-2 text-xl font-semibold'>
+                    Sueldo Neto:{' '}
+                    <span className='text-blue-500'>${(totalGanancias - totalDeducciones).toFixed(2)}</span>
+                </div>
 
                 <div className='flex flex-row-reverse gap-4'>
                     {mode === 'create' && (
@@ -334,7 +407,7 @@ const PayrollForm: React.FC<TPayrollForm> = ({
                                 onClick={handleDelete}>
                                 Eliminar
                             </Button>
-                            <Button type='button' variant='delete' icon={<IconFileTypePdf stroke={2} />}>
+                            <Button type='button' variant='details' icon={<IconFileTypePdf stroke={2} />}>
                                 PDF
                             </Button>
                         </>

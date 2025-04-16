@@ -10,7 +10,8 @@ export interface EmployeeInterface {
     fecha_incorporacion?: string;
     departamento?: string;
     puesto: string;
-    sueldo?: number;
+    dias_laborables?: number;
+    sueldo: number;
     created_at?: string;
     updated_at?: string;
     estado?: number;
@@ -95,8 +96,8 @@ export interface WeeklyReportData {
 
 export interface ParamsInterface {
     estado: number;
-    page: number;
-    limit: number;
+    page?: number;
+    limit?: number;
     order?: 'asc' | 'desc';
     sort_by?: string;
     q?: string;

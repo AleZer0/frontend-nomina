@@ -2,6 +2,7 @@ import { FaFilePdf } from 'react-icons/fa';
 import { Column } from '../types/extras';
 import { WeeklyReportData } from '../types/entities';
 import Button from '../components/Button';
+import StyleComponents from '../utils/stylesComponentes';
 
 export const getWeeklyReportColumns = (
     loading: {
@@ -10,26 +11,6 @@ export const getWeeklyReportColumns = (
     },
     createPreviewWeeklyReportPDF: (year: number, row: WeeklyReportData) => void
 ): Column<WeeklyReportData>[] => {
-    const formatMoney = (cantidad: number, tipo: 'normal' | 'total' = 'normal') => {
-        const classes = {
-            normal: !cantidad
-                ? 'border-gray-300 bg-gray-100 text-gray-500'
-                : cantidad < 0
-                  ? 'border-red-400 bg-red-200 text-red-700'
-                  : 'border-green-200 bg-green-50 text-green-700',
-            total: cantidad < 0 ? 'border-red-700 bg-red-500 text-red-700' : 'border-blue-400 bg-blue-50 text-blue-500',
-        };
-
-        return (
-            <span
-                className={`inline-block rounded-full border px-3 py-1 font-semibold ${
-                    tipo === 'total' ? classes.total : classes.normal
-                }`}>
-                ${cantidad.toFixed(2)}
-            </span>
-        );
-    };
-
     return [
         {
             key: 'semana',
@@ -42,37 +23,37 @@ export const getWeeklyReportColumns = (
         {
             key: 'total_sueldos',
             header: 'Sueldos',
-            render: (_, row) => formatMoney(row.total_sueldos ?? 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_sueldos ?? 0, 'total'),
         },
         {
             key: 'total_vacaciones',
             header: 'Vacaciones',
-            render: (_, row) => formatMoney(row.total_vacaciones ? row.total_vacaciones : 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_vacaciones ? row.total_vacaciones : 0, 'total'),
         },
         {
             key: 'total_aguinaldo',
             header: 'Aguinaldo',
-            render: (_, row) => formatMoney(row.total_aguinaldos ?? 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_aguinaldos ?? 0, 'total'),
         },
         {
             key: 'total_finiquito',
             header: 'Finiquito',
-            render: (_, row) => formatMoney(row.total_finiquitos ?? 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_finiquitos ?? 0, 'total'),
         },
         {
             key: 'total_prestamos',
             header: 'Prestamos',
-            render: (_, row) => formatMoney(row.total_prestamos ?? 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_prestamos ?? 0, 'total'),
         },
         {
             key: 'total_infonavit',
             header: 'Infonavit',
-            render: (_, row) => formatMoney(row.total_infonavit ?? 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_infonavit ?? 0, 'total'),
         },
         {
             key: 'total_neto',
             header: 'Neto',
-            render: (_, row) => formatMoney(row.total_neto ?? 0, 'total'),
+            render: (_, row) => StyleComponents.formatMoney(row.total_neto ?? 0, 'total'),
         },
         {
             key: 'accion',

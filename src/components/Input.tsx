@@ -1,15 +1,17 @@
 import { ReactNode } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, FieldError, UseFormRegisterReturn } from 'react-hook-form';
 import clsx from 'clsx';
 
 interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
     name: string;
     label?: string;
-    variant?: 'default' | 'error' | 'filled';
+    variant?: 'default' | 'filled';
     inputSize?: 'sm' | 'md' | 'lg';
     leftIcon?: ReactNode;
     rightIcon?: ReactNode;
     isPassword?: boolean;
+    register?: UseFormRegisterReturn;
+    error?: FieldError;
 }
 
 const Input: React.FC<IInput> = ({
@@ -23,31 +25,50 @@ const Input: React.FC<IInput> = ({
     type,
     required,
     className,
+    register,
+    error: externalError,
     ...props
 }) => {
-    const { register, formState, getFieldState } = useFormContext();
-    const { error } = getFieldState(name, formState);
+    let fieldRegister = register;
+    let fieldError = externalError;
+
+    try {
+        const form = useFormContext();
+        const { register: contextRegister, getFieldState, formState } = form;
+
+        if (!fieldRegister) {
+            fieldRegister = contextRegister(name);
+        }
+
+        if (!fieldError) {
+            const { error } = getFieldState(name, formState);
+            fieldError = error;
+        }
+    } catch (e) {}
 
     return (
         <div>
             {label && (
-                <label htmlFor={name} className='text-base font-medium capitalize'>
-                    {label} {required && <span className='text-red-500'>*</span>}
+                <label
+                    htmlFor={name}
+                    className={`text-base font-medium ${required && "after:ml-0.5 after:text-red-500 after:content-['*']"}`}>
+                    {label}
                 </label>
             )}
             <div className='relative mt-1.5 w-full'>
                 {leftIcon && <span className='absolute top-1/2 left-3 -translate-y-1/2'>{leftIcon}</span>}
                 <input
-                    {...register(name)}
+                    {...fieldRegister}
                     {...props}
                     type={isPassword ? 'password' : (type ?? 'text')}
                     className={clsx(
-                        'w-full rounded-lg bg-gray-50 transition-all duration-300 hover:shadow focus:ring-1 focus:shadow-xl focus:outline-none',
+                        'w-full rounded-lg transition-all duration-300 placeholder:text-gray-400 placeholder:italic invalid:border-red-500 hover:shadow focus:shadow-xl focus:outline-none disabled:shadow-none',
                         {
-                            'border border-gray-300 text-gray-900 hover:border-gray-400 focus:ring-blue-400':
-                                variant === 'default',
-                            'border-none text-gray-500 focus:ring-gray-500': variant === 'filled',
-                            'border border-red-500 text-gray-900 hover:ring-red-600 focus:border-red-700': error,
+                            'border border-gray-300 bg-gray-50 text-gray-900 hover:border-gray-400 focus:border-sky-500':
+                                variant === 'default' && !fieldError,
+                            'border border-red-500 text-gray-900 hover:border-red-500 focus:border-red-500':
+                                variant === 'default' && fieldError,
+                            'border-none bg-gray-100 text-gray-500 focus:ring-gray-500': variant === 'filled',
                         },
                         {
                             'p-1 text-sm': inputSize === 'sm',
@@ -63,7 +84,9 @@ const Input: React.FC<IInput> = ({
                     <span className='absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer'>{rightIcon}</span>
                 )}
             </div>
-            {error?.message && <span className='text-xs text-red-500'>{error.message}</span>}
+            <span className={`${fieldError?.message ? 'visible' : 'invisible'} text-xs text-red-500`}>
+                {(fieldError?.message && fieldError.message) || 'Sin errores'}
+            </span>
         </div>
     );
 };

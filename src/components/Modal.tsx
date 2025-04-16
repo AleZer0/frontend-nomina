@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { AiOutlineClose } from 'react-icons/ai';
+import { IconCircleX } from '@tabler/icons-react';
 
 export interface ModalProps {
     isOpen: boolean;
@@ -22,8 +22,8 @@ const Modal: React.FC<ModalProps> = ({
     children,
     footer,
     closeOnOverlayClick = false,
-    containerClassName,
-    overlayClassName,
+    containerClassName = '',
+    overlayClassName = '',
     zIndex = 50,
     popup,
 }) => {
@@ -66,23 +66,27 @@ const Modal: React.FC<ModalProps> = ({
             onClick={handleOverlayClick}
             className={`fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-500 ${
                 isVisible ? 'opacity-100' : 'opacity-0'
-            } ${overlayClassName || ''}`}
+            } ${overlayClassName}`}
             style={{ zIndex }}>
-            <div className='px-10 pt-2 pb-6'>{popup && <div className='mb-4 flex justify-center'>{popup}</div>}</div>
             <div
                 className={`relative max-h-[80vh] w-full max-w-4xl transform overflow-y-auto rounded-lg bg-white shadow-lg transition-all duration-300 ease-in-out ${
                     isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-                } sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 ${containerClassName || ''}`}
+                } sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 ${containerClassName}`}
                 style={{ zIndex: zIndex + 1 }}>
                 <div className='sticky top-0 z-50 flex items-center justify-between bg-white px-10 pt-6 pb-2'>
                     <h1 className='text-2xl font-bold'>{title}</h1>
-                    <AiOutlineClose
-                        className='cursor-pointer rounded-2xl bg-gray-100 p-0.5 text-2xl hover:bg-gray-200'
+                    <button
                         onClick={handleClose}
-                        size={25}
-                    />
+                        className='transition-transform duration-250 hover:scale-110 hover:rotate-90 focus:outline-none'
+                        aria-label='Cerrar'>
+                        <IconCircleX stroke={2} size={30} className='text-gray-400 hover:text-gray-600' />
+                    </button>
                 </div>
+
+                {popup && <div className='px-8 pt-2'>{popup}</div>}
+
                 <div className='px-10 pt-2 pb-6'>{children}</div>
+
                 {footer && <div className='mt-4'>{footer}</div>}
             </div>
         </div>

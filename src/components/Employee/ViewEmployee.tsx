@@ -139,7 +139,7 @@ const ViewEmployee: React.FC<ViewEmployeeProps> = ({
                 <Table
                     columns={columns}
                     data={selectedEntities.selectedEmployee?.nomina ?? []}
-                    loading={loading['prestamos']}
+                    loading={loading['nominas']}
                 />
 
                 <div className='mt-4 flex justify-end gap-2'>

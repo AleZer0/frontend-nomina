@@ -1,3 +1,5 @@
+import { PayrollInterface } from '../types/entities';
+
 class Utils {
     static formatDateDDMMYYYY = (dateInput: string | Date): string => {
         if (!dateInput) return 'Fecha no disponible';
@@ -45,6 +47,19 @@ class Utils {
         }
         return data;
     };
+
+    static calcTotal = (row: PayrollInterface) =>
+        (row.sueldo ?? 0) -
+        (row.prestamos ?? 0) -
+        (row.infonavit ?? 0) +
+        (row.vacaciones ?? 0) +
+        (row.finiquito ?? 0) +
+        (row.aguinaldo ?? 0) -
+        (row.pension_alimenticia ?? 0) +
+        (row.pago_horas_extras ?? 0) +
+        (row.maniobras ?? 0) -
+        ((row.sueldo ?? 0) / 7) * (row.faltas ?? 0) +
+        (row.otros ?? 0);
 }
 
 export default Utils;

@@ -1,60 +1,93 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, FieldError, UseFormRegisterReturn } from 'react-hook-form';
 import clsx from 'clsx';
 
-interface ISelect extends React.InputHTMLAttributes<HTMLSelectElement> {
+interface ISelect extends React.SelectHTMLAttributes<HTMLSelectElement> {
     name: string;
-    options: readonly { id: number; label: string }[];
     label?: string;
-    variant?: 'default' | 'error' | 'filled';
+    variant?: 'default' | 'filled';
     selectSize?: 'sm' | 'md' | 'lg';
-    defaultMessage: string;
+    options: readonly { id: number; label: string }[];
+    defaultMessage?: string;
+    required?: boolean;
+    register?: UseFormRegisterReturn;
+    error?: FieldError;
 }
 
 const Select: React.FC<ISelect> = ({
     name,
-    options,
     label,
-    variant,
-    selectSize,
-    defaultMessage,
-    multiple = false,
+    variant = 'default',
+    selectSize = 'md',
+    options,
+    defaultMessage = 'Seleccione una opción...',
+    required,
     className,
+    multiple = false,
+    register,
+    error: externalError,
     ...props
 }) => {
-    const { register, formState, getFieldState } = useFormContext();
-    const { error } = getFieldState(name, formState);
+    let fieldRegister = register;
+    let fieldError = externalError;
+
+    try {
+        const form = useFormContext();
+        const { register: contextRegister, getFieldState, formState } = form;
+
+        if (!fieldRegister) {
+            fieldRegister = contextRegister(name);
+        }
+
+        if (!fieldError) {
+            const { error } = getFieldState(name, formState);
+            fieldError = error;
+        }
+    } catch (e) {}
 
     return (
         <div className={clsx('w-full', className)}>
+            {label && (
+                <label
+                    htmlFor={name}
+                    className={`text-base font-medium capitalize ${required && "after:ml-0.5 after:text-red-500 after:content-['*']"}`}>
+                    {label}
+                </label>
+            )}
+
             <select
-                {...register(name)}
+                {...fieldRegister}
                 {...props}
+                multiple={multiple}
                 className={clsx(
-                    'w-full rounded-lg border bg-gray-50 p-2 transition-all duration-300 hover:shadow focus:ring-1 focus:shadow-xl focus:outline-none',
+                    'mt-1.5 w-full rounded-lg transition-all duration-300 placeholder:text-gray-400 placeholder:italic hover:shadow focus:shadow-xl focus:outline-none disabled:shadow-none',
                     {
-                        'border-gray-300 text-gray-900 hover:border-gray-400 focus:ring-blue-400':
-                            variant === 'default',
-                        'border-none text-gray-500 focus:ring-gray-500': variant === 'filled',
-                        'border border-red-500 text-gray-900 hover:ring-red-600 focus:border-red-700': error,
+                        'border border-gray-300 bg-gray-50 text-gray-900 hover:border-gray-400 focus:border-sky-500':
+                            variant === 'default' && !fieldError,
+                        'border border-red-500 text-gray-900 hover:border-red-500 focus:border-red-500':
+                            variant === 'default' && fieldError,
+                        'border-none bg-gray-100 text-gray-500 focus:ring-gray-500': variant === 'filled',
                     },
                     {
                         'p-1 text-sm': selectSize === 'sm',
                         'p-2 text-base': selectSize === 'md',
                         'p-4 text-lg': selectSize === 'lg',
-                    },
-                    className
-                )}
-                multiple={multiple}>
-                {defaultMessage && <option>{defaultMessage}</option>}
+                    }
+                )}>
+                {!multiple && <option value=''>{defaultMessage}</option>}
                 {options.map(option => (
-                    <option key={option.id} value={String(option.id)}>
+                    <option key={option.id} value={option.id}>
                         {option.label}
                     </option>
                 ))}
             </select>
-            {error?.message && <span className='text-xs text-red-500'>{error.message}</span>}
+
+            <span className={`${fieldError?.message ? 'visible' : 'invisible'} text-xs text-red-500`}>
+                {(fieldError?.message && fieldError.message) || 'Sin errores'}
+            </span>
         </div>
     );
 };
+
+Select.displayName = 'Select';
 
 export default Select;

@@ -6,17 +6,18 @@ import { usePayrollsHandlers } from '../hooks/usePayrollHandlers';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
 import PayrollSearchBar from '../components/Payroll/PayrollSearchBar';
-import PayrollModals from '../components/Payroll/PayrollModals';
 import PayrollHeader from '../components/Payroll/PayrollHeader';
 import Popup from '../components/Popup';
+import PayrollModal from '../components/Payroll/PayrolModal';
+
+import { PayrollInterface } from '../types/entities';
 
 const Payroll: React.FC = () => {
     const { entitiesState, setParams, params, isSidebarOpen, setSelectedEntities, loading, setContentHeader } =
         useGlobalContext();
 
-    const [isOpenViewPayroll, setIsOpenViewPayroll] = useState(false);
-    const [isOpenCreatePayroll, setIsOpenCreatePayroll] = useState(false);
-    const [isOpenEditPayroll, setIsOpenEditPayroll] = useState(false);
+    const [payrollModalOpen, setPayrollModalOpen] = useState(false);
+    const [payrollModalMode, setPayrollModalMode] = useState<'create' | 'view' | 'edit'>('create');
 
     const {
         handleCreatePayroll,
@@ -28,13 +29,23 @@ const Payroll: React.FC = () => {
     } = usePayrollsHandlers();
 
     useEffect(() => {
-        setContentHeader(<PayrollHeader onAdd={() => setIsOpenCreatePayroll(true)} />);
+        setContentHeader(
+            <PayrollHeader
+                onAdd={() => {
+                    setPayrollModalMode('create');
+                    setPayrollModalOpen(true);
+                }}
+            />
+        );
     }, [isSidebarOpen]);
 
-    const columns = useMemo(
-        () => getPayrollColumns(params, setParams, setSelectedEntities, setIsOpenViewPayroll),
-        [params]
-    );
+    const onClickDetails = (selectedPayroll: PayrollInterface) => {
+        setSelectedEntities(prev => ({ ...prev, selectedPayroll }));
+        setPayrollModalMode('view');
+        setPayrollModalOpen(true);
+    };
+
+    const columns = useMemo(() => getPayrollColumns(params, setParams, onClickDetails), [params]);
 
     return (
         <section className={`mb-20 flex-auto p-6 transition-all ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
@@ -44,17 +55,14 @@ const Payroll: React.FC = () => {
             <PayrollSearchBar />
             <Table columns={columns} data={entitiesState.payrolls} loading={loading['payrolls']} />
             <Pagination />
-            <PayrollModals
-                onDelete={handleDeletePayroll}
+            <PayrollModal
+                isOpen={payrollModalOpen}
+                setIsOpen={setPayrollModalOpen}
+                mode={payrollModalMode}
+                setMode={setPayrollModalMode}
                 onCreate={handleCreatePayroll}
                 onUpdate={handleUpdatePayroll}
-                showSuccessEdit={showSuccessEdit}
-                openView={isOpenViewPayroll}
-                setOpenView={setIsOpenViewPayroll}
-                openCreate={isOpenCreatePayroll}
-                setOpenCreate={setIsOpenCreatePayroll}
-                openEdit={isOpenEditPayroll}
-                setOpenEdit={setIsOpenEditPayroll}
+                onDelete={handleDeletePayroll}
             />
         </section>
     );

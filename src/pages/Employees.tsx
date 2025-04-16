@@ -40,7 +40,7 @@ const Employees: React.FC = () => {
     }, [isSidebarOpen]);
 
     const onClickDetails = (selectedEmployee: EmployeeInterface) => {
-        setSelectedEntities(prev => ({ ...prev, selectedEmployee: selectedEmployee }));
+        setSelectedEntities(prev => ({ ...prev, selectedEmployee }));
         setEmployeeModalMode('view');
         setEmployeeModalOpen(true);
     };
@@ -55,19 +55,15 @@ const Employees: React.FC = () => {
             <EmployeeSearchBar />
             <Table columns={columns} data={entitiesState.employees} loading={loading['employees']} />
             <Pagination />
-            <EmployeeModal isOpen={employeeModalOpen} setIsOpen={setEmployeeModalOpen} mode={employeeModalMode} />
-            {/* <EmployeeModals
+            <EmployeeModal
+                isOpen={employeeModalOpen}
+                setIsOpen={setEmployeeModalOpen}
+                mode={employeeModalMode}
+                setMode={setEmployeeModalMode}
                 onCreate={handleCreateEmployee}
                 onUpdate={handleUpdateEmployee}
                 onDelete={handleDeleteEmployee}
-                showSuccessEdit={showSuccessEdit}
-                openView={isOpenViewEmployee}
-                setOpenView={setIsOpenViewEmployee}
-                openCreate={isOpenCreateEmployee}
-                setOpenCreate={setIsOpenCreateEmployee}
-                openEdit={isOpenEditEmployee}
-                setOpenEdit={setIsOpenEditEmployee}
-            /> */}
+            />
         </section>
     );
 };

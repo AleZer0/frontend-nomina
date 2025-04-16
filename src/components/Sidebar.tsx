@@ -53,7 +53,7 @@ const Sidebar: React.FC = () => {
                 className={`fixed z-10 flex h-screen flex-col bg-white pt-20 text-black inset-shadow-xs shadow-current transition-all duration-500 ease-in-out ${
                     isSidebarOpen ? 'w-64' : 'w-20'
                 }`}>
-                <ul className='flex flex-col'>
+                <ul role='list' className='flex flex-col'>
                     {routes.map((route, index) => (
                         <li key={route.name}>
                             {index !== 0 && <hr className='mx-4 border-t border-gray-300' />}

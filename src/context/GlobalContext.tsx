@@ -130,7 +130,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                     status === 0 && updatedEmployees.length === 0 && metaData.employees.currentPage > 1;
 
                 if (shouldGoBack) {
-                    setParams(prev => ({ ...prev, page: prev.page - 1 }));
+                    setParams(prev => ({ ...prev, page: prev.page ?? 0 - 1 }));
                 }
 
                 return {
@@ -216,7 +216,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 const shouldGoBack = status === 0 && updatedPayrolls.length === 0 && metaData.payrolls.currentPage > 1;
 
                 if (shouldGoBack) {
-                    setParams(prev => ({ ...prev, page: prev.page - 1 }));
+                    setParams(prev => ({ ...prev, page: prev.page ?? 0 - 1 }));
                 }
 
                 return {
@@ -277,7 +277,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                 const shouldGoBack = status === 0 && updatedLoans.length === 0 && metaData.loans.currentPage > 1;
 
                 if (shouldGoBack) {
-                    setParams(prev => ({ ...prev, page: prev.page - 1 }));
+                    setParams(prev => ({ ...prev, page: prev.page ?? 0 - 1 }));
                 }
 
                 return {
